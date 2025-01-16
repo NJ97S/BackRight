@@ -15,3 +15,54 @@
 - Pose Estimation AI [리서치](https://github.com/google-ai-edge/mediapipe) 및 [테스트](https://mediapipe-studio.webapps.google.com/demo/pose_landmarker?hl=ko)
 - 자세 예측으로 나온 결과물을 바탕으로 올바른 자세인지 확인하는 문제를 어떻게 치환시킬지?
     - classification이라면 [예시](https://teachablemachine.withgoogle.com/train/pose)
+
+## 2025-01-16
+### 개인 생산성 향상법
+- TODO -> 더 나은 무언가는 없나?
+
+- GTD (Get Things Done)
+    - 할 일을 알고리즘에 따라 분류
+        - Is actionable? 	-> trash | reference | someday
+    - 다음 액션
+        - 싱글
+            - 2분 바로
+            - no -> defer | delegate
+        - 멀티
+
+    - PQ 맨 밑에서 계속 남는다면 버린다
+
+- 아이젠하워 매트릭스
+    - Urgent, Important, Not Urgent, Not Important
+
+- 만트라트
+    - 오타니
+
+- 뽀모도로
+    - 25분 5분 -> 4번 후 휴식 
+
+- 타임 박싱
+    - 일정 시간 내에 특정 작업을 끝내겠다는 목표를 세우는 것
+
+- 타임 블로킹
+    - Focus time -> 특정 시간 동안 자기 업무에만
+
+- PARA method
+    - Project: 진행중
+    - Area: 관심
+    - Resource: 링크 같은 것
+    - Archive: 완료 후 아카이빙
+    - second brain
+        - 내 뇌와 비슷한 방식으로 정보를 저장해두자
+
+- 제텔카스텐 (메모 상자)
+    1. 임시적, 영구적 메모를 수시로 작성
+    2. 연관된 메모들을 인덱스 카드로 관리
+    3. 연관된 메모들끼리도 서로 가리키게 기록
+
+### WebRTC
+- 플러그인 없이 웹 브라우저에서 실시간 통신을 구현
+- 프로젝트에서 어떻게 WebRTC 사용할 지 구상
+
+### 프로젝트
+- 프로젝트 기획 구체화
+- Jira 설정
