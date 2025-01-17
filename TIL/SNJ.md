@@ -102,3 +102,22 @@
     - 임시적, 영구적인 메모를 수시로 작성
     - 연관된 메모들을 index 카드로 관리
     - 연관된 메모들끼리도 서로 가리키도록 기록
+<br/>
+<br/>
+
+## 📅 2025.01.17.FRI
+### MediaRecorder의 데이터 저장 방식
+- `MediaRecorder`는 녹화를 시작할 때 `start(timeslice)`를 설정하면 해당 `timeslice(ms)`마다 `ondataavailable` 이벤트를 통해 Blob 데이터를 생성한다.
+- `ondataavailable에서` 받은 `event.data`를 IndexedDB에 저장하면, 녹화된 비디오를 저장 및 재생할 수 있다.
+
+### IndexedDB 트랜잭션 관리
+- IndexedDB에 데이터를 저장하려면 `transaction`을 생성하고, 그 안에서 데이터를 `add()`해야 한다.
+- `TransactionInactiveError`는 트랜잭션이 닫힌 후 데이터를 저장하려고 할 때 발생한다.
+
+### IndexedDB에서 Blob 데이터를 올바르게 복원하는 방법
+- IndexedDB에서 데이터를 가져올 때, Blob을 저장하면 MIME 타입 정보가 손실될 수 있다.
+- Blob을 `arrayBuffer()`로 변환해 저장하고, 다시 Blob으로 복원해야 한다.
+
+### MediaRecorder의 중복 실행 방지
+- `mediaRecorder.stop()`을 `ondataavailable` 내부에서 호출하면 새로운 녹화가 시작될 때마다 중복 실행이 발생할 수 있다.
+- `startRecording()` 내에서 `mediaRecorder.start(5000)`을 한 번만 실행해야 한다.
