@@ -1,0 +1,33 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: cfb992f8871aa4288acb8e03c741e671  # ??? REST API ?
+            client-secret: voelBw80wfOu2HkNns44cUZ0RBVgbyTM  # ??? ????? ???
+            client-authentication-method: client_secret_post # ????? ???? POST ??? ??
+            redirect-uri: http://localhost:8080/login/oauth2/code/kakao  # ???? URL
+            authorization-grant-type: authorization_code  # ?? ?? ?? ??
+            scope:
+              - profile_nickname
+              - profile_image
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize?prompt=login  # ?? ?? ?? URL
+            token-uri: https://kauth.kakao.com/oauth/token  # ?? ?? ?? URL
+            user-info-uri: https://kapi.kakao.com/v2/user/me  # ??? ?? ?? URL
+            user-name-attribute: id  # ??? ?? ??
+
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+
+# ?? ??
+server:
+  port: 8080
+  servlet:
+    session:
+      tracking-modes: cookie
+
