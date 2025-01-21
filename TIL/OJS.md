@@ -106,3 +106,44 @@
         → nosql을 써본다? user 테이블을 nosql과 rdbms 양쪽에 유지해야하지 않나? → 기각
         
 - 결론: 비정규화된 형태로 report 테이블을 구성해보는 것도 좋을 듯 → 추가 성능 향상 필요 시 고려
+
+## 2025-01-21
+### Indexing
+- Clustered Index: 
+    - PK
+    - 실제로 군집해 있고 물리적 정렬로 관리
+    - 삽입 삭제 시 새로 정렬 -> 비교적 느림
+- Non-Clustered Index:
+    - 목차
+    - 별도 공간에 저장
+    - PK 보다 삽입 삭제 빠르지만 리소스 필요
+    - 여러 공간을 참조하는데 드는 시간에 대한 고려 필요
+- B-tree, B+tree
+    - B+tree는 leaf node를 linked list로 연결 -> 범위 검색에 유리
+- Indexing 팁
+    - join 키
+    - 카디널리티가 높은 값
+### WebRTC 통신의 흐름
+- Signaling
+    - WebRTC 연결을 설정하기 위해 두 Peer가 서로 연결 정보를 교환하는 과정
+        1. SDP 교환: 세션 정보 기술
+        2. ICE Candidate 교환: P2P 연결에 사용되는 네트워크 정보
+    - WebRTC는 Signaling 방법을 정의하지 않기 때문에 다른 통신 프로토콜을 사용해서 두 Peer간 Signaling을 진행한다.
+- ICE Gathering
+    1. ICE Agent: 각 Peer가 네트워크 경로 검색
+    2. ICE Candidate 수집: 발견한 네트워크 경로를 상대방에 전달
+- NAT Traversal
+    - NAT 뒤에 있는 Peer간 연결
+    1. STUN
+    2. TURN
+- Connection
+    1. ICE Candidate 검증
+    2. DTLS 설정: Data Transport Layer Security 보안 설정
+    3. SRTP/SCTP 채널
+        - SRTP: 오디오/비디오 스트림
+        - SCTP: 데이터 스트림
+### 오늘의 Trouble shooting
+1. Kurento는 미디어 서버고 우리는 데이터만 송수신하면 되는데 필요 없는거 아닐까?
+2. Kurento 없이 그냥 Signaling 후에 데이터를 송수신하려고하니 WebRTC가 통신 흐름에서 없어졌다.
+3. Kurento에서 Data Channel을 이용해서 Data를 송수신 하려고 했는데 서버는 중개만 할 뿐 Kurento Client를 통해서는 접근할 수 없었다.
+4. 서버를 하나의 Peer로 만들어야 할 것 같다. -> 어떻게 해야할까...
