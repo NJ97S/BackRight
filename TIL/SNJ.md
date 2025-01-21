@@ -121,3 +121,45 @@
 ### MediaRecorder의 중복 실행 방지
 - `mediaRecorder.stop()`을 `ondataavailable` 내부에서 호출하면 새로운 녹화가 시작될 때마다 중복 실행이 발생할 수 있다.
 - `startRecording()` 내에서 `mediaRecorder.start(5000)`을 한 번만 실행해야 한다.
+<br/>
+<br/>
+
+## 📅 2025.01.20.MON
+### Git Branch 전략
+#### 1. Git Flow
+- `main` 브랜치는 안정적인 배포 버전을 유지하고, `develop` 브랜치에서 개발을 진행한다.
+- `feature/{기능명}` 브랜치를 생성해 기능 개발 후, `develop`에 머지한다.
+- `release/{버전명}` 브랜치를 만들어 QA 및 테스트를 진행하고, 검증이 끝나면 `main`과 `develop`에 병합한다.
+- `hotfix/{버그명}` 브랜치는 배포된 `main`에서 긴급 버그 수정 시 사용된다.
+
+#### 2. GitHub Flow
+- `main` 브랜치에서 직접 `feature/{기능명}` 브랜치를 생성하고, PR(Pull Request)을 통해 병합한다.
+- CI/CD 환경과 잘 맞으며, 빠른 개발 주기에 적합하다.
+- `hotfix` 브랜치는 필요 시 `main`에서 직접 생성하여 버그를 수정한 후 배포한다.
+
+#### 3. GitLab Flow
+- `main` 브랜치는 항상 배포 가능한 상태를 유지하며, `feature` 브랜치는 필요할 때 생성한다.
+- `production`, `staging` 브랜치를 추가하여 배포 환경별 코드 분리를 지원한다.
+- `environment` 기반으로 브랜치를 나누어, 특정 환경에서만 테스트할 수 있도록 한다.
+
+#### 4. Trunk-Based Development
+- `main` 브랜치에서 직접 개발하며, 작은 단위로 빈번한 병합을 수행한다.
+- 브랜치 생성을 최소화하고, `feature flag`를 활용해 미완성 기능을 비활성화한 채 배포할 수 있다.
+- 대규모 협업 프로젝트에서 CI/CD를 활용한 지속적인 배포에 적합하다.
+<br/>
+<br/>
+
+## 📅 2025.01.21.TUE
+### JavaScript 및 TypeScript의 컴파일 동작 과정
+- JavaScript는 인터프리터 언어이지만, V8 엔진 등에서 Just-In-Time(JIT) 컴파일을 통해 실행 속도를 최적화한다.
+- TypeScript는 정적 타입을 제공하며, `tsc`(TypeScript Compiler)를 사용해 JavaScript 코드로 변환된다.
+- `tsc`는 코드의 타입 검사를 수행한 후, 설정된 `target` 버전에 맞게 ES5, ES6 등으로 변환한다.
+- TypeScript의 `strict` 옵션을 활성화하면 더 엄격한 타입 검사를 적용할 수 있다.
+
+### Babel과 SWC의 비교
+- `Babel`과 `SWC`는 모두 JavaScript/TypeScript 코드를 트랜스파일하는 도구지만, 동작 방식과 성능이 다르다.
+- `Babel`은 AST(Abstract Syntax Tree) 기반으로 변환하며, 플러그인을 활용해 다양한 변환 작업을 수행할 수 있다.
+- `SWC(Speedy Web Compiler)`는 Rust 기반으로 작성되어 있으며, Babel보다 빠른 변환 속도를 제공한다.
+- `SWC`는 멀티스레딩을 활용하여 성능을 극대화하며, 최근 Next.js에서 기본 트랜스파일러로 채택되었다.
+- `Babel`은 플러그인 확장성이 뛰어나며, `@babel/preset-env`를 활용하면 브라우저 호환성을 조정할 수 있다.
+- `SWC`는 설정이 간단하며, 특히 대규모 프로젝트에서 빌드 속도를 크게 개선할 수 있다.
