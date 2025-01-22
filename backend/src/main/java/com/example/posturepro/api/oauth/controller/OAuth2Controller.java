@@ -1,71 +1,57 @@
 package com.example.posturepro.api.oauth.controller;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.example.posturepro.api.oauth.utils.JwtUtil;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
 public class OAuth2Controller {
 
-	private final OAuth2AuthorizedClientService authorizedClientService;
+	private final JwtUtil jwtUtil;
 
-	public OAuth2Controller(OAuth2AuthorizedClientService authorizedClientService) {
-		this.authorizedClientService = authorizedClientService;
+	public OAuth2Controller(JwtUtil jwtUtil) {
+		this.jwtUtil = jwtUtil;
 	}
 
-	// 카카오 인증 서버로부터 토큰 받기
-	@GetMapping("/success")
-	public ResponseEntity<Map<String, Object>> loginSuccess(OAuth2AuthenticationToken authentication) {
-		OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient(
-			authentication.getAuthorizedClientRegistrationId(),
-			authentication.getName()
-		);
+	// 리프레시 토큰 엔드포인트
+	@PostMapping("/refresh-token")
+	public ResponseEntity<?> refreshToken(@RequestBody Map<String, String> tokens, HttpServletResponse response) {
+		String refreshToken = tokens.get("refresh_token");
+		if (refreshToken == null || refreshToken.isEmpty()) {
+			return ResponseEntity.badRequest().body("Refresh token is missing");
+		}
 
-		// 발급된 액세스 토큰
-		String accessToken = client.getAccessToken().getTokenValue();
-		String refreshToken = client.getRefreshToken().getTokenValue();
+		if (!jwtUtil.validateToken(refreshToken)) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
+		}
 
-		// 사용자 정보 가져오기
-		Map<String, Object> userInfo = authentication.getPrincipal().getAttributes();
+		String userId = jwtUtil.getUserIdFromToken(refreshToken);
+		String newAccessToken = jwtUtil.generateAccessToken(userId, null, null);
+		String newRefreshToken = jwtUtil.generateRefreshToken(userId);
 
-		Map<String, Object> response = new HashMap<>();
-		response.put("access_token", accessToken);
-		response.put("refresh_token", refreshToken);
-		response.put("expires_at", client.getAccessToken().getExpiresAt());
-		response.put("user_info", userInfo);
+		// HttpOnly 쿠키로 새 토큰 전송
+		Cookie accessCookie = new Cookie("access_token", newAccessToken);
+		accessCookie.setHttpOnly(true);
+		accessCookie.setSecure(true);
+		accessCookie.setPath("/");
+		accessCookie.setMaxAge(3600); // 1시간
+		accessCookie.setAttribute("SameSite", "Strict");
+		response.addCookie(accessCookie);
 
-		return ResponseEntity.ok(response);
+		Cookie refreshCookie = new Cookie("refresh_token", newRefreshToken);
+		refreshCookie.setHttpOnly(true);
+		refreshCookie.setSecure(true);
+		refreshCookie.setPath("/");
+		refreshCookie.setMaxAge(604800); // 7일
+		refreshCookie.setAttribute("SameSite", "Strict");
+		response.addCookie(refreshCookie);
+
+		return ResponseEntity.ok(Map.of("message", "Token refreshed"));
 	}
-
-	// 인증 서버로부터 받아온 유저 데이터를 바탕으로 JWT 토큰 발행
-	@PostMapping("/login-success")
-	public ResponseEntity<?> loginSuccess(@RequestBody Map<String, Object> userInfo, HttpServletResponse response) {
-		// 사용자 정보에서 필요한 데이터 추출
-		String userId = userInfo.get("id").toString();
-
-		// JWT 액세스 및 리프레시 토큰 생성
-		String accessToken = JwtUtil.generateAccessToken(userId);
-		String refreshToken = JwtUtil.generateRefreshToken(userId);
-
-		// HttpOnly 쿠키로 토큰 전송 (보안 강화)
-		response.addHeader("Set-Cookie", "access_token=" + accessToken + "; HttpOnly; Secure; Path=/; Max-Age=3600");
-		response.addHeader("Set-Cookie", "refresh_token=" + refreshToken + "; HttpOnly; Secure; Path=/; Max-Age=604800");
-
-		return ResponseEntity.ok(Map.of("message", "로그인 성공"));
-	}
-
 }
