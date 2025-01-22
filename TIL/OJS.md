@@ -147,3 +147,10 @@
 2. Kurento 없이 그냥 Signaling 후에 데이터를 송수신하려고하니 WebRTC가 통신 흐름에서 없어졌다.
 3. Kurento에서 Data Channel을 이용해서 Data를 송수신 하려고 했는데 서버는 중개만 할 뿐 Kurento Client를 통해서는 접근할 수 없었다.
 4. 서버를 하나의 Peer로 만들어야 할 것 같다. -> 어떻게 해야할까...
+
+## 2025-01-22
+### webrtc-java
+- server내에 peer를 만드는 일환으로 Java에서 WebRTC API를 구현해 놓은 [Webrtc-java](https://github.com/devopvoid/webrtc-java) repo를 사용해보기로 했다.
+- webrtc-java는 demo나 documentation이 따로 준비돼있지 않아 test code와 코드를 보며 사용법을 유추해보고 있다.
+- webrtc-java가 mdn의 WebRTC를 충실히 구현했다면 MDN의 [자바스크립트 예시](https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Signaling_and_video_calling)를 바탕으로 비슷하게 구현할 수 있을 것이라고 판단했다.
+- 대부분의 내용과 흐름을 확인했고 WebSocket으로 client에서 offer를 넣는 시그널링 작업의 초입부까지 구현했다.
