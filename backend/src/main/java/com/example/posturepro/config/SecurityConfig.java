@@ -15,6 +15,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.*;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -36,35 +40,28 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
-			// CSRF 보호 비활성화 (상태 비저장 애플리케이션의 경우)
+			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 			.csrf(AbstractHttpConfigurer::disable)
-			// 폼 로그인 비활성화
 			.formLogin(AbstractHttpConfigurer::disable)
-			// 세션 관리 정책 설정 (상태 비저장)
 			.sessionManagement(session ->
 				session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			)
-			// 권한 설정
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/", "/auth/**", "/oauth2/**").permitAll() // 홈 및 인증 관련 경로 허용
+				.requestMatchers("/", "/auth/**", "/oauth2/**", "/api/members/signup").permitAll()
 				.anyRequest().authenticated()
 			)
-			// OAuth2 로그인 설정
+
 			.oauth2Login(oauth2 -> oauth2
 				.successHandler(customAuthenticationSuccessHandler)
 				.failureUrl("/auth/fail")
 			)
-			// JWT 인증 필터 추가
+
 			.addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
-			// CORS 설정 (필요에 따라 커스터마이징)
-			.cors(Customizer.withDefaults())
-			// 보안 헤더 설정
 			.headers(headers -> headers
 				.contentSecurityPolicy(csp -> csp
 					.policyDirectives("default-src 'self'; script-src 'self'; style-src 'self'")
 				)
-				.frameOptions(HeadersConfigurer.FrameOptionsConfig::deny
-				)
+				.frameOptions(HeadersConfigurer.FrameOptionsConfig::deny)
 				.httpStrictTransportSecurity(hsts -> hsts
 					.includeSubDomains(true)
 					.maxAgeInSeconds(31536000)
@@ -72,5 +69,21 @@ public class SecurityConfig {
 			);
 
 		return http.build();
+	}
+
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
+
+		configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+		configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+		configuration.setAllowCredentials(true);
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+
+		source.registerCorsConfiguration("/api/**", configuration);
+		source.registerCorsConfiguration("/oauth2/**", configuration);
+
+		return source;
 	}
 }

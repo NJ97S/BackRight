@@ -1,10 +1,14 @@
 package com.example.posturepro.api.oauth.handler;
 
 import com.example.posturepro.api.oauth.utils.JwtUtil;
+import com.example.posturepro.domain.member.Member;
+import com.example.posturepro.domain.member.service.MemberService;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -27,11 +31,14 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
 	private final OAuth2AuthorizedClientService authorizedClientService;
 	private final JwtUtil jwtUtil;
+	private final MemberService memberService;
 	private static final Logger logger = LoggerFactory.getLogger(CustomAuthenticationSuccessHandler.class);
 
-	public CustomAuthenticationSuccessHandler(OAuth2AuthorizedClientService authorizedClientService, JwtUtil jwtUtil) {
+	@Autowired
+	public CustomAuthenticationSuccessHandler(OAuth2AuthorizedClientService authorizedClientService, JwtUtil jwtUtil, MemberService memberService) {
 		this.authorizedClientService = authorizedClientService;
 		this.jwtUtil = jwtUtil;
+		this.memberService = memberService;
 	}
 
 	@Override
@@ -47,47 +54,71 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		}
 
 		String kakaoAccessToken = client.getAccessToken().getTokenValue();
-		String kakaoRefreshToken = client.getRefreshToken() != null ? client.getRefreshToken().getTokenValue() : null;
 
 		// 카카오 리소스 서버에서 사용자 정보 가져오기
 		Map<String, Object> kakaoUserInfo = fetchKakaoUserInfo(kakaoAccessToken);
 
-		String userId = kakaoUserInfo.get("id").toString();
+		// 사용자 ID 추출
+		Long kakaoId = Long.parseLong(kakaoUserInfo.get("id").toString());
 
-		String jwtAccessToken = jwtUtil.generateAccessToken(userId, kakaoAccessToken, kakaoRefreshToken);
-		String jwtRefreshToken = jwtUtil.generateRefreshToken(userId);
+		// DB에서 사용자 찾기
+		Member member = memberService.findByKakaoId(kakaoId).orElse(null);
 
-		// HttpOnly 쿠키로 JWT 액세스 토큰 전송
-		Cookie accessCookie = new Cookie("access_token", jwtAccessToken);
-		accessCookie.setHttpOnly(true);
-		accessCookie.setSecure(true);
-		accessCookie.setPath("/");
-		accessCookie.setMaxAge(3600);
-		accessCookie.setAttribute("SameSite", "Strict");
-		response.addCookie(accessCookie);
+		if (member != null) {
+			// 기존 사용자일 경우: JWT 토큰 생성 및 홈 페이지로 리다이렉트
+			String jwtAccessToken = jwtUtil.generateAccessToken(
+				member.getKakaoId().toString(),
+				member.getNickname(),
+				member.getGender().name(),
+				member.getBirthDate().toString()
+			);
+			String jwtRefreshToken = jwtUtil.generateRefreshToken(member.getKakaoId().toString());
 
-		// HttpOnly 쿠키로 JWT 리프레시 토큰 전송
-		if (jwtRefreshToken != null) {
-			Cookie refreshCookie = new Cookie("refresh_token", jwtRefreshToken);
-			refreshCookie.setHttpOnly(true);
-			refreshCookie.setSecure(true);
-			refreshCookie.setPath("/");
-			refreshCookie.setMaxAge(604800);
-			refreshCookie.setAttribute("SameSite", "Strict");
-			response.addCookie(refreshCookie);
+			// HttpOnly 쿠키로 JWT 액세스 토큰 전송
+			Cookie accessCookie = new Cookie("access_token", jwtAccessToken);
+			accessCookie.setHttpOnly(true);
+			accessCookie.setSecure(true); // 프로덕션 환경에서는 true로 설정
+			accessCookie.setPath("/");
+			accessCookie.setMaxAge(3600); // 1시간
+			accessCookie.setAttribute("SameSite", "Strict");
+			response.addCookie(accessCookie);
+
+			// HttpOnly 쿠키로 JWT 리프레시 토큰 전송
+			if (jwtRefreshToken != null) {
+				Cookie refreshCookie = new Cookie("refresh_token", jwtRefreshToken);
+				refreshCookie.setHttpOnly(true);
+				refreshCookie.setSecure(true); // 프로덕션 환경에서는 true로 설정
+				refreshCookie.setPath("/");
+				refreshCookie.setMaxAge(604800); // 7일
+				refreshCookie.setAttribute("SameSite", "Strict");
+				response.addCookie(refreshCookie);
+			}
+
+			// 로깅
+			logger.info("OAuth2 login successful for existing user: {}", member.getKakaoId());
+			logger.info("JWT access Token: {}", jwtAccessToken);
+			logger.info("JWT refresh Token: {}", jwtRefreshToken);
+
+			// 홈 페이지로 리다이렉트
+			response.sendRedirect("http://localhost:5173/");
+		} else {
+			// 신규 사용자일 경우: 임시 JWT 토큰 생성 및 쿠키 설정 후 회원 가입 페이지로 리다이렉트
+			String tempToken = jwtUtil.generateTempToken(kakaoId.toString());
+
+			Cookie tempTokenCookie = new Cookie("temp_token", tempToken);
+			tempTokenCookie.setHttpOnly(true);
+			tempTokenCookie.setSecure(true); // 프로덕션 환경에서는 true로 설정
+			tempTokenCookie.setPath("/");
+			tempTokenCookie.setMaxAge(300); // 5분
+			tempTokenCookie.setAttribute("SameSite", "Strict");
+			response.addCookie(tempTokenCookie);
+
+			// 회원 가입 페이지로 리다이렉트
+			response.sendRedirect("http://localhost:5173/sign-up");
 		}
-
-		// 로깅
-		logger.info("OAuth2 login successful for user: {}", userId);
-		logger.info("JWT access Token: {}", jwtAccessToken);
-		logger.info("JWT refresh Token: {}", jwtRefreshToken);
-
-		// 로그인 성공 후 리다이렉션 또는 응답
-		response.sendRedirect("http://localhost:5173");
 	}
 
 	private Map<String, Object> fetchKakaoUserInfo(String accessToken) throws IOException, ServletException {
-		// 카카오 API 호출하여 사용자 정보 가져오기
 		RestTemplate restTemplate = new RestTemplate();
 		org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
 		headers.add("Authorization", "Bearer " + accessToken);
@@ -107,42 +138,8 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		Map<String, Object> userInfo = response.getBody();
 
 		if (userInfo != null) {
-			// 사용자 ID
-			Object idObj = userInfo.get("id");
-			String userId = idObj != null ? idObj.toString() : "Unknown";
-
-			// kakao_account 정보
-			Map<String, Object> kakaoAccount = (Map<String, Object>) userInfo.get("kakao_account");
-			if (kakaoAccount != null) {
-				// 이름
-				Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
-				String nickname = profile != null ? (String) profile.get("nickname") : "Unknown";
-
-				// 성별
-				String gender = (String) kakaoAccount.get("gender");
-				if (gender == null) {
-					gender = "Unknown";
-				}
-
-				// 연령대
-				String ageRange = (String) kakaoAccount.get("age_range");
-				if (ageRange == null) {
-					ageRange = "Unknown";
-				}
-
-				// 생년월일
-				// String birthyear = (String) kakaoAccount.get("birthyear");
-
-				// 로깅
-				logger.info("사용자 ID: {}", userId);
-				logger.info("이름: {}", nickname);
-				logger.info("성별: {}", gender);
-				logger.info("연령대: {}", ageRange);
-				// logger.info("생년: {}", birthyear);
-
-			} else {
-				logger.warn("kakao_account 정보가 없습니다.");
-			}
+			// 전체 사용자 정보 로그 출력 (민감한 정보는 제외하거나 필요 시만 로깅)
+			logger.info("Kakao API 응답: {}", userInfo);
 		} else {
 			logger.warn("응답 본문이 null입니다.");
 		}
