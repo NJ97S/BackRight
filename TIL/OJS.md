@@ -85,3 +85,72 @@
 ### Media Recorder API
 - 자세가 무너졌음을 감지했을 때 해당 영상을 다시 보여줘서 사용자에게 다시 보여줄 방법으로 채택해보고자 공부
 - 브라우저에서 영상을 일정 주기로 저장하고 플레이 백하는 방법'
+
+## 2025-01-20
+### 탐지 및 보고서 관련 DB 설계
+- 실시간 탐지 서비스 특성상 한번 탐지된 내용에 변화가 일어날 가능성이 매우 낮다
+- 각 session은 user_id를 참조한다
+- 각 detection은 session_id를 참조한다
+- 각 session에 대한 통계 데이터를 미리 캐싱한다면 성능을 높일 수 있을 것
+<br>
+    → report 테이블을 유지한다?
+    
+    - 예상 문제점
+    
+    1. report 내부의 데이터들은 무결성을 보장할 수 없다
+        
+        → session과 detection은 session이 종료된 순간 수정될 여지가 없다.
+        
+    2. report 내부의 데이터를 정규화하는 것이 더 큰 오버헤드를 발생 시킨다.
+        
+        → nosql을 써본다? user 테이블을 nosql과 rdbms 양쪽에 유지해야하지 않나? → 기각
+        
+- 결론: 비정규화된 형태로 report 테이블을 구성해보는 것도 좋을 듯 → 추가 성능 향상 필요 시 고려
+
+## 2025-01-21
+### Indexing
+- Clustered Index: 
+    - PK
+    - 실제로 군집해 있고 물리적 정렬로 관리
+    - 삽입 삭제 시 새로 정렬 -> 비교적 느림
+- Non-Clustered Index:
+    - 목차
+    - 별도 공간에 저장
+    - PK 보다 삽입 삭제 빠르지만 리소스 필요
+    - 여러 공간을 참조하는데 드는 시간에 대한 고려 필요
+- B-tree, B+tree
+    - B+tree는 leaf node를 linked list로 연결 -> 범위 검색에 유리
+- Indexing 팁
+    - join 키
+    - 카디널리티가 높은 값
+### WebRTC 통신의 흐름
+- Signaling
+    - WebRTC 연결을 설정하기 위해 두 Peer가 서로 연결 정보를 교환하는 과정
+        1. SDP 교환: 세션 정보 기술
+        2. ICE Candidate 교환: P2P 연결에 사용되는 네트워크 정보
+    - WebRTC는 Signaling 방법을 정의하지 않기 때문에 다른 통신 프로토콜을 사용해서 두 Peer간 Signaling을 진행한다.
+- ICE Gathering
+    1. ICE Agent: 각 Peer가 네트워크 경로 검색
+    2. ICE Candidate 수집: 발견한 네트워크 경로를 상대방에 전달
+- NAT Traversal
+    - NAT 뒤에 있는 Peer간 연결
+    1. STUN
+    2. TURN
+- Connection
+    1. ICE Candidate 검증
+    2. DTLS 설정: Data Transport Layer Security 보안 설정
+    3. SRTP/SCTP 채널
+        - SRTP: 오디오/비디오 스트림
+        - SCTP: 데이터 스트림
+### 오늘의 Trouble shooting
+1. Kurento는 미디어 서버고 우리는 데이터만 송수신하면 되는데 필요 없는거 아닐까?
+2. Kurento 없이 그냥 Signaling 후에 데이터를 송수신하려고하니 WebRTC가 통신 흐름에서 없어졌다.
+3. Kurento에서 Data Channel을 이용해서 Data를 송수신 하려고 했는데 서버는 중개만 할 뿐 Kurento Client를 통해서는 접근할 수 없었다.
+4. 서버를 하나의 Peer로 만들어야 할 것 같다. -> 어떻게 해야할까...
+
+## 2025-01-22
+### webrtc-java
+- server내에 peer를 만드는 일환으로 Java에서 WebRTC API를 구현해 놓은 [Webrtc-java](https://github.com/devopvoid/webrtc-java) repo를 사용해보기로 했다.
+- webrtc-java는 demo나 documentation이 따로 준비돼있지 않아 test code와 코드를 보며 사용법을 유추해보고 있다.
+- webrtc-java가 mdn의 WebRTC를 충실히 구현했다면 MDN의 [자바스크립트 예시](https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Signaling_and_video_calling)를 바탕으로 비슷하게 구현할 수 있을 것이라고 판단했다.
+- 대부분의 내용과 흐름을 확인했고 WebSocket으로 client에서 offer를 넣는 시그널링 작업의 초입부까지 구현했다.
