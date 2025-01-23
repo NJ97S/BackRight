@@ -154,3 +154,24 @@
 - webrtc-java는 demo나 documentation이 따로 준비돼있지 않아 test code와 코드를 보며 사용법을 유추해보고 있다.
 - webrtc-java가 mdn의 WebRTC를 충실히 구현했다면 MDN의 [자바스크립트 예시](https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Signaling_and_video_calling)를 바탕으로 비슷하게 구현할 수 있을 것이라고 판단했다.
 - 대부분의 내용과 흐름을 확인했고 WebSocket으로 client에서 offer를 넣는 시그널링 작업의 초입부까지 구현했다.
+
+## 2025-01-23
+### WebRTC
+- webrtc-java를 사용해서 peer를 띄우는 것 까지는 성공했다.
+- Observer 패턴을 사용해서 SetDesciption, CreateDescription, PeerConnection 을 관리하는데 직접 구현해야 하는 부분과 그렇지 않은 부분을 잘 분리하는 게 관건이였다.
+- 대략의 흐름
+    1. js 쪽 client에서 offer를 만들어 SignalingHandler에 송신
+    2. SignalingHandler에서 Java쪽 PeerConnection 옵저버에게 전달
+    3. SetRemoteDescription
+    4. createAnswer
+    5. session을 통해 answer 송신
+    - offer가 도착하는 시점 즈음부터 ICE Candidate를 서로 주고받는 것으로 보인다.
+    - onIceCandidate는 local에서 ICE Agent가 Candidate를 발견했을 때 trigger
+    - onNewIceCandidate는 세션을 통해 ICE Candidate를 수신 받았을 때 trigger
+- 이런 흐름을 통해 ICE Candidate state 가 completed 되고 WebRTC state 도 stable인 상태까지 구현했다.
+- 아직 이해가 되지 않는 점
+    - ICE Candidate를 서로 주고 받는 과정이 언제 실행되는가?
+        -> Data Channel을 연결하기 전까지는 ICE Servers에 ICE Server를 명시해도 ICE Candidate를 주고 받지 않았다.
+- 내일 할 일
+    1. Data Channel을 연결하고 Data를 주고 받는 것
+    2. 여러 js Peer에 대해 동시에 처리할 능력이 있는지 테스트
