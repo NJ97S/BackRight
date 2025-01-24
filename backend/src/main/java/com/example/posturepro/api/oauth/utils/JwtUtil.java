@@ -15,46 +15,45 @@ import org.slf4j.LoggerFactory;
 public class JwtUtil {
 	private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
 	private final Key key;
-	private final long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 60;  // 1시간
-	private final long REFRESH_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24 * 7;  // 7일
-	private final long TEMP_TOKEN_EXPIRATION = 1000 * 60 * 5; // 5분
+	private final long ACCESS_TOKEN_EXPIRATION;
+	private final long REFRESH_TOKEN_EXPIRATION;
+	private final long TEMP_TOKEN_EXPIRATION;
 
-	public JwtUtil(@Value("${jwt.secret}") String secret) {
+	public JwtUtil(
+		@Value("${jwt.secret}") String secret,
+		@Value("${jwt.access-token-expiration}") long accessTokenExpiration,
+		@Value("${jwt.refresh-token-expiration}") long refreshTokenExpiration,
+		@Value("${jwt.temp-token-expiration}") long tempTokenExpiration) {
 		if (secret == null || secret.length() < 32) {
 			throw new IllegalArgumentException("JWT secret must be at least 32 characters long");
 		}
 		logger.info("JWT secret length: {}", secret.length());
 		this.key = Keys.hmacShaKeyFor(secret.getBytes());
+		this.ACCESS_TOKEN_EXPIRATION = accessTokenExpiration;
+		this.REFRESH_TOKEN_EXPIRATION = refreshTokenExpiration;
+		this.TEMP_TOKEN_EXPIRATION = tempTokenExpiration;
 	}
 
-	public String generateAccessToken(String userId, String nickname, String gender, String birthDate) {
+	private String generateToken(String userId, long expirationMillis) {
+		long now =  System.currentTimeMillis();
 		return Jwts.builder()
 			.setSubject(userId)
-			.claim("nickname", nickname)
-			.claim("gender", gender)
-			.claim("birthDate", birthDate)
-			.setIssuedAt(new Date())
-			.setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION))
+			.setIssuedAt(new Date(now))
+			.setExpiration(new Date(now+expirationMillis))
 			.signWith(key, SignatureAlgorithm.HS256)
 			.compact();
+	}
+
+	public String generateAccessToken(String userId) {
+		return generateToken(userId, ACCESS_TOKEN_EXPIRATION);
 	}
 
 	public String generateRefreshToken(String userId) {
-		return Jwts.builder()
-			.setSubject(userId)
-			.setIssuedAt(new Date())
-			.setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION))
-			.signWith(key, SignatureAlgorithm.HS256)
-			.compact();
+		return generateToken(userId, REFRESH_TOKEN_EXPIRATION);
 	}
 
 	public String generateTempToken(String userId) {
-		return Jwts.builder()
-			.setSubject(userId)
-			.setIssuedAt(new Date())
-			.setExpiration(new Date(System.currentTimeMillis() + TEMP_TOKEN_EXPIRATION))
-			.signWith(key, SignatureAlgorithm.HS256)
-			.compact();
+		return generateToken(userId, TEMP_TOKEN_EXPIRATION);
 	}
 
 	public Claims parseToken(String token) {
