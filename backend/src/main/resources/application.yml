@@ -1,5 +1,8 @@
 jwt:
-  secret: yourVerySecretKeyThatIsAtLeast32Characters
+  secret: your-very-secure-secret-key-that-is-at-least-32-characters
+  ACCESS_TOKEN_EXPIRATION: 3600000
+  REFRESH_TOKEN_EXPIRATION: 604800000
+  TEMP_TOKEN_EXPIRATION: 300000
 
 spring:
   datasource:

@@ -22,21 +22,6 @@ public class MemberService {
 	}
 
 	@Transactional
-	public Member findOrCreateMember(Long kakaoId, String name, String nickname, LocalDate birthDate, Gender gender) {
-		return memberRepository.findByKakaoId(kakaoId)
-			.orElseGet(() -> {
-				Member newMember = Member.builder()
-					.kakaoId(kakaoId)
-					.name(name)
-					.nickname(nickname)
-					.birthDate(birthDate)
-					.gender(gender)
-					.build();
-				return memberRepository.save(newMember);
-			});
-	}
-
-	@Transactional
 	public Optional<Member> findByKakaoId(Long kakaoId) {
 		return memberRepository.findByKakaoId(kakaoId);
 	}

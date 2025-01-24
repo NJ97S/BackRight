@@ -3,10 +3,10 @@ package com.example.posturepro.config;
 import com.example.posturepro.api.oauth.filter.JwtAuthenticationFilter;
 import com.example.posturepro.api.oauth.handler.CustomAuthenticationSuccessHandler;
 import com.example.posturepro.api.oauth.utils.JwtUtil;
+import com.example.posturepro.api.oauth.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -25,16 +25,15 @@ import java.util.List;
 public class SecurityConfig {
 
 	private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
-	private final OAuth2AuthorizedClientService authorizedClientService;
 	private final JwtUtil jwtUtil;
+	private final TokenService tokenService;
 
 	@Autowired
 	public SecurityConfig(CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler,
-		OAuth2AuthorizedClientService authorizedClientService,
-		JwtUtil jwtUtil) {
+		JwtUtil jwtUtil, TokenService tokenService) {
 		this.customAuthenticationSuccessHandler = customAuthenticationSuccessHandler;
-		this.authorizedClientService = authorizedClientService;
 		this.jwtUtil = jwtUtil;
+		this.tokenService = tokenService;
 	}
 
 	@Bean
@@ -56,16 +55,16 @@ public class SecurityConfig {
 				.failureUrl("/auth/fail")
 			)
 
-			.addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(new JwtAuthenticationFilter(tokenService), UsernamePasswordAuthenticationFilter.class)
 			.headers(headers -> headers
 				.contentSecurityPolicy(csp -> csp
 					.policyDirectives("default-src 'self'; script-src 'self'; style-src 'self'")
 				)
 				.frameOptions(HeadersConfigurer.FrameOptionsConfig::deny)
-				.httpStrictTransportSecurity(hsts -> hsts
-					.includeSubDomains(true)
-					.maxAgeInSeconds(31536000)
-				)
+				// .httpStrictTransportSecurity(hsts -> hsts
+				// 	.includeSubDomains(true)
+				// 	.maxAgeInSeconds(31536000)
+				// )
 			);
 
 		return http.build();

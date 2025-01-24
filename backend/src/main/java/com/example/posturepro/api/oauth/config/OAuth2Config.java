@@ -13,11 +13,11 @@ import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepo
 @Configuration
 public class OAuth2Config {
 
-	@Bean
-	// OAuth 클라이언트 서비스 정보를 메모리에 저장(db설정 이전 임시 저장)
-	public OAuth2AuthorizedClientService authorizedClientService(ClientRegistrationRepository clientRegistrationRepository) {
-		return new org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService(clientRegistrationRepository);
-	}
+	// @Bean
+	// // OAuth 클라이언트 서비스 정보를 메모리에 저장(db설정 이전 임시 저장)
+	// public OAuth2AuthorizedClientService authorizedClientService(ClientRegistrationRepository clientRegistrationRepository) {
+	// 	return new org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService(clientRegistrationRepository);
+	// }
 
 	@Bean
 	// OAuth 클라이언트 매니저 설정

@@ -1,10 +1,10 @@
 package com.example.posturepro.api.oauth.filter;
 
 import com.example.posturepro.api.oauth.utils.JwtUtil;
+import com.example.posturepro.api.oauth.service.TokenService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import jakarta.servlet.FilterChain;
@@ -18,10 +18,10 @@ import java.util.ArrayList;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-	private final JwtUtil jwtUtil;
+	private final TokenService tokenService;
 
-	public JwtAuthenticationFilter(JwtUtil jwtUtil) {
-		this.jwtUtil = jwtUtil;
+	public JwtAuthenticationFilter(TokenService tokenService) {
+		this.tokenService = tokenService;
 	}
 
 	@Override
@@ -30,9 +30,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		FilterChain filterChain) throws ServletException, IOException {
 		String token = getJwtFromCookies(request);
 
-		if (token != null && jwtUtil.validateToken(token)) {
-			String userId = jwtUtil.getUserIdFromToken(token);
-
+		if (token != null && tokenService.validateToken(token)) {
+			String userId = tokenService.getUserIdFromToken(token);
 			UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
 				userId, null, new ArrayList<>()); // 권한은 필요에 따라 설정
 			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

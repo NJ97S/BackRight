@@ -3,6 +3,7 @@ package com.example.posturepro.api.oauth.controller;
 import com.example.posturepro.api.oauth.utils.JwtUtil;
 import com.example.posturepro.domain.member.Member;
 import com.example.posturepro.domain.member.service.MemberService;
+import com.example.posturepro.api.oauth.service.TokenService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,15 +18,15 @@ import java.util.Optional;
 @RequestMapping("/auth")
 public class OAuth2Controller {
 
-	private final JwtUtil jwtUtil;
 	private final MemberService memberService;
+	private final TokenService tokenService;
 
-	public OAuth2Controller(JwtUtil jwtUtil, MemberService memberService) {
-		this.jwtUtil = jwtUtil;
+	public OAuth2Controller(MemberService memberService, TokenService tokenService) {
+
 		this.memberService = memberService;
+		this.tokenService = tokenService;
 	}
 
-	// 리프레시 토큰 엔드포인트
 	@PostMapping("/refresh-token")
 	public ResponseEntity<?> refreshToken(@RequestBody Map<String, String> tokens, HttpServletResponse response) {
 		String refreshToken = tokens.get("refresh_token");
@@ -33,11 +34,11 @@ public class OAuth2Controller {
 			return ResponseEntity.badRequest().body("Refresh token is missing");
 		}
 
-		if (!jwtUtil.validateToken(refreshToken)) {
+		if (!tokenService.validateToken(refreshToken)) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
 		}
 
-		String userId = jwtUtil.getUserIdFromToken(refreshToken);
+		String userId = tokenService.getUserIdFromToken(refreshToken);
 		Long kakaoId = Long.parseLong(userId);
 
 		// UserService를 통해 사용자 정보 조회
@@ -48,18 +49,15 @@ public class OAuth2Controller {
 		Member member = memberOpt.get();
 
 		// 새로운 엑세스 토큰 및 리프레시 토큰 생성
-		String newAccessToken = jwtUtil.generateAccessToken(
-			member.getKakaoId().toString(),
-			member.getNickname(),
-			member.getGender().name(),
-			member.getBirthDate().toString()
+		String newAccessToken = tokenService.createAccessToken(
+			member.getKakaoId().toString()
 		);
-		String newRefreshToken = jwtUtil.generateRefreshToken(userId);
+		String newRefreshToken = tokenService.createRefreshToken(userId);
 
 		// HttpOnly 쿠키로 새 토큰 전송
 		Cookie accessCookie = new Cookie("access_token", newAccessToken);
 		accessCookie.setHttpOnly(true);
-		accessCookie.setSecure(true); // 프로덕션 환경에서는 true로 설정
+		accessCookie.setSecure(false); // true로 변경
 		accessCookie.setPath("/");
 		accessCookie.setMaxAge(3600); // 1시간
 		accessCookie.setAttribute("SameSite", "Strict");
@@ -67,7 +65,7 @@ public class OAuth2Controller {
 
 		Cookie refreshCookie = new Cookie("refresh_token", newRefreshToken);
 		refreshCookie.setHttpOnly(true);
-		refreshCookie.setSecure(true); // 프로덕션 환경에서는 true로 설정
+		refreshCookie.setSecure(false); // true로 변경
 		refreshCookie.setPath("/");
 		refreshCookie.setMaxAge(604800); // 7일
 		refreshCookie.setAttribute("SameSite", "Strict");

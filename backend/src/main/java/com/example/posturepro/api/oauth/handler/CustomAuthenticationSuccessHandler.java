@@ -3,6 +3,7 @@ package com.example.posturepro.api.oauth.handler;
 import com.example.posturepro.api.oauth.utils.JwtUtil;
 import com.example.posturepro.domain.member.Member;
 import com.example.posturepro.domain.member.service.MemberService;
+import com.example.posturepro.api.oauth.service.TokenService;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -32,19 +33,21 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 	private final OAuth2AuthorizedClientService authorizedClientService;
 	private final JwtUtil jwtUtil;
 	private final MemberService memberService;
+	private final TokenService tokenService;
 	private static final Logger logger = LoggerFactory.getLogger(CustomAuthenticationSuccessHandler.class);
 
 	@Autowired
-	public CustomAuthenticationSuccessHandler(OAuth2AuthorizedClientService authorizedClientService, JwtUtil jwtUtil, MemberService memberService) {
+	public CustomAuthenticationSuccessHandler(OAuth2AuthorizedClientService authorizedClientService, JwtUtil jwtUtil, MemberService memberService,
+		TokenService tokenService) {
 		this.authorizedClientService = authorizedClientService;
 		this.jwtUtil = jwtUtil;
 		this.memberService = memberService;
+		this.tokenService = tokenService;
 	}
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 		Authentication authentication) throws IOException, ServletException {
-		OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 		String registrationId = ((org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId();
 		String userName = authentication.getName();
 
@@ -66,20 +69,17 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
 		if (member != null) {
 			// 기존 사용자일 경우: JWT 토큰 생성 및 홈 페이지로 리다이렉트
-			String jwtAccessToken = jwtUtil.generateAccessToken(
-				member.getKakaoId().toString(),
-				member.getNickname(),
-				member.getGender().name(),
-				member.getBirthDate().toString()
+			String jwtAccessToken = tokenService.createAccessToken(
+				member.getKakaoId().toString()
 			);
-			String jwtRefreshToken = jwtUtil.generateRefreshToken(member.getKakaoId().toString());
+			String jwtRefreshToken = tokenService.createRefreshToken(member.getKakaoId().toString());
 
 			// HttpOnly 쿠키로 JWT 액세스 토큰 전송
 			Cookie accessCookie = new Cookie("access_token", jwtAccessToken);
 			accessCookie.setHttpOnly(true);
-			accessCookie.setSecure(true); // 프로덕션 환경에서는 true로 설정
+			accessCookie.setSecure(false); // 프로덕션 환경에서는 true로 설정
 			accessCookie.setPath("/");
-			accessCookie.setMaxAge(3600); // 1시간
+			accessCookie.setMaxAge(3600);
 			accessCookie.setAttribute("SameSite", "Strict");
 			response.addCookie(accessCookie);
 
@@ -87,9 +87,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 			if (jwtRefreshToken != null) {
 				Cookie refreshCookie = new Cookie("refresh_token", jwtRefreshToken);
 				refreshCookie.setHttpOnly(true);
-				refreshCookie.setSecure(true); // 프로덕션 환경에서는 true로 설정
+				refreshCookie.setSecure(false); // 프로덕션 환경에서는 true로 설정
 				refreshCookie.setPath("/");
-				refreshCookie.setMaxAge(604800); // 7일
+				refreshCookie.setMaxAge(604800);
 				refreshCookie.setAttribute("SameSite", "Strict");
 				response.addCookie(refreshCookie);
 			}
