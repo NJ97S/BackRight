@@ -64,3 +64,6 @@
  - 일단 자동으로 stun 서버에 요청하고 받는 것 같다
  - 근데 data channel은 아직 안열린다 -> 내일 할 일이다.
 
+## 2025.01.24.
+ - Data channel은 양방향으로 한쪽에서 연결된 후 open하면 반대쪽에서 onDataChannel 이벤트로 message를 생성하여여 주고받을 수 있다(open하여 데이터 보내기,message 쪽은 open에 대한 반환)
+ - WebSoket으로 연결을 하는데 메시지를 동시에 보내며 충돌, 에러 발생 -> Answer 메시지가 도착하기전에 Ice Candidate 메시지를 보내서 발생했다.-> 이를 해결하기 위해 SessionHandler를 만들고 Message를 큐에 넣어 하나씩 보내고 완료되면 다음껄 보내도록 수정
