@@ -33,7 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		if (token != null && tokenService.validateToken(token)) {
 			String userId = tokenService.getUserIdFromToken(token);
 			UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-				userId, null, new ArrayList<>()); // 권한은 필요에 따라 설정
+				userId, null, new ArrayList<>());
 			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
 			SecurityContextHolder.getContext().setAuthentication(authentication);

@@ -32,7 +32,7 @@ public class MemberController {
 
 	@PostMapping("/signup")
 	public ResponseEntity<?> signUp(@RequestBody SignUpRequest signUpRequest, HttpServletRequest request, HttpServletResponse response) {
-		// 유효성 검증 (필요 시 추가)
+
 		if (signUpRequest.getName() == null || signUpRequest.getNickname() == null
 			|| signUpRequest.getBirthDate() == null || signUpRequest.getGender() == null) {
 			return ResponseEntity.badRequest().body("필수 입력 항목이 누락되었습니다.");
@@ -42,10 +42,6 @@ public class MemberController {
 		String kakaoId = extractAndValidateTempToken(request);
 		if (kakaoId == null) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효한 인증 정보가 없습니다. 다시 로그인해주세요.");
-		}
-
-		if (kakaoId == null) {
-			return ResponseEntity.badRequest().body("유효한 인증 정보가 없습니다.");
 		}
 
 		// 이미 사용자가 존재하는지 확인
@@ -89,7 +85,7 @@ public class MemberController {
 		tempCookie.setHttpOnly(true);
 		tempCookie.setSecure(false); // 프로덕션 환경에서는 true로 설정
 		tempCookie.setPath("/");
-		tempCookie.setMaxAge(0); // 쿠키 삭제
+		tempCookie.setMaxAge(0);
 		tempCookie.setAttribute("SameSite", "Strict");
 		response.addCookie(tempCookie);
 

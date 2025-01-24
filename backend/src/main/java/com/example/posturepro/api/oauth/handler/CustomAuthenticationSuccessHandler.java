@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -58,17 +57,14 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
 		String kakaoAccessToken = client.getAccessToken().getTokenValue();
 
-		// 카카오 리소스 서버에서 사용자 정보 가져오기
 		Map<String, Object> kakaoUserInfo = fetchKakaoUserInfo(kakaoAccessToken);
 
-		// 사용자 ID 추출
 		Long kakaoId = Long.parseLong(kakaoUserInfo.get("id").toString());
 
-		// DB에서 사용자 찾기
+
 		Member member = memberService.findByKakaoId(kakaoId).orElse(null);
 
 		if (member != null) {
-			// 기존 사용자일 경우: JWT 토큰 생성 및 홈 페이지로 리다이렉트
 			String jwtAccessToken = tokenService.createAccessToken(
 				member.getKakaoId().toString()
 			);
@@ -93,11 +89,6 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 				refreshCookie.setAttribute("SameSite", "Strict");
 				response.addCookie(refreshCookie);
 			}
-
-			// 로깅
-			logger.info("OAuth2 login successful for existing user: {}", member.getKakaoId());
-			logger.info("JWT access Token: {}", jwtAccessToken);
-			logger.info("JWT refresh Token: {}", jwtRefreshToken);
 
 			// 홈 페이지로 리다이렉트
 			response.sendRedirect("http://localhost:5173/");
@@ -138,7 +129,6 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		Map<String, Object> userInfo = response.getBody();
 
 		if (userInfo != null) {
-			// 전체 사용자 정보 로그 출력 (민감한 정보는 제외하거나 필요 시만 로깅)
 			logger.info("Kakao API 응답: {}", userInfo);
 		} else {
 			logger.warn("응답 본문이 null입니다.");

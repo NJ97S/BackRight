@@ -2,7 +2,6 @@ package com.example.posturepro.config;
 
 import com.example.posturepro.api.oauth.filter.JwtAuthenticationFilter;
 import com.example.posturepro.api.oauth.handler.CustomAuthenticationSuccessHandler;
-import com.example.posturepro.api.oauth.utils.JwtUtil;
 import com.example.posturepro.api.oauth.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.*;
@@ -25,14 +23,12 @@ import java.util.List;
 public class SecurityConfig {
 
 	private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
-	private final JwtUtil jwtUtil;
 	private final TokenService tokenService;
 
 	@Autowired
 	public SecurityConfig(CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler,
-		JwtUtil jwtUtil, TokenService tokenService) {
+		 TokenService tokenService) {
 		this.customAuthenticationSuccessHandler = customAuthenticationSuccessHandler;
-		this.jwtUtil = jwtUtil;
 		this.tokenService = tokenService;
 	}
 
