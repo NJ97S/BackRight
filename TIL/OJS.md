@@ -175,3 +175,23 @@
 - 내일 할 일
     1. Data Channel을 연결하고 Data를 주고 받는 것
     2. 여러 js Peer에 대해 동시에 처리할 능력이 있는지 테스트
+
+## 2025-01-24
+### WebRTC
+- ICE candidate 교환 과정에서 java와 js에서 형식이 달라서 발생한 오류 수정
+- Data Channel을 open하고 data를 주고 받는 과정
+    - Data Channel은 양방향이고 한쪽이 open하면 반대쪽에서 onDataChannel 이벤트가 발생한다.
+- WebSocket 세션은 비동기적으로 동작하기 때문에 이전에 있는 Message가 송신이 완료되지 않았을 때 새로운 메시지를 보내면 에러가 발생한다.
+    - Answer 메시지가 도착하기전에 Ice Candidate 메시지를 보내서 발생했다.
+    ``` java
+    Exception in thread "Thread-8" java.lang.IllegalStateException: 
+    The remote endpoint was in state [TEXT_PARTIAL_WRITING] which is an invalid state for called method
+	at org.apache.tomcat.websocket.WsRemoteEndpointImplBase$StateMachine.checkState(WsRemoteEndpointImplBase.java:1250)
+    ```
+    -> 이를 해결하기 위해 SessionHandler를 만들고 Message를 큐에 넣어 하나씩 보내고 완료되면 다음껄 보내도록 수정
+- 해야할 일 (부족하다고 느끼는 것)
+    - WebSocket을 관리하는 `SignalingHandler`와 `PeerConnectionObserver`를 implements하는 `ServerConnection`의 강한 결합
+        <br>-> `onIceCandidate` 이벤트를 `SignalingHandler`가 직접 해결할 수 없기 때문에 `ServerConnection` 내부에서 직접 session을 의존하는 구조
+        - 이를 해결하기 위해 event listner를 추가해 느슨한 결합 구조로 바꾸고자함.
+    - Prototype 완성하기
+        - client-prototype 브랜치를 만들고 데이터 송수신까지 해서 올리기
