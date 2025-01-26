@@ -12,7 +12,7 @@ export const HeaderContainer = styled.div`
   padding: 1.25rem 1.5rem;
   width: 100%;
   background-color: var(--gray-400);
-  box-shadow: rgba(0, 0, 0, 0.24) 0px 4px 8px;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 2px 4px;
 `;
 
 export const IconLink = styled(Link)`
