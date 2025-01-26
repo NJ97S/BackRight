@@ -4,12 +4,15 @@ import styled from "styled-components";
 import mockProfileImg from "../../../assets/images/mock-profile.jpg";
 
 export const HeaderContainer = styled.div`
+  position: relative;
+  z-index: 50;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1.25rem 1.5rem;
   width: 100%;
   background-color: var(--gray-400);
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 4px 8px;
 `;
 
 export const IconLink = styled(Link)`
