@@ -1,11 +1,11 @@
-import "./App.css";
+import Router from "./Router";
+import GlobalStyle from "./GlobalStyle";
 
-function App() {
-  return (
-    <>
-      <h1>App</h1>
-    </>
-  );
-}
+const App = () => (
+  <>
+    <GlobalStyle />
+    <Router />
+  </>
+);
 
 export default App;
