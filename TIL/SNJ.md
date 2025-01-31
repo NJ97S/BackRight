@@ -405,3 +405,72 @@ UI는 시각적인 요소와 인터랙션을 포함하여 사용자가 시스템
 - 팀원 간 원활한 협업과 커뮤니케이션이 필수적이다.
 - 프로젝트 성격에 따라 적절한 애자일 프레임워크를 선택해야 한다.
 - 지속적인 개선과 피드백 반영이 이루어져야 한다.
+
+  <br/>
+  <br/>
+
+## 📅 2025.01.31.FRI
+
+### WebRTC의 동작 원리 (팀 프로젝트 구조 기반)
+
+#### 1. WebRTC 개요
+
+- WebRTC(Web Real-Time Communication)는 브라우저 간 **실시간 오디오, 비디오 및 데이터 전송을 가능하게 하는 기술**이다.
+- 일반적으로 P2P(Peer-to-Peer) 연결을 사용하여 데이터 교환이 이루어진다.
+- 기본적으로는 Caller(초기화하는 쪽)와 Callee(응답하는 쪽)로 나뉘며, **Signaling Server**를 통해 연결이 설정된다.
+
+---
+
+### 2. 일반적인 WebRTC 흐름과 우리 팀의 차이점
+
+#### ✅ 일반적인 WebRTC 연결 흐름 (P2P)
+
+1. **Caller가 Signaling Server에 연결**
+   - `RTCPeerConnection`을 생성하고, `offer`를 만들 준비를 한다.
+2. **Callee가 Signaling Server에 연결**
+   - `RTCPeerConnection`을 생성하고, `offer`를 수락할 준비를 한다.
+3. **Caller가 Offer 생성**
+   - `createOffer()`를 호출하여 SDP(Session Description Protocol)를 생성한 뒤, Signaling Server를 통해 전송한다.
+4. **Callee가 Offer 수신 후 Answer 생성**
+   - `setRemoteDescription()`을 사용하여 Offer를 적용한 후, `createAnswer()`를 호출하여 Answer를 생성하고 Signaling Server를 통해 Caller에게 전달한다.
+5. **ICE Candidate 교환**
+   - 양쪽 Peer는 **ICE Candidate**(네트워크 정보)를 교환하여 연결을 확립한다.
+6. **미디어 스트림 및 DataChannel 연결**
+   - 일반적으로 **오디오/비디오 스트림**과 함께 **DataChannel**을 사용한다.
+
+---
+
+### 3. 우리 프로젝트 WebRTC 구조
+
+#### ✅ 기본적인 WebRTC 흐름과의 차이점
+
+- 일반적인 WebRTC와 달리, **우리는 한쪽 Peer(Caller)는 클라이언트, 다른 한쪽 Peer(Callee)는 서버에서 담당**한다.
+- **Caller(클라이언트)**는 `invite()`를 호출할 때, **미디어를 연결하지 않고 Data Channel을 생성**하여 `handleNegotiationNeededEvent`를 트리거한다.
+- **Callee(서버)**는 이를 수락하고, Data Channel을 통해 데이터를 송수신할 수 있도록 한다.
+
+#### ✅ 우리 팀의 WebRTC 연결 과정
+
+1. **Caller(클라이언트)에서 WebRTC 연결 초기화**
+   - `RTCPeerConnection`을 생성하고, **미디어 스트림을 추가하지 않고 Data Channel을 생성**한다.
+   - `handleNegotiationNeededEvent`가 트리거되어 **Signaling Server를 통해 Offer를 전송**한다.
+2. **Callee(서버)에서 Offer 수락**
+
+   - 서버 측에서 `setRemoteDescription()`을 수행하고, `createAnswer()`를 호출하여 응답한다.
+   - `handleNegotiationNeededEvent`가 트리거되며, `answer`를 Caller에게 전달한다.
+
+3. **ICE Candidate 교환**
+
+   - 클라이언트와 서버가 ICE Candidate를 교환하여 네트워크 연결을 확립한다.
+
+4. **Data Channel을 통해 데이터 전송**
+   - 클라이언트가 WebRTC의 `DataChannel`을 사용하여 **랜드마크 좌표 데이터를 서버로 전송**한다.
+   - 서버는 이 데이터를 수신하고, 후속 처리를 진행한다.
+
+---
+
+### 4. 랜드마크 좌표 데이터 전송 방식
+
+- WebRTC의 `DataChannel`을 활용하여 **클라이언트에서 서버로 랜드마크 좌표만 전송**한다.
+- **미디어 스트림(오디오/비디오)은 사용하지 않으며, 데이터 전용 채널을 사용**한다.
+- 클라이언트에서 특정 이벤트(예: 프레임 업데이트)가 발생하면, `dataChannel.send(JSON.stringify(landmarkData))` 형식으로 좌표를 전송한다.
+- 서버는 `onmessage` 이벤트를 통해 데이터를 수신하고 처리한다.
