@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { FilesetResolver, PoseLandmarker, PoseLandmarkerResult } from "@mediapipe/tasks-vision";
+import {
+  FilesetResolver,
+  PoseLandmarker,
+  PoseLandmarkerResult,
+} from "@mediapipe/tasks-vision";
 import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
 
 import * as S from "./WebCamStyle";
@@ -60,10 +64,10 @@ const WebCam = () => {
 
     if (!canvasContext) return;
 
-    const { offsetWidth, offsetHeight } = videoRef.current;
+    const { clientWidth, clientHeight } = videoRef.current;
 
-    canvas.width = offsetWidth;
-    canvas.height = offsetHeight;
+    canvas.width = clientWidth;
+    canvas.height = clientHeight;
 
     canvasContext.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -99,7 +103,11 @@ const WebCam = () => {
 
     if (!video) return;
 
-    if (video.currentTime === lastVideoTime || video.videoWidth === 0 || video.videoHeight === 0) {
+    if (
+      video.currentTime === lastVideoTime ||
+      video.videoWidth === 0 ||
+      video.videoHeight === 0
+    ) {
       requestAnimationFrame(detectPose);
 
       return;
