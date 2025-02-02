@@ -3,6 +3,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { FilesetResolver, PoseLandmarker, PoseLandmarkerResult } from "@mediapipe/tasks-vision";
 import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
 
+import useWebRTC from "../../hooks/useWebRTC";
+
 import * as S from "./WebCamStyle";
 
 import recordingStopButton from "../../assets/icons/recording-stop.svg";
@@ -14,6 +16,8 @@ const WebCam = () => {
   const [landmarker, setLandmarker] = useState<PoseLandmarker | null>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [lastVideoTime, setLastVideoTime] = useState(-1);
+
+  const { startConnection, sendMessage } = useWebRTC({ serverUrl: "ws://127.0.0.1:8080/helloworld" }); // TODO: serverURL 환경 변수 설정
 
   const setupCamera = async () => {
     const video = videoRef.current;
@@ -116,36 +120,51 @@ const WebCam = () => {
     requestAnimationFrame(detectPose);
   }, [landmarker, lastVideoTime]);
 
-  const handleRecordingStopButtonClick = () => {
-    if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
-      setStream(null);
-    }
+  const handleRecordingStartButtonClick = async () => {
+    await startConnection();
 
-    if (videoRef.current) {
-      videoRef.current.srcObject = null;
-    }
+    await setupCamera();
+    await loadPoseLandmarker();
+
+    sendMessage(); // TEST
   };
 
-  useEffect(() => {
-    setupCamera();
-    loadPoseLandmarker();
-  }, []);
+  const handleRecordingStopButtonClick = () => {
+    if (!stream) return;
+
+    stream.getTracks().forEach((track) => track.stop());
+    setStream(null);
+
+    if (!videoRef.current) return;
+    videoRef.current.srcObject = null;
+
+    if (!canvasRef.current) return;
+    const canvasContext = canvasRef.current.getContext("2d");
+
+    if (!canvasContext) return;
+    canvasContext.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+  };
 
   useEffect(() => {
     if (landmarker) detectPose();
   }, [landmarker, detectPose]);
 
   return (
-    <S.VideoContainer>
-      <S.Video ref={videoRef} />
-      <S.Canvas ref={canvasRef} />
+    <S.WebCamContainer>
+      <S.VideoContainer>
+        <S.Video ref={videoRef} />
+        <S.Canvas ref={canvasRef} />
+
+        <S.RecordingStartButton onClick={handleRecordingStartButtonClick} isVisible={stream === null}>
+          분석 시작
+        </S.RecordingStartButton>
+      </S.VideoContainer>
 
       <S.RecordingStopButton onClick={handleRecordingStopButtonClick}>
         <S.RecordingStopIcon src={recordingStopButton} alt="분석 중지" />
         분석 종료
       </S.RecordingStopButton>
-    </S.VideoContainer>
+    </S.WebCamContainer>
   );
 };
 
