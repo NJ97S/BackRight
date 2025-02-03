@@ -66,15 +66,14 @@ public class SignalingHandler extends TextWebSocketHandler implements IceCandida
 	}
 
 	@Override
-	public void afterConnectionEstablished(WebSocketSession session)
-		throws Exception {
+	public void afterConnectionEstablished(WebSocketSession session) {
 		logger.info("[Handler::afterConnectionEstablished] New WebSocket connection, sessionId: {}",
 			session.getId());
 	}
 
 	@Override
 	public void afterConnectionClosed(final WebSocketSession session,
-		CloseStatus status) throws Exception {
+		CloseStatus status) {
 		var sessionId = session.getId();
 		if (!status.equalsCode(CloseStatus.NORMAL)) {
 			logger.warn("[Handler::afterConnectionClosed] status: {}, sessionId: {}",
@@ -100,7 +99,7 @@ public class SignalingHandler extends TextWebSocketHandler implements IceCandida
 	}
 
 	@Override
-	public void onIceConnectionChange(String sessionId, RTCIceConnectionState state) throws IOException {
+	public void onIceConnectionChange(String sessionId, RTCIceConnectionState state) {
 		logger.info("[Handler::IceConnectionChange] ICE Connection state is changed into {}", state);
 	}
 
