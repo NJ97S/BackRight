@@ -1,4 +1,4 @@
-package com.example.posturepro.signaling;
+package com.example.posturepro.signaling.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

@@ -13,6 +13,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.example.posturepro.peer.RTCPeerConnectionHandler;
 import com.example.posturepro.signaling.dto.ClientIceCandidate;
+import com.example.posturepro.signaling.dto.SignalingMessage;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
