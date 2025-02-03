@@ -38,12 +38,4 @@ public class SerializedWebSocketSender {
 			throw new IOException("메시지 전송 실패", exception);
 		}
 	}
-
-	public void close() throws IOException {
-		try {
-			this.session.close();
-		} catch (IOException e) {
-			throw new IOException("세션 종료 실패", e);
-		}
-	}
 }
