@@ -8,7 +8,7 @@ export const SideBarContainer = styled.div`
   align-items: center;
   height: 100%;
   padding: 1.5rem 1rem;
-  background-color: var(--gray-400);
+  background-color: var(--navy-200);
 `;
 
 export const ImageContainer = styled.div`

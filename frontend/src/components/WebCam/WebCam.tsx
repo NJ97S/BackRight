@@ -11,7 +11,7 @@ import useWebRTC from "../../hooks/useWebRTC";
 
 import * as S from "./WebCamStyle";
 
-import recordingStopButton from "../../assets/icons/recording-stop.svg";
+import recordingStopIcon from "../../assets/icons/recording-stop.svg";
 
 const WebCam = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -169,16 +169,21 @@ const WebCam = () => {
         <S.Video ref={videoRef} />
         <S.Canvas ref={canvasRef} />
 
-        <S.RecordingStartButton
-          onClick={handleRecordingStartButtonClick}
-          isVisible={stream === null}
-        >
-          분석 시작
-        </S.RecordingStartButton>
+        <S.RecordingStartGuide isStreaming={stream !== null}>
+          <S.RecordingStartText>
+            아래 버튼을 눌러, 자세 분석을 시작해보세요.
+          </S.RecordingStartText>
+          <S.RecordingStartButton onClick={handleRecordingStartButtonClick}>
+            분석 시작
+          </S.RecordingStartButton>
+        </S.RecordingStartGuide>
       </S.VideoContainer>
 
-      <S.RecordingStopButton onClick={handleRecordingStopButtonClick}>
-        <S.RecordingStopIcon src={recordingStopButton} alt="분석 중지" />
+      <S.RecordingStopButton
+        onClick={handleRecordingStopButtonClick}
+        isStreaming={stream !== null}
+      >
+        <S.RecordingStopIcon src={recordingStopIcon} alt="분석 중지" />
         분석 종료
       </S.RecordingStopButton>
     </S.WebCamContainer>

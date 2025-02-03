@@ -20,7 +20,7 @@ export const Video = styled.video`
   height: 100%;
   aspect-ratio: 1.8;
   border-radius: 12px;
-  background-color: var(--white);
+  background-color: var(--cream);
   transform: scaleX(-1);
 `;
 
@@ -30,34 +30,50 @@ export const Canvas = styled.canvas`
   left: 0;
 `;
 
-interface RecordingStartButtonProps {
-  isVisible: boolean;
+interface RecordingProps {
+  isStreaming: boolean;
 }
 
-export const RecordingStartButton = styled.button.withConfig({
-  shouldForwardProp: (prop) => prop !== "isVisible",
-})<RecordingStartButtonProps>`
+export const RecordingStartGuide = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== "isStreaming",
+})<RecordingProps>`
+  visibility: ${({ isStreaming }) => (isStreaming ? "hidden" : "visible")};
+
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
 
-  border-radius: 12px;
-  padding: 1rem 1.25rem;
-  background-color: var(--gray-400);
-  color: var(--white);
-  font-weight: 700;
-
-  display: ${({ isVisible }) => (isVisible ? "block" : "none")};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.75rem;
 `;
 
-export const RecordingStopButton = styled.button`
+export const RecordingStartText = styled.span`
+  font-size: 0.875rem;
+  font-weight: 600;
+`;
+
+export const RecordingStartButton = styled.button`
+  border-radius: 12px;
+  padding: 1rem 2rem;
+  background-color: var(--mint);
+  color: var(--white);
+  font-weight: 700;
+`;
+
+export const RecordingStopButton = styled.button.withConfig({
+  shouldForwardProp: (prop) => prop !== "isStreaming",
+})<RecordingProps>`
+  visibility: ${({ isStreaming }) => (isStreaming ? "visible" : "hidden")};
+
   display: flex;
   align-items: center;
   gap: 0.5rem;
   border-radius: 12px;
-  padding: 1rem 1.25rem;
-  background-color: var(--gray-400);
+  padding: 1rem 1.5rem;
+  background-color: var(--navy-200);
   color: var(--white);
   font-weight: 700;
 `;
