@@ -1,0 +1,21 @@
+package com.example.posturepro.api.oauth.utils;
+
+import jakarta.servlet.http.Cookie;
+
+public class CookieUtil {
+
+	public static Cookie createCookie(String name, String value, boolean httpOnly, boolean secure, String path, int maxAge, String sameSite) {
+		Cookie cookie = new Cookie(name, value);
+		cookie.setHttpOnly(httpOnly);
+		cookie.setSecure(secure);
+		cookie.setPath(path);
+		cookie.setMaxAge(maxAge);
+		cookie.setAttribute("sameSite", sameSite);
+		return cookie;
+	}
+
+	public static Cookie deleteCookie(String name, boolean secure, String path, String sameSite) {
+		return createCookie(name, null, true, secure, path, 0, sameSite);
+	}
+
+}
