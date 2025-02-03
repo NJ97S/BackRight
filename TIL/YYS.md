@@ -507,3 +507,45 @@ Docker는 **컨테이너 기반의 가상화 기술**을 제공하는 플랫폼�
 3. 삭제 후에도 이미지는 재사용할 수 있어 유연한 배포 및 관리가 가능하다.
 
 
+## 📅 날짜
+
+- 2025-02-03
+
+---
+
+## ✏️ 배운 것
+
+### **1 Docker Compose란?**  
+- 여러 개의 컨테이너를 한 번에 관리할 수 있도록 도와주는 **도커 오케스트레이션 툴**  
+- `docker-compose.yml` 파일을 사용하여 서비스(컨테이너) 간의 **네트워크, 볼륨, 환경 변수** 등을 정의  
+- 단일 명령어로 컨테이너 생성 및 실행 가능  
+
+### **2️ Docker Compose 기본 명령어**
+| 명령어 | 설명 |
+|--------|------|
+| `docker compose up` | `docker-compose.yml` 기반으로 컨테이너 실행 |
+| `docker compose up --build` | 이미지를 다시 빌드 후 컨테이너 실행 |
+| `docker compose down` | 실행 중인 컨테이너 중지 및 네트워크 제거 |
+
+### **3️ Docker Compose 주요 개념**
+- **services**: 실행할 컨테이너 정의 (ex. `app`, `mysql`, `redis`, `nginx`)  
+- **depends_on**: 컨테이너 실행 순서 지정  
+- **networks**: 컨테이너 간 통신을 위한 네트워크 설정  
+- **volumes**: 컨테이너가 종료되어도 데이터 유지 가능  
+- **env_file**: 환경 변수 파일 (`.env`) 로드  
+
+---
+
+## **📌 더 배워야 할 것**  
+
+### **1️ Nginx 개념**  
+- **웹 서버 & 리버스 프록시** 역할  
+- `nginx.conf` 설정 방법  
+- **Spring Boot + Nginx + Docker 연동 방법**  
+
+### **2️ EC2에 Docker 배포하는 방법**  
+- EC2에 Docker 설치 (`sudo apt install docker.io`)  
+- Docker Compose 실행 (`docker compose up -d`)  
+- **도메인 연결 (Nginx) & 보안 그룹 설정**  
+
+---
