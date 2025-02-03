@@ -1,16 +1,10 @@
 import * as S from "./HomePageStyle";
 
-import recordingStopButton from "../../assets/icons/recording-stop.svg";
+import WebCam from "../../components/WebCam/WebCam";
 
 const HomePage = () => (
   <S.HomePageContainer>
-    <S.VideoContainer>
-      <S.Video>VIDEO</S.Video>
-      <S.RecordingStopButton>
-        <S.RecordingStopIcon src={recordingStopButton} alt="분석 중지" />
-        분석 종료
-      </S.RecordingStopButton>
-    </S.VideoContainer>
+    <WebCam />
   </S.HomePageContainer>
 );
 
