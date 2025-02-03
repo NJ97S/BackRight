@@ -17,7 +17,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dev.onvoid.webrtc.PeerConnectionFactory;
-import dev.onvoid.webrtc.RTCConfiguration;
 import dev.onvoid.webrtc.RTCIceCandidate;
 import dev.onvoid.webrtc.RTCIceConnectionState;
 import dev.onvoid.webrtc.RTCSdpType;
@@ -32,7 +31,6 @@ public class SignalingHandler extends TextWebSocketHandler implements IceCandida
 
 	protected PeerConnectionFactory factory;
 	protected AudioDeviceModule audioDevModule;
-	protected RTCConfiguration config;
 
 	private final ConcurrentHashMap<String, ServerConnection> serverConnections =
 		new ConcurrentHashMap<>();
@@ -41,9 +39,8 @@ public class SignalingHandler extends TextWebSocketHandler implements IceCandida
 		new ConcurrentHashMap<>();
 
 	SignalingHandler() {
-		audioDevModule = new AudioDeviceModule(AudioLayer.kDummyAudio);
-		factory = new PeerConnectionFactory(audioDevModule);
-		config = new RTCConfiguration();
+		this.audioDevModule = new AudioDeviceModule(AudioLayer.kDummyAudio);
+		this.factory = new PeerConnectionFactory(audioDevModule);
 	}
 
 	private ServerConnection initializeSession(final WebSocketSession session) {
