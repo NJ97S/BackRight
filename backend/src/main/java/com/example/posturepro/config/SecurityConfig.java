@@ -60,7 +60,7 @@ public class SecurityConfig {
 				// .httpStrictTransportSecurity(hsts -> hsts
 				// 	.includeSubDomains(true)
 				// 	.maxAgeInSeconds(31536000)
-				// )
+				// )  테스트를 위해 주석처리
 			);
 
 		return http.build();
