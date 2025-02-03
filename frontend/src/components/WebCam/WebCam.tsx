@@ -16,10 +16,10 @@ import recordingStopButton from "../../assets/icons/recording-stop.svg";
 const WebCam = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const lastVideoTime = useRef(-1);
 
   const [landmarker, setLandmarker] = useState<PoseLandmarker | null>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
-  const [lastVideoTime, setLastVideoTime] = useState(-1);
 
   const { startConnection, sendMessage } = useWebRTC({
     serverUrl: "ws://127.0.0.1:8080/helloworld",
@@ -110,7 +110,7 @@ const WebCam = () => {
     if (!video) return;
 
     if (
-      video.currentTime === lastVideoTime ||
+      video.currentTime === lastVideoTime.current ||
       video.videoWidth === 0 ||
       video.videoHeight === 0
     ) {
@@ -119,7 +119,7 @@ const WebCam = () => {
       return;
     }
 
-    setLastVideoTime(video.currentTime);
+    lastVideoTime.current = video.currentTime;
 
     const poses = landmarker.detectForVideo(video, performance.now());
 
