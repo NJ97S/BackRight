@@ -11,7 +11,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import com.example.posturepro.peer.ServerConnection;
+import com.example.posturepro.peer.RTCPeerConnectionHandler;
 import com.example.posturepro.signaling.dto.ClientIceCandidate;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,10 +32,10 @@ public class SignalingHandler extends TextWebSocketHandler implements IceCandida
 	protected PeerConnectionFactory factory;
 	protected AudioDeviceModule audioDevModule;
 
-	private final ConcurrentHashMap<String, ServerConnection> serverConnections =
+	private final ConcurrentHashMap<String, RTCPeerConnectionHandler> sessionIdToPeerConnectionMap =
 		new ConcurrentHashMap<>();
 
-	private final ConcurrentHashMap<String, SerializedWebSocketSender> sessionHandlers =
+	private final ConcurrentHashMap<String, SerializedWebSocketSender> sessionIdToSenderMap =
 		new ConcurrentHashMap<>();
 
 	SignalingHandler() {
@@ -43,20 +43,20 @@ public class SignalingHandler extends TextWebSocketHandler implements IceCandida
 		this.factory = new PeerConnectionFactory(audioDevModule);
 	}
 
-	private ServerConnection initializeSession(final WebSocketSession session) {
+	private RTCPeerConnectionHandler initializeSession(final WebSocketSession session) {
 		final String sessionId = session.getId();
 
-		if (serverConnections.containsKey(sessionId)) {
-			return serverConnections.get(sessionId);
+		if (sessionIdToPeerConnectionMap.containsKey(sessionId)) {
+			return sessionIdToPeerConnectionMap.get(sessionId);
 		}
 
 		logger.info("[Handler::initializeSession] Initializing session, sessionId: {}", sessionId);
 
 		var sessionHandler = new SerializedWebSocketSender(session);
-		sessionHandlers.put(sessionId, sessionHandler);
+		sessionIdToSenderMap.put(sessionId, sessionHandler);
 
-		var serverConnection = new ServerConnection(factory, sessionId, this, logger);
-		serverConnections.put(sessionId, serverConnection);
+		var serverConnection = new RTCPeerConnectionHandler(factory, sessionId, this, logger);
+		sessionIdToPeerConnectionMap.put(sessionId, serverConnection);
 
 		return serverConnection;
 	}
@@ -77,8 +77,8 @@ public class SignalingHandler extends TextWebSocketHandler implements IceCandida
 			return;
 		}
 		logger.info("[Handler::afterConnectionClosed] sessionId: {}", sessionId);
-		sessionHandlers.remove(sessionId);
-		serverConnections.remove(sessionId);
+		sessionIdToSenderMap.remove(sessionId);
+		sessionIdToPeerConnectionMap.remove(sessionId);
 	}
 
 	@Override
@@ -88,7 +88,7 @@ public class SignalingHandler extends TextWebSocketHandler implements IceCandida
 		try {
 			String jsonString = objectMapper.writeValueAsString(signalingMessage);
 
-			sessionHandlers.get(sessionId).sendMessage(jsonString);
+			sessionIdToSenderMap.get(sessionId).sendMessage(jsonString);
 		} catch (IOException e) {
 			logger.error("Failed to serialize ICE Candidate message", e);
 		}
@@ -146,7 +146,7 @@ public class SignalingHandler extends TextWebSocketHandler implements IceCandida
 
 			String jsonString = objectMapper.writeValueAsString(signalingMessage);
 			logger.info("[Handler::sendAnswerMessage] {}", jsonString);
-			sessionHandlers.get(sessionId).sendMessage(jsonString);
+			sessionIdToSenderMap.get(sessionId).sendMessage(jsonString);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

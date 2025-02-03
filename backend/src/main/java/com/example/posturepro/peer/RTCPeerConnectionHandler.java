@@ -27,7 +27,7 @@ import dev.onvoid.webrtc.RTCIceServer;
 import dev.onvoid.webrtc.RTCPeerConnection;
 import dev.onvoid.webrtc.RTCSessionDescription;
 
-public class ServerConnection implements PeerConnectionObserver {
+public class RTCPeerConnectionHandler implements PeerConnectionObserver {
 	private final List<String> receivedTexts;
 
 	private RTCPeerConnection localPeerConnection;
@@ -39,7 +39,7 @@ public class ServerConnection implements PeerConnectionObserver {
 
 	private final Logger logger;
 
-	public ServerConnection(PeerConnectionFactory factory, String sessionId, IceCandidateListener listener,
+	public RTCPeerConnectionHandler(PeerConnectionFactory factory, String sessionId, IceCandidateListener listener,
 		Logger logger) {
 		this.sessionId = sessionId;
 		this.listener = listener;
