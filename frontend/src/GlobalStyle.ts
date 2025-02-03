@@ -1,6 +1,15 @@
 import { createGlobalStyle } from "styled-components";
 
+import Pretendard from "./assets/fonts/PretendardVariable.woff2";
+
 const GlobalStyle = createGlobalStyle`
+    @font-face {
+    font-family: 'Pretendard';
+    src: url(${Pretendard}) format('woff2');
+    font-weight: 100 900;
+    font-display: swap;
+  }
+
   * {
     margin: 0;
     padding: 0;
@@ -11,10 +20,18 @@ const GlobalStyle = createGlobalStyle`
     --white: #ffffff;
     --black: #000000;
 
-    --gray-100: #a7a7a7;
-    --gray-200: #777777;
-    --gray-300: #35373d;
-    --gray-400: #2b2d31;
+    --gray-100: #c7c7c7;
+    --gray-200: #a7a7a7;
+    --gray-300: #777777;
+    --gray-400: #35373d;
+    --gray-500: #2b2d31;
+
+    --navy-100: #31363f;
+    --navy-200: #222831;
+
+    --mint: #76abae;
+
+    --cream: #EEEEEE
   }
 
   a {
