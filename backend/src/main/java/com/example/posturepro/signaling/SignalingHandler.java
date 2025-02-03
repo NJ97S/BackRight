@@ -34,7 +34,7 @@ public class SignalingHandler extends TextWebSocketHandler implements IceCandida
 	protected PeerConnectionFactory factory;
 	protected AudioDeviceModule audioDevModule;
 	protected RTCConfiguration config;
-	
+
 	private final ConcurrentHashMap<String, ServerConnection> serverConnections =
 		new ConcurrentHashMap<>();
 
@@ -45,7 +45,6 @@ public class SignalingHandler extends TextWebSocketHandler implements IceCandida
 		audioDevModule = new AudioDeviceModule(AudioLayer.kDummyAudio);
 		factory = new PeerConnectionFactory(audioDevModule);
 		config = new RTCConfiguration();
-		logger.info("CREATED");
 	}
 
 	private ServerConnection initializeSession(final WebSocketSession session) {
@@ -103,12 +102,6 @@ public class SignalingHandler extends TextWebSocketHandler implements IceCandida
 	@Override
 	public void onIceConnectionChange(String sessionId, RTCIceConnectionState state) throws IOException {
 		logger.info("[Handler::IceConnectionChange] ICE Connection state is changed into {}", state);
-		// if (state == RTCIceConnectionState.COMPLETED) {
-		// 	var sessionHandler = sessionHandlers.get(sessionId);
-		// 	sessionHandler.close();
-		// 	sessionHandlers.remove(sessionId);
-		// 	serverConnections.remove(sessionId);
-		// }
 	}
 
 	@Override
@@ -124,14 +117,12 @@ public class SignalingHandler extends TextWebSocketHandler implements IceCandida
 			final String type = rootNode.get("type").asText();
 			switch (type) {
 				case "offer":
-					// Start: Create user session and process SDP Offer
 					handleProcessSdpOffer(session, rootNode);
 					break;
 				case "new-ice-candidate":
 					handleAddIceCandidate(session, rootNode);
 					break;
 				default:
-					// Ignore the message
 					logger.warn("[Handler::handleTextMessage] Skip, invalid message, id: {}",
 						type);
 					break;
