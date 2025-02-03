@@ -7,7 +7,7 @@ export const HomePageContainer = styled.div`
   align-items: center;
   width: 100%;
   padding: 3.25rem;
-  background-color: var(--gray-300);
+  background-color: var(--navy-100);
 `;
 
 export const empty = styled.div``;
