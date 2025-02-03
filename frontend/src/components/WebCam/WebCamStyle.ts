@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
-export const VideoContainer = styled.div`
-  position: relative;
+export const WebCamContainer = styled.div`
+  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -11,8 +11,13 @@ export const VideoContainer = styled.div`
   max-width: 100%;
 `;
 
-export const Video = styled.video`
+export const VideoContainer = styled.div`
+  position: relative;
   height: 90%;
+`;
+
+export const Video = styled.video`
+  height: 100%;
   aspect-ratio: 1.8;
   border-radius: 12px;
   background-color: var(--white);
@@ -23,6 +28,27 @@ export const Canvas = styled.canvas`
   position: absolute;
   top: 0;
   left: 0;
+`;
+
+interface RecordingStartButtonProps {
+  isVisible: boolean;
+}
+
+export const RecordingStartButton = styled.button.withConfig({
+  shouldForwardProp: (prop) => prop !== "isVisible",
+})<RecordingStartButtonProps>`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  background-color: var(--gray-400);
+  color: var(--white);
+  font-weight: 700;
+
+  display: ${({ isVisible }) => (isVisible ? "block" : "none")};
 `;
 
 export const RecordingStopButton = styled.button`
