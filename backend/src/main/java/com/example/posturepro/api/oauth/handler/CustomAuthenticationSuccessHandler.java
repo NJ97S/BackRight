@@ -1,5 +1,6 @@
 package com.example.posturepro.api.oauth.handler;
 
+import com.example.posturepro.api.oauth.utils.CookieUtil;
 import com.example.posturepro.api.oauth.utils.JwtUtil;
 import com.example.posturepro.domain.member.Member;
 import com.example.posturepro.domain.member.service.MemberService;
@@ -11,11 +12,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -36,7 +40,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 	private static final Logger logger = LoggerFactory.getLogger(CustomAuthenticationSuccessHandler.class);
 
 	@Autowired
-	public CustomAuthenticationSuccessHandler(OAuth2AuthorizedClientService authorizedClientService, JwtUtil jwtUtil, MemberService memberService,
+	public CustomAuthenticationSuccessHandler(OAuth2AuthorizedClientService authorizedClientService,
+		JwtUtil jwtUtil,
+		MemberService memberService,
 		TokenService tokenService) {
 		this.authorizedClientService = authorizedClientService;
 		this.jwtUtil = jwtUtil;
@@ -47,73 +53,81 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 		Authentication authentication) throws IOException, ServletException {
-		String registrationId = ((org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId();
-		String userName = authentication.getName();
+		OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
+		String registrationId = oauthToken.getAuthorizedClientRegistrationId();
+		String userName = oauthToken.getName();
+
 
 		OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient(registrationId, userName);
 		if (client == null) {
 			throw new ServletException("OAuth2AuthorizedClient not found");
 		}
 
-		String kakaoAccessToken = client.getAccessToken().getTokenValue();
+		String oauthAccessToken = client.getAccessToken().getTokenValue();
 
-		Map<String, Object> kakaoUserInfo = fetchKakaoUserInfo(kakaoAccessToken);
-
+		Map<String, Object> kakaoUserInfo = fetchKakaoUserInfo(oauthAccessToken);
 		Long kakaoId = Long.parseLong(kakaoUserInfo.get("id").toString());
-
 
 		Member member = memberService.findByKakaoId(kakaoId).orElse(null);
 
 		if (member != null) {
-			String jwtAccessToken = tokenService.createAccessToken(
-				member.getKakaoId().toString()
-			);
-			String jwtRefreshToken = tokenService.createRefreshToken(member.getKakaoId().toString());
-
-			// HttpOnly 쿠키로 JWT 액세스 토큰 전송
-			Cookie accessCookie = new Cookie("access_token", jwtAccessToken);
-			accessCookie.setHttpOnly(true);
-			accessCookie.setSecure(false); // 프로덕션 환경에서는 true로 설정
-			accessCookie.setPath("/");
-			accessCookie.setMaxAge(3600);
-			accessCookie.setAttribute("SameSite", "Strict");
-			response.addCookie(accessCookie);
-
-			// HttpOnly 쿠키로 JWT 리프레시 토큰 전송
-			if (jwtRefreshToken != null) {
-				Cookie refreshCookie = new Cookie("refresh_token", jwtRefreshToken);
-				refreshCookie.setHttpOnly(true);
-				refreshCookie.setSecure(false); // 프로덕션 환경에서는 true로 설정
-				refreshCookie.setPath("/");
-				refreshCookie.setMaxAge(604800);
-				refreshCookie.setAttribute("SameSite", "Strict");
-				response.addCookie(refreshCookie);
-			}
-
-			// 홈 페이지로 리다이렉트
-			response.sendRedirect("http://localhost:5173/");
+			onMemberLogin(member, response);
 		} else {
-			// 신규 사용자일 경우: 임시 JWT 토큰 생성 및 쿠키 설정 후 회원 가입 페이지로 리다이렉트
-			String tempToken = jwtUtil.generateTempToken(kakaoId.toString());
-
-			Cookie tempTokenCookie = new Cookie("temp_token", tempToken);
-			tempTokenCookie.setHttpOnly(true);
-			tempTokenCookie.setSecure(true); // 프로덕션 환경에서는 true로 설정
-			tempTokenCookie.setPath("/");
-			tempTokenCookie.setMaxAge(300); // 5분
-			tempTokenCookie.setAttribute("SameSite", "Strict");
-			response.addCookie(tempTokenCookie);
-
-			// 회원 가입 페이지로 리다이렉트
-			response.sendRedirect("http://localhost:5173/sign-up");
+			onNewMember(kakaoId, response);
 		}
+	}
+
+	private void onMemberLogin(Member member, HttpServletResponse response) throws IOException {
+		String jwtAccessToken = tokenService.createAccessToken(member.getKakaoId().toString());
+		String jwtRefreshToken = tokenService.createRefreshToken(member.getKakaoId().toString());
+
+		Cookie accessCookie = CookieUtil.createCookie(
+			"access-token",
+			jwtAccessToken,
+			true,
+			false,  // 프로덕션 환경에서는 true로 변경 필요
+			"/",
+			3600,
+			"Strict"
+		);
+		response.addCookie(accessCookie);
+
+		if (jwtRefreshToken != null) {
+			Cookie refreshCookie = CookieUtil.createCookie(
+				"refresh-token",
+				jwtRefreshToken,
+				true,
+				false,  // 프로덕션 환경에서는 true로 변경 필요
+				"/",
+				604800,
+				"Strict"
+			);
+			response.addCookie(refreshCookie);
+		}
+		response.sendRedirect("http://localhost:5173/");
+	}
+
+
+	private void onNewMember(Long kakaoId, HttpServletResponse response) throws IOException {
+		String tempToken = jwtUtil.generateTempToken(kakaoId.toString());
+		Cookie tempTokenCookie = CookieUtil.createCookie(
+			"temp-token",
+			tempToken,
+			true,
+			true,
+			"/",
+			300,
+			"Strict"
+		);
+		response.addCookie(tempTokenCookie);
+		response.sendRedirect("http://localhost:5173/sign-up");
 	}
 
 	private Map<String, Object> fetchKakaoUserInfo(String accessToken) throws IOException, ServletException {
 		RestTemplate restTemplate = new RestTemplate();
-		org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+		HttpHeaders headers = new HttpHeaders();
 		headers.add("Authorization", "Bearer " + accessToken);
-		org.springframework.http.HttpEntity<String> entity = new org.springframework.http.HttpEntity<>(headers);
+		HttpEntity<String> entity = new HttpEntity<>(headers);
 
 		ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
 			"https://kapi.kakao.com/v2/user/me",
@@ -127,13 +141,12 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		}
 
 		Map<String, Object> userInfo = response.getBody();
-
 		if (userInfo != null) {
 			logger.info("Kakao API 응답: {}", userInfo);
 		} else {
 			logger.warn("응답 본문이 null입니다.");
 		}
-
 		return userInfo;
 	}
+
 }
