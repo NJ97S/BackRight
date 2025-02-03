@@ -7,7 +7,7 @@ export const SideBarContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   height: 100%;
-  padding: 1.5rem;
+  padding: 1.5rem 1rem;
   background-color: var(--gray-400);
 `;
 
