@@ -34,11 +34,9 @@ interface RecordingProps {
   isStreaming: boolean;
 }
 
-export const RecordingStart = styled.div.withConfig({
+export const RecordingStartContainer = styled.div.withConfig({
   shouldForwardProp: (prop) => prop !== "isStreaming",
 })<RecordingProps>`
-  visibility: ${({ isStreaming }) => (isStreaming ? "hidden" : "visible")};
-
   position: absolute;
   top: 50%;
   left: 50%;
@@ -48,6 +46,8 @@ export const RecordingStart = styled.div.withConfig({
   flex-direction: column;
   align-items: center;
   gap: 1.75rem;
+
+  visibility: ${({ isStreaming }) => (isStreaming ? "hidden" : "visible")};
 `;
 
 export const RecordingStartText = styled.span`
@@ -66,11 +66,6 @@ export const RecordingStartButton = styled.button`
 export const ElapsedTimeContainer = styled.div.withConfig({
   shouldForwardProp: (prop) => prop !== "isStreaming",
 })<RecordingProps>`
-  opacity: ${({ isStreaming }) => (isStreaming ? 1 : 0)};
-  visibility: ${({ isStreaming }) => (isStreaming ? "visible" : "hidden")};
-  transition: opacity 1s ease-in-out;
-  ${({ isStreaming }) => !isStreaming && "transition: none;"}
-
   position: absolute;
   top: 1rem;
   left: 1rem;
@@ -82,10 +77,15 @@ export const ElapsedTimeContainer = styled.div.withConfig({
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--gray-200);
   border-radius: 999px;
-  background: rgba(238, 238, 238, 0.5);
+  background: rgba(238, 238, 238, 0.7);
 
   color: var(--gray-300);
   font-size: 0.875rem;
+
+  opacity: ${({ isStreaming }) => (isStreaming ? 1 : 0)};
+  visibility: ${({ isStreaming }) => (isStreaming ? "visible" : "hidden")};
+  transition: opacity 1s ease-in-out;
+  ${({ isStreaming }) => !isStreaming && "transition: none;"}
 `;
 
 export const RecordingIcon = styled.img`
@@ -96,8 +96,6 @@ export const RecordingIcon = styled.img`
 export const RecordingStopButton = styled.button.withConfig({
   shouldForwardProp: (prop) => prop !== "isStreaming",
 })<RecordingProps>`
-  visibility: ${({ isStreaming }) => (isStreaming ? "visible" : "hidden")};
-
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -106,6 +104,8 @@ export const RecordingStopButton = styled.button.withConfig({
   background-color: var(--navy-200);
   color: var(--white);
   font-weight: 700;
+
+  visibility: ${({ isStreaming }) => (isStreaming ? "visible" : "hidden")};
 `;
 
 export const RecordingStopIcon = styled.img`

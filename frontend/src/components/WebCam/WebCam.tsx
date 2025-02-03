@@ -2,11 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import {
-  FilesetResolver,
-  PoseLandmarker,
-  PoseLandmarkerResult,
-} from "@mediapipe/tasks-vision";
+import { FilesetResolver, PoseLandmarker, PoseLandmarkerResult } from "@mediapipe/tasks-vision";
 import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
 
 import useWebRTC from "../../hooks/useWebRTC";
@@ -115,11 +111,7 @@ const WebCam = () => {
 
     if (!video) return;
 
-    if (
-      video.currentTime === lastVideoTime.current ||
-      video.videoWidth === 0 ||
-      video.videoHeight === 0
-    ) {
+    if (video.currentTime === lastVideoTime.current || video.videoWidth === 0 || video.videoHeight === 0) {
       requestAnimationFrame(detectPose);
 
       return;
@@ -165,12 +157,7 @@ const WebCam = () => {
     const canvasContext = canvasRef.current.getContext("2d");
 
     if (!canvasContext) return;
-    canvasContext.clearRect(
-      0,
-      0,
-      canvasRef.current.width,
-      canvasRef.current.height
-    );
+    canvasContext.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
     // 타이머 초기화
     if (timerRef.current) clearInterval(timerRef.current);
@@ -188,14 +175,10 @@ const WebCam = () => {
         <S.Video ref={videoRef} />
         <S.Canvas ref={canvasRef} />
 
-        <S.RecordingStart isStreaming={stream !== null}>
-          <S.RecordingStartText>
-            아래 버튼을 눌러, 자세 분석을 시작해보세요.
-          </S.RecordingStartText>
-          <S.RecordingStartButton onClick={handleRecordingStartButtonClick}>
-            분석 시작
-          </S.RecordingStartButton>
-        </S.RecordingStart>
+        <S.RecordingStartContainer isStreaming={stream !== null}>
+          <S.RecordingStartText>아래 버튼을 눌러, 자세 분석을 시작해보세요.</S.RecordingStartText>
+          <S.RecordingStartButton onClick={handleRecordingStartButtonClick}>분석 시작</S.RecordingStartButton>
+        </S.RecordingStartContainer>
 
         <S.ElapsedTimeContainer isStreaming={stream !== null}>
           <S.RecordingIcon src={recordingIcon} alt="녹화중" />
@@ -203,10 +186,7 @@ const WebCam = () => {
         </S.ElapsedTimeContainer>
       </S.VideoContainer>
 
-      <S.RecordingStopButton
-        onClick={handleRecordingStopButtonClick}
-        isStreaming={stream !== null}
-      >
+      <S.RecordingStopButton onClick={handleRecordingStopButtonClick} isStreaming={stream !== null}>
         <S.RecordingStopIcon src={recordingStopIcon} alt="분석 중지" />
         분석 종료
       </S.RecordingStopButton>
