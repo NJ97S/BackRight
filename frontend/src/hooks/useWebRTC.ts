@@ -72,11 +72,15 @@ const useWebRTC = ({ serverUrl }: useWebRTCProps) => {
     peerConnectionRef.current = pc;
   };
 
-  const handleAnswerMessage = async (msg: { sdp: RTCSessionDescriptionInit }) => {
+  const handleAnswerMessage = async (msg: {
+    sdp: RTCSessionDescriptionInit;
+  }) => {
     if (!peerConnectionRef.current) return;
 
     try {
-      await peerConnectionRef.current.setRemoteDescription(new RTCSessionDescription(msg.sdp));
+      await peerConnectionRef.current.setRemoteDescription(
+        new RTCSessionDescription(msg.sdp)
+      );
     } catch (error) {
       console.error("Error setting remote description:", error);
     }
@@ -110,7 +114,7 @@ const useWebRTC = ({ serverUrl }: useWebRTCProps) => {
         {
           const newCandidate = {
             ...message.candidate,
-            candidate: message.candidate.sdp,
+            candidate: message.candidate,
           };
 
           addICECandidate(newCandidate);
