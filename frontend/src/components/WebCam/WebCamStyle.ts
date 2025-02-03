@@ -34,7 +34,7 @@ interface RecordingProps {
   isStreaming: boolean;
 }
 
-export const RecordingStartGuide = styled.div.withConfig({
+export const RecordingStart = styled.div.withConfig({
   shouldForwardProp: (prop) => prop !== "isStreaming",
 })<RecordingProps>`
   visibility: ${({ isStreaming }) => (isStreaming ? "hidden" : "visible")};
@@ -61,6 +61,36 @@ export const RecordingStartButton = styled.button`
   background-color: var(--mint);
   color: var(--white);
   font-weight: 700;
+`;
+
+export const ElapsedTimeContainer = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== "isStreaming",
+})<RecordingProps>`
+  opacity: ${({ isStreaming }) => (isStreaming ? 1 : 0)};
+  visibility: ${({ isStreaming }) => (isStreaming ? "visible" : "hidden")};
+  transition: opacity 1s ease-in-out;
+  ${({ isStreaming }) => !isStreaming && "transition: none;"}
+
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--gray-200);
+  border-radius: 999px;
+  background: rgba(238, 238, 238, 0.5);
+
+  color: var(--gray-300);
+  font-size: 0.875rem;
+`;
+
+export const RecordingIcon = styled.img`
+  width: 1.25rem;
+  height: 1.25rem;
 `;
 
 export const RecordingStopButton = styled.button.withConfig({
