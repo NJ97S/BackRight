@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 
+import { Landmark } from "@mediapipe/tasks-vision";
 import { useEffect, useRef } from "react";
 
 interface useWebRTCProps {
@@ -111,14 +112,7 @@ const useWebRTC = ({ serverUrl }: useWebRTCProps) => {
         handleAnswerMessage(message);
         break;
       case "new-ice-candidate":
-        {
-          const newCandidate = {
-            ...message.candidate,
-            candidate: message.candidate,
-          };
-
-          addICECandidate(newCandidate);
-        }
+        addICECandidate(message.candidate);
         break;
       default:
         console.error(`Unknown message type: ${message.type}`);
@@ -156,8 +150,7 @@ const useWebRTC = ({ serverUrl }: useWebRTCProps) => {
     }
   };
 
-  // TODO: 랜드마크 좌표 데이터 받아서 넘기도록 변경
-  const sendMessage = () => {
+  const sendMessage = (data: Landmark[]) => {
     const dataChannel = dataChannelRef.current;
 
     if (!dataChannel || dataChannel.readyState !== "open") {
@@ -165,7 +158,7 @@ const useWebRTC = ({ serverUrl }: useWebRTCProps) => {
       return;
     }
 
-    dataChannel.send("꽃가루를 날려어어 메세지를 보내애ㅐ");
+    dataChannel.send(JSON.stringify(data));
   };
 
   useEffect(

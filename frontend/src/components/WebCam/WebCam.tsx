@@ -21,7 +21,9 @@ const WebCam = () => {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [lastVideoTime, setLastVideoTime] = useState(-1);
 
-  const { startConnection, sendMessage } = useWebRTC({ serverUrl: "ws://127.0.0.1:8080/helloworld" }); // TODO: serverURL 환경 변수 설정
+  const { startConnection, sendMessage } = useWebRTC({
+    serverUrl: "ws://127.0.0.1:8080/helloworld",
+  }); // TODO: serverURL 환경 변수 설정
 
   const setupCamera = async () => {
     const video = videoRef.current;
@@ -122,6 +124,7 @@ const WebCam = () => {
     const poses = landmarker.detectForVideo(video, performance.now());
 
     if (poses.landmarks.length > 0) {
+      sendMessage(poses.landmarks[0]);
       drawLandmarkers(poses);
     }
 
@@ -133,8 +136,6 @@ const WebCam = () => {
 
     await setupCamera();
     await loadPoseLandmarker();
-
-    sendMessage(); // TEST
   };
 
   const handleRecordingStopButtonClick = () => {
@@ -150,7 +151,12 @@ const WebCam = () => {
     const canvasContext = canvasRef.current.getContext("2d");
 
     if (!canvasContext) return;
-    canvasContext.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    canvasContext.clearRect(
+      0,
+      0,
+      canvasRef.current.width,
+      canvasRef.current.height
+    );
   };
 
   useEffect(() => {
@@ -163,7 +169,10 @@ const WebCam = () => {
         <S.Video ref={videoRef} />
         <S.Canvas ref={canvasRef} />
 
-        <S.RecordingStartButton onClick={handleRecordingStartButtonClick} isVisible={stream === null}>
+        <S.RecordingStartButton
+          onClick={handleRecordingStartButtonClick}
+          isVisible={stream === null}
+        >
           분석 시작
         </S.RecordingStartButton>
       </S.VideoContainer>
