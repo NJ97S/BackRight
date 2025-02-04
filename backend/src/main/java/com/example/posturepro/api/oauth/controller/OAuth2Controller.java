@@ -30,7 +30,7 @@ public class OAuth2Controller {
 
 	@PostMapping("/refresh-token")
 	public ResponseEntity<?> refreshToken(@CookieValue Map<String, String> tokens, HttpServletResponse response) {
-		String refreshToken = tokens.get("refresh_token");
+		String refreshToken = tokens.get("refresh-token");
 		if (refreshToken == null || refreshToken.isEmpty()) {
 			return ResponseEntity.badRequest().body("Refresh token is missing");
 		}
@@ -49,26 +49,10 @@ public class OAuth2Controller {
 		String newAccessToken = tokenService.createAccessToken(member.getProviderId());
 		String newRefreshToken = tokenService.createRefreshToken(providerId);
 
-		Cookie accessCookie = CookieUtil.createCookie(
-			"access-token",
-			newAccessToken,
-			true,
-			false,   // 프로덕션 환경에서는 true로 변경
-			"/",
-			3600,
-			"Strict"
-		);
+		Cookie accessCookie = CookieUtil.createAccessCookie(newAccessToken, false);
 		response.addCookie(accessCookie);
 
-		Cookie refreshCookie = CookieUtil.createCookie(
-			"refresh-token",
-			newRefreshToken,
-			true,
-			false,   // 프로덕션 환경에서는 true로 변경
-			"/",
-			604800,
-			"Strict"
-		);
+		Cookie refreshCookie = CookieUtil.createRefreshCookie(newRefreshToken, false);
 		response.addCookie(refreshCookie);
 
 		return ResponseEntity.ok(Map.of("message", "Token refreshed"));
