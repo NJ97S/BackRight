@@ -11,10 +11,8 @@ import com.example.posturepro.domain.member.Member;
 import com.example.posturepro.domain.member.repository.MemberRepository;
 import com.example.posturepro.api.oauth.service.TokenService;
 import com.example.posturepro.dto.SignUpRequest;
-import com.example.posturepro.api.oauth.utils.CookieUtil;
+import com.example.posturepro.dto.SignUpToken;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -52,7 +50,7 @@ public class MemberService {
 	}
 
 	@Transactional
-	public Member signUpAndIssueTokens(Long kakaoId, SignUpRequest signUpRequest, HttpServletResponse response) {
+	public SignUpToken signUpToken(String providerId, SignUpRequest signUpRequest) {
 		Member newMember = createMember(
 			providerId,
 			signUpRequest.getName(),
@@ -61,36 +59,10 @@ public class MemberService {
 			signUpRequest.getGender()
 		);
 
-		String jwtAccessToken = tokenService.createAccessToken(newMember.getKakaoId().toString());
-		String jwtRefreshToken = tokenService.createRefreshToken(newMember.getKakaoId().toString());
-
-		Cookie accessCookie = CookieUtil.createCookie(
-			"access-token",
-			jwtAccessToken,
-			true,
-			false,                    // 프로덕션 환경에서는 true로 설정
-			"/",
-			3600,
-			"Strict"
+		String jwtAccessToken = tokenService.createAccessToken(newMember.getProviderId());
+		String jwtRefreshToken = tokenService.createRefreshToken(newMember.getProviderId()
 		);
-		response.addCookie(accessCookie);
 
-		if (jwtRefreshToken != null) {
-			Cookie refreshCookie = CookieUtil.createCookie(
-				"refresh-token",
-				jwtRefreshToken,
-				true,
-				false,                // 프로덕션 환경에서는 true로 설정
-				"/",
-				604800,
-				"Strict"
-			);
-			response.addCookie(refreshCookie);
-		}
-
-		Cookie tempCookie = CookieUtil.deleteCookie("temp-token", false, "/", "Strict");
-		response.addCookie(tempCookie);
-
-		return newMember;
+		return new SignUpToken(newMember,jwtAccessToken,jwtRefreshToken);
 	}
 }
