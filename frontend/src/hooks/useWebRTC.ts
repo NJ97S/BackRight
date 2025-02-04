@@ -150,7 +150,7 @@ const useWebRTC = ({ serverUrl }: useWebRTCProps) => {
     }
   };
 
-  const sendMessage = (data: Landmark[]) => {
+  const sendMessage = (data: Landmark[][]) => {
     const dataChannel = dataChannelRef.current;
 
     if (!dataChannel || dataChannel.readyState !== "open") {

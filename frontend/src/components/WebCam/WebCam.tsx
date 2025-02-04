@@ -2,7 +2,12 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { FilesetResolver, PoseLandmarker, PoseLandmarkerResult } from "@mediapipe/tasks-vision";
+import {
+  FilesetResolver,
+  Landmark,
+  PoseLandmarker,
+  PoseLandmarkerResult,
+} from "@mediapipe/tasks-vision";
 import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
 
 import useWebRTC from "../../hooks/useWebRTC";
@@ -16,8 +21,9 @@ import formatTime from "../../utils/formatTime";
 const WebCam = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const lastVideoTime = useRef(-1);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const landmarkStorageRef = useRef<Landmark[][]>([]);
+  const lastVideoTime = useRef(-1);
 
   const [landmarker, setLandmarker] = useState<PoseLandmarker | null>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
@@ -104,6 +110,16 @@ const WebCam = () => {
     canvasContext.restore();
   };
 
+  const pushLandmark = (landmark: Landmark[]) => {
+    landmarkStorageRef.current.push(landmark);
+
+    if (landmarkStorageRef.current.length < 10) return;
+
+    sendMessage(landmarkStorageRef.current);
+
+    landmarkStorageRef.current = [];
+  };
+
   const detectPose = useCallback(() => {
     if (!landmarker) return;
 
@@ -111,7 +127,11 @@ const WebCam = () => {
 
     if (!video) return;
 
-    if (video.currentTime === lastVideoTime.current || video.videoWidth === 0 || video.videoHeight === 0) {
+    if (
+      video.currentTime === lastVideoTime.current ||
+      video.videoWidth === 0 ||
+      video.videoHeight === 0
+    ) {
       requestAnimationFrame(detectPose);
 
       return;
@@ -122,8 +142,10 @@ const WebCam = () => {
     const poses = landmarker.detectForVideo(video, performance.now());
 
     if (poses.landmarks.length > 0) {
-      sendMessage(poses.landmarks[0]);
+      pushLandmark(poses.landmarks[0]);
       drawLandmarkers(poses);
+
+      console.log(JSON.stringify(landmarkStorageRef.current));
     }
 
     requestAnimationFrame(detectPose);
@@ -147,6 +169,12 @@ const WebCam = () => {
   const handleRecordingStopButtonClick = () => {
     if (!stream) return;
 
+    // landmark 데이터 남아있으면 전송
+    if (landmarkStorageRef.current.length > 0) {
+      sendMessage(landmarkStorageRef.current);
+      landmarkStorageRef.current = [];
+    }
+
     stream.getTracks().forEach((track) => track.stop());
     setStream(null);
 
@@ -157,7 +185,12 @@ const WebCam = () => {
     const canvasContext = canvasRef.current.getContext("2d");
 
     if (!canvasContext) return;
-    canvasContext.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    canvasContext.clearRect(
+      0,
+      0,
+      canvasRef.current.width,
+      canvasRef.current.height
+    );
 
     // 타이머 초기화
     if (timerRef.current) clearInterval(timerRef.current);
@@ -176,8 +209,12 @@ const WebCam = () => {
         <S.Canvas ref={canvasRef} />
 
         <S.RecordingStartContainer isStreaming={stream !== null}>
-          <S.RecordingStartText>아래 버튼을 눌러, 자세 분석을 시작해보세요.</S.RecordingStartText>
-          <S.RecordingStartButton onClick={handleRecordingStartButtonClick}>분석 시작</S.RecordingStartButton>
+          <S.RecordingStartText>
+            아래 버튼을 눌러, 자세 분석을 시작해보세요.
+          </S.RecordingStartText>
+          <S.RecordingStartButton onClick={handleRecordingStartButtonClick}>
+            분석 시작
+          </S.RecordingStartButton>
         </S.RecordingStartContainer>
 
         <S.ElapsedTimeContainer isStreaming={stream !== null}>
@@ -186,7 +223,10 @@ const WebCam = () => {
         </S.ElapsedTimeContainer>
       </S.VideoContainer>
 
-      <S.RecordingStopButton onClick={handleRecordingStopButtonClick} isStreaming={stream !== null}>
+      <S.RecordingStopButton
+        onClick={handleRecordingStopButtonClick}
+        isStreaming={stream !== null}
+      >
         <S.RecordingStopIcon src={recordingStopIcon} alt="분석 중지" />
         분석 종료
       </S.RecordingStopButton>
