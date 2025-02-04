@@ -38,17 +38,16 @@ public class OAuth2Controller {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
 		}
 
-		String userId = tokenService.getUserIdFromToken(refreshToken);
-		Long providerId = Long.parseLong(userId);
+		String providerId = tokenService.getUserIdFromToken(refreshToken);
 
-		Optional<Member> memberOpt = memberService.findByKakaoId(providerId);
+		Optional<Member> memberOpt = memberService.findByProviderId(providerId);
 		if (!memberOpt.isPresent()) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
 		}
 		Member member = memberOpt.get();
 
-		String newAccessToken = tokenService.createAccessToken(member.getKakaoId().toString());
-		String newRefreshToken = tokenService.createRefreshToken(userId);
+		String newAccessToken = tokenService.createAccessToken(member.getProviderId());
+		String newRefreshToken = tokenService.createRefreshToken(providerId);
 
 		Cookie accessCookie = CookieUtil.createCookie(
 			"access-token",
