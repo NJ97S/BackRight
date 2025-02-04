@@ -8,10 +8,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.posturepro.api.oauth.utils.CookieUtil;
 import com.example.posturepro.domain.member.service.MemberService;
 import com.example.posturepro.domain.member.Member;
 import com.example.posturepro.dto.SignUpRequest;
 import com.example.posturepro.api.oauth.service.TokenService;
+import com.example.posturepro.dto.SignUpToken;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,7 +43,19 @@ public class MemberController {
 		}
 
 		try {
-			memberService.signUpAndIssueTokens(Long.parseLong(kakaoId), signUpRequest, response);
+			SignUpToken result = memberService.signUpToken(providerId, signUpRequest);
+
+			Cookie accessCookie = CookieUtil.createAccessCookie(result.getAccessToken(),false);
+			response.addCookie(accessCookie);
+
+			if (result.getRefreshToken() != null) {
+				Cookie refreshCookie = CookieUtil.createRefreshCookie(result.getRefreshToken(),false);
+				response.addCookie(refreshCookie);
+			}
+
+			Cookie tempCookie = CookieUtil.deleteCookie("temp-token", false, "/", "Strict");
+			response.addCookie(tempCookie);
+
 			return ResponseEntity.ok("회원 가입이 완료되었습니다.");
 		} catch (IllegalArgumentException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
