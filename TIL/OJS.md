@@ -301,3 +301,44 @@
 ### 배포 관련
 
 - nginx, spring boot, mysql 세개의 이미지를 활용해 docker compose를 사용해서 간단히 ec2에 배포를 해봤다.
+
+## 2025-02-05
+
+### TDD
+
+- Test Deriven Development: 테스트 먼저, 구현은 나중에
+- Behavior Deriven Development: 모든 함수와 조건문에 대한 테스트를 만들기 보다 유저의 행동에 집중하여 (Given When Then)
+
+### 배포 관련
+
+1. frontend
+
+- node 이미지에서 NODE_ENV는 기본적으로 production인데 build 시에 devDependency(typescript)가 필요
+- 인스톨 시에는 production을 false로로
+  `RUN npm install -g pnpm && pnpm install --frozen-lockfile --production=false`
+
+2. backend
+
+- webrtc-java는 os에 따라 다른 네이티브 라이브러리를 필요로 하는데 build.gradle에 windows 것만 명시됨
+- webrtc-java의 네이티브 라이브러리가 사용하는 특정 라이브러리가 openjdk:17-jdk-slim 이미지에 미설치
+  ```Docker
+  RUN apt-get update
+  RUN apt-get install -y libpulse0
+  RUN apt-get install -y libx11-6
+  ```
+
+3. nginx
+
+- js의 getUserMedia는 ssl 환경에서만 작동함
+- Let's Encrypt를 사용해서 무료 인증서를 받고 90일 마다 renew 하는 봇 코드 추가
+  - 빌드할 때마다 발급 받다가 뭔가 이상하다고 느낄 쯤 5개 제한을 채워서 일단은 staging으로 받음
+  - 서버에 저장해두고 볼륨에 넣어주는 방식으로 변경 필요
+
+4. 그 외
+
+- 프론트와 백엔드가 통신은 candidate를 주고 받는데 연결 수립이 안됨
+  - STUN 구글이 테스트 용이라서?
+  - backend가 도커의 내부 네트워크 안이라서 (사설 망) TURN이 필요해서?
+- 둘 중 뭐가 됐든 TURN 서버가 필요했다
+  - 전에 세팅해둔 TURN 서버를 켜서 작동을 확인했는데 RTC 연결 수립이 됐다 안됐다 한다 이유를 좀 더 알아봐야 겠다.
+  - TURN이 필요한거라면 중간 서버를 반드시 거쳐야 하기 때문에 지연이 필연적이다.
