@@ -20,7 +20,7 @@ export const Video = styled.video`
   height: 100%;
   aspect-ratio: 1.8;
   border-radius: 12px;
-  background-color: var(--white);
+  background-color: var(--cream);
   transform: scaleX(-1);
 `;
 
@@ -30,36 +30,82 @@ export const Canvas = styled.canvas`
   left: 0;
 `;
 
-interface RecordingStartButtonProps {
-  isVisible: boolean;
+interface RecordingProps {
+  isStreaming: boolean;
 }
 
-export const RecordingStartButton = styled.button.withConfig({
-  shouldForwardProp: (prop) => prop !== "isVisible",
-})<RecordingStartButtonProps>`
+export const RecordingStartContainer = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== "isStreaming",
+})<RecordingProps>`
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
 
-  border-radius: 12px;
-  padding: 1rem 1.25rem;
-  background-color: var(--gray-400);
-  color: var(--white);
-  font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.75rem;
 
-  display: ${({ isVisible }) => (isVisible ? "block" : "none")};
+  visibility: ${({ isStreaming }) => (isStreaming ? "hidden" : "visible")};
 `;
 
-export const RecordingStopButton = styled.button`
+export const RecordingStartText = styled.span`
+  font-size: 0.875rem;
+  font-weight: 600;
+`;
+
+export const RecordingStartButton = styled.button`
+  border-radius: 12px;
+  padding: 1rem 2rem;
+  background-color: var(--mint);
+  color: var(--white);
+  font-weight: 700;
+`;
+
+export const ElapsedTimeContainer = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== "isStreaming",
+})<RecordingProps>`
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--gray-200);
+  border-radius: 999px;
+  background: rgba(238, 238, 238, 0.7);
+
+  color: var(--gray-300);
+  font-size: 0.875rem;
+
+  opacity: ${({ isStreaming }) => (isStreaming ? 1 : 0)};
+  visibility: ${({ isStreaming }) => (isStreaming ? "visible" : "hidden")};
+  transition: opacity 1s ease-in-out;
+  ${({ isStreaming }) => !isStreaming && "transition: none;"}
+`;
+
+export const RecordingIcon = styled.img`
+  width: 1.25rem;
+  height: 1.25rem;
+`;
+
+export const RecordingStopButton = styled.button.withConfig({
+  shouldForwardProp: (prop) => prop !== "isStreaming",
+})<RecordingProps>`
   display: flex;
   align-items: center;
   gap: 0.5rem;
   border-radius: 12px;
-  padding: 1rem 1.25rem;
-  background-color: var(--gray-400);
+  padding: 1rem 1.5rem;
+  background-color: var(--navy-200);
   color: var(--white);
   font-weight: 700;
+
+  visibility: ${({ isStreaming }) => (isStreaming ? "visible" : "hidden")};
 `;
 
 export const RecordingStopIcon = styled.img`

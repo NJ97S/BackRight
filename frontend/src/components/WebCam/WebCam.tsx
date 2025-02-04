@@ -1,25 +1,33 @@
+/* eslint-disable no-undef */
+
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
   FilesetResolver,
+  Landmark,
   PoseLandmarker,
   PoseLandmarkerResult,
+  DrawingUtils,
 } from "@mediapipe/tasks-vision";
-import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
 
 import useWebRTC from "../../hooks/useWebRTC";
 
 import * as S from "./WebCamStyle";
 
-import recordingStopButton from "../../assets/icons/recording-stop.svg";
+import recordingIcon from "../../assets/icons/recording.svg";
+import recordingStopIcon from "../../assets/icons/recording-stop.svg";
+import formatTime from "../../utils/formatTime";
 
 const WebCam = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const landmarkStorageRef = useRef<Landmark[][]>([]);
   const lastVideoTime = useRef(-1);
 
   const [landmarker, setLandmarker] = useState<PoseLandmarker | null>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
+  const [elapsedTime, setElapsedTime] = useState(0);
 
   const { startConnection, sendMessage } = useWebRTC({
     serverUrl: "ws://127.0.0.1:8080/helloworld",
@@ -82,24 +90,31 @@ const WebCam = () => {
     canvasContext.translate(canvas.width, 0);
     canvasContext.scale(-1, 1);
 
+    const drawingUtils = new DrawingUtils(canvasContext);
+
     for (const landmark of poses.landmarks) {
-      drawLandmarks(canvasContext, landmark, {
+      drawingUtils.drawLandmarks(landmark, {
         radius: 4,
         color: "#00FF09",
       });
 
-      drawConnectors(
-        canvasContext,
-        landmark,
-        PoseLandmarker.POSE_CONNECTIONS.map(({ start, end }) => [start, end]),
-        {
-          color: "#00FF09",
-          lineWidth: 2,
-        }
-      );
+      drawingUtils.drawConnectors(landmark, PoseLandmarker.POSE_CONNECTIONS, {
+        color: "#00FF09",
+        lineWidth: 2,
+      });
     }
 
     canvasContext.restore();
+  };
+
+  const pushLandmark = (landmark: Landmark[]) => {
+    landmarkStorageRef.current.push(landmark);
+
+    if (landmarkStorageRef.current.length < 10) return;
+
+    sendMessage(landmarkStorageRef.current);
+
+    landmarkStorageRef.current = [];
   };
 
   const detectPose = useCallback(() => {
@@ -124,7 +139,7 @@ const WebCam = () => {
     const poses = landmarker.detectForVideo(video, performance.now());
 
     if (poses.landmarks.length > 0) {
-      sendMessage(poses.landmarks[0]);
+      pushLandmark(poses.landmarks[0]);
       drawLandmarkers(poses);
     }
 
@@ -132,14 +147,28 @@ const WebCam = () => {
   }, [landmarker, lastVideoTime]);
 
   const handleRecordingStartButtonClick = async () => {
+    // WebRTC 연결 및 자세분석 준비
     await startConnection();
 
     await setupCamera();
     await loadPoseLandmarker();
+
+    // 타이머 준비
+    if (timerRef.current) clearInterval(timerRef.current);
+
+    timerRef.current = setInterval(() => {
+      setElapsedTime((prev) => prev + 1);
+    }, 1000);
   };
 
   const handleRecordingStopButtonClick = () => {
     if (!stream) return;
+
+    // landmark 데이터 남아있으면 전송
+    if (landmarkStorageRef.current.length > 0) {
+      sendMessage(landmarkStorageRef.current);
+      landmarkStorageRef.current = [];
+    }
 
     stream.getTracks().forEach((track) => track.stop());
     setStream(null);
@@ -157,6 +186,11 @@ const WebCam = () => {
       canvasRef.current.width,
       canvasRef.current.height
     );
+
+    // 타이머 초기화
+    if (timerRef.current) clearInterval(timerRef.current);
+
+    setElapsedTime(0);
   };
 
   useEffect(() => {
@@ -169,16 +203,26 @@ const WebCam = () => {
         <S.Video ref={videoRef} />
         <S.Canvas ref={canvasRef} />
 
-        <S.RecordingStartButton
-          onClick={handleRecordingStartButtonClick}
-          isVisible={stream === null}
-        >
-          분석 시작
-        </S.RecordingStartButton>
+        <S.RecordingStartContainer isStreaming={stream !== null}>
+          <S.RecordingStartText>
+            아래 버튼을 눌러, 자세 분석을 시작해보세요.
+          </S.RecordingStartText>
+          <S.RecordingStartButton onClick={handleRecordingStartButtonClick}>
+            분석 시작
+          </S.RecordingStartButton>
+        </S.RecordingStartContainer>
+
+        <S.ElapsedTimeContainer isStreaming={stream !== null}>
+          <S.RecordingIcon src={recordingIcon} alt="녹화중" />
+          {formatTime(elapsedTime)}
+        </S.ElapsedTimeContainer>
       </S.VideoContainer>
 
-      <S.RecordingStopButton onClick={handleRecordingStopButtonClick}>
-        <S.RecordingStopIcon src={recordingStopButton} alt="분석 중지" />
+      <S.RecordingStopButton
+        onClick={handleRecordingStopButtonClick}
+        isStreaming={stream !== null}
+      >
+        <S.RecordingStopIcon src={recordingStopIcon} alt="분석 중지" />
         분석 종료
       </S.RecordingStopButton>
     </S.WebCamContainer>
