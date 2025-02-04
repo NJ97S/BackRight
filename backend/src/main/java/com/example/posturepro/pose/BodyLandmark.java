@@ -10,11 +10,18 @@ public class BodyLandmark {
 	@Getter
 	String name;
 	double x, y, z;
+	String visibility;
 
 	public BodyLandmark() {
 	}
 
 	public BodyLandmark(double x, double y, double z) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+
+	public BodyLandmark(double x, double y, double z, String visibility) {
 		this.x = x;
 		this.y = y;
 		this.z = z;

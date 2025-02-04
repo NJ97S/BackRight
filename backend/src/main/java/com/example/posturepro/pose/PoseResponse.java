@@ -9,6 +9,7 @@ import lombok.Data;
 public class PoseResponse {
 	boolean initialSet;
 	boolean detected;
+	String videoUrl;
 	int problemCode;    // neck = 1<<3, left shoulder = 1<<2, right shoulder = 1<<1, back = 1
 
 	public PoseResponse() {
