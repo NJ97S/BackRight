@@ -54,29 +54,49 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		String registrationId = oauthToken.getAuthorizedClientRegistrationId();
 		String userName = oauthToken.getName();
 
-
 		OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient(registrationId, userName);
 		if (client == null) {
 			throw new ServletException("OAuth2AuthorizedClient not found");
 		}
 
 		String oauthAccessToken = client.getAccessToken().getTokenValue();
+		Map<String, Object> providerUserInfo = fetchProviderUserInfo(registrationId, oauthAccessToken);
 
-		Map<String, Object> kakaoUserInfo = fetchKakaoUserInfo(oauthAccessToken);
-		Long kakaoId = Long.parseLong(kakaoUserInfo.get("id").toString());
+		String providerId = extractProviderId(registrationId, providerUserInfo);
 
-		Member member = memberService.findByKakaoId(kakaoId).orElse(null);
-
+		Member member = memberService.findByProviderId(providerId).orElse(null);
 		if (member != null) {
 			onMemberLogin(member, response);
 		} else {
-			onNewMember(kakaoId, response);
+			onNewMember(providerId, response);
 		}
 	}
 
+	private String extractProviderId(String registrationId, Map<String, Object> providerUserInfo)
+		throws ServletException  {
+		Object providerId = null;
+
+		if("naver".equalsIgnoreCase(registrationId)) {
+			@SuppressWarnings("unchecked")
+			Map<String, Object> responseMap = (Map<String, Object>) providerUserInfo.get("response");
+			if (responseMap != null) {
+				providerId = responseMap.get("id");
+			}
+		} else if ("kakao".equalsIgnoreCase(registrationId)) {
+			providerId = providerUserInfo.get("id");
+		} else {
+			throw new ServletException("Invalid registration id " + registrationId);
+		}
+
+		if (providerId == null) {
+			throw new ServletException("User Id not found in provider" + registrationId);
+		}
+		return providerId.toString();
+	}
+
 	private void onMemberLogin(Member member, HttpServletResponse response) throws IOException {
-		String jwtAccessToken = tokenService.createAccessToken(member.getKakaoId().toString());
-		String jwtRefreshToken = tokenService.createRefreshToken(member.getKakaoId().toString());
+		String jwtAccessToken = tokenService.createAccessToken(member.getProviderId());
+		String jwtRefreshToken = tokenService.createRefreshToken(member.getProviderId());
 
 		Cookie accessCookie = CookieUtil.createAccessCookie(jwtAccessToken, false);
 		response.addCookie(accessCookie);
@@ -85,6 +105,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 			Cookie refreshCookie = CookieUtil.createRefreshCookie(jwtRefreshToken, false);
 			response.addCookie(refreshCookie);
 		}
+
 		response.sendRedirect("http://localhost:5173/");
 	}
 
@@ -93,6 +114,16 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		Cookie tempCookie = CookieUtil.createTempCookie(tempToken, false);
 		response.addCookie(tempCookie);
 		response.sendRedirect("http://localhost:5173/sign-up");
+	}
+
+	private Map<String, Object> fetchProviderUserInfo(String registrationId, String accessToken) throws IOException, ServletException {
+		if ("kakao".equalsIgnoreCase(registrationId)) {
+			return fetchKakaoUserInfo(accessToken);
+		} else if ("naver".equalsIgnoreCase(registrationId)) {
+			return fetchNaverUserInfo(accessToken);
+		} else {
+			throw new ServletException("Unsupported OAuth provider: " + registrationId);
+		}
 	}
 
 	private Map<String, Object> fetchKakaoUserInfo(String accessToken) throws IOException, ServletException {
@@ -121,4 +152,29 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		return userInfo;
 	}
 
+	private Map<String, Object> fetchNaverUserInfo(String accessToken) throws IOException, ServletException {
+		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Authorization", "Bearer " + accessToken);
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+
+		ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+			"https://openapi.naver.com/v1/nid/me",
+			HttpMethod.GET,
+			entity,
+			new ParameterizedTypeReference<Map<String, Object>>() {}
+		);
+
+		if (!response.getStatusCode().is2xxSuccessful()) {
+			throw new ServletException("Failed to fetch user info from Naver");
+		}
+
+		Map<String, Object> userInfo = response.getBody();
+		if (userInfo != null) {
+			logger.info("Naver API 응답: {}", userInfo);
+		} else {
+			logger.warn("응답 본문이 null입니다.");
+		}
+		return userInfo;
+	}
 }
