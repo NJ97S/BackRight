@@ -26,8 +26,8 @@ public class Member {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "kakao_id", unique = true, nullable = false)
-	private Long kakaoId;
+	@Column(name = "provider_id", unique = true, nullable = false)
+	private String providerId;
 
 	@Column(nullable = false)
 	private String name;
@@ -51,8 +51,8 @@ public class Member {
 	}
 
 	@Builder
-	public Member(Long kakaoId, String name, String nickname, LocalDate birthDate, Gender gender) {
-		this.kakaoId = kakaoId;
+	public Member(String providerId, String name, String nickname, LocalDate birthDate, Gender gender) {
+		this.providerId = providerId;
 		this.name = name;
 		this.nickname = nickname;
 		this.birthDate = birthDate;
