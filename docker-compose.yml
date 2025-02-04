@@ -25,6 +25,8 @@ services:
       - frontend
     networks:
       - app-network
+    env_file:
+      - ./nginx/.env
 
 networks:
   app-network:
