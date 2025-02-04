@@ -1,7 +1,8 @@
 /* eslint-disable no-undef */
 
 import { Landmark } from "@mediapipe/tasks-vision";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { ReceivedDataType } from "../types/type";
 
 interface useWebRTCProps {
   serverUrl: string;
@@ -11,6 +12,10 @@ const useWebRTC = ({ serverUrl }: useWebRTCProps) => {
   const signalingServerConnectionRef = useRef<WebSocket | null>(null);
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
   const dataChannelRef = useRef<RTCDataChannel | null>(null);
+
+  const [receivedData, setReceivedData] = useState<ReceivedDataType | null>(
+    null
+  );
 
   const sendToServer = (message: Record<string, unknown>) => {
     const ws = signalingServerConnectionRef.current;
@@ -49,7 +54,11 @@ const useWebRTC = ({ serverUrl }: useWebRTCProps) => {
 
   const setupDataChannel = (dataChannel: RTCDataChannel) => {
     dataChannel.onopen = () => signalingServerConnectionRef.current?.close();
-    dataChannel.onmessage = (e) => console.log("Message received:", e.data);
+    dataChannel.onmessage = (e) => {
+      const parsedData: ReceivedDataType = JSON.parse(e.data);
+
+      setReceivedData(parsedData);
+    };
   };
 
   const createPeerConnection = () => {
@@ -172,6 +181,7 @@ const useWebRTC = ({ serverUrl }: useWebRTCProps) => {
   return {
     startConnection,
     sendMessage,
+    receivedData,
   };
 };
 
