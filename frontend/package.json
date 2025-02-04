@@ -7,6 +7,8 @@
     "dev": "vite",
     "dev:web": "cross-env VITE_DISABLE_ELECTRON=1 vite",
     "build": "tsc && vite build && electron-builder",
+    "build:web": "tsc && vite build",
+    "start:web": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
