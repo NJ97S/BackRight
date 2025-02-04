@@ -10,4 +10,4 @@ COPY certbot-renew.sh /certbot-renew.sh
 
 RUN chmod +x /certbot-renew.sh
 
-CMD ["/bin/sh", "-c", "/certbot-renew.sh & nginx -g 'daemon off;'"]
+CMD ["/bin/sh", "-c", "/certbot-renew.sh"]

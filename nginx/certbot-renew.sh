@@ -23,7 +23,10 @@ if [ ! -f "/etc/letsencrypt/live/$DOMAIN/fullchain.pem" ]; then
   exit 1
 fi
 
-# ✅ 3️⃣ 인증서 갱신 (12시간마다 실행)
+# ✅ 3️⃣ Nginx 시작 (이제 SSL 인증서가 있으므로 실행 가능)
+exec nginx -g 'daemon off;'
+
+# ✅ 4️⃣ 인증서 갱신 (12시간마다 실행)
 while :; do
   certbot renew --quiet
   sleep 12h
