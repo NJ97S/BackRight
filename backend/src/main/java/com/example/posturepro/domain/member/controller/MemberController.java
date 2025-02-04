@@ -35,8 +35,8 @@ public class MemberController {
 	public ResponseEntity<?> signUp(@RequestBody @Valid SignUpRequest signUpRequest,
 		HttpServletRequest request,
 		HttpServletResponse response) {
-		String kakaoId = extractAndValidateTempToken(request);
-		if (kakaoId == null) {
+		String providerId = extractAndValidateTempToken(request);
+		if (providerId == null) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효한 인증 정보가 없습니다. 다시 로그인해주세요.");
 		}
 
