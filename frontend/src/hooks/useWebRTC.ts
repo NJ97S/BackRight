@@ -66,7 +66,7 @@ const useWebRTC = ({ serverUrl }: useWebRTCProps) => {
       iceServers: [
         { urls: "stun:stun.l.google.com:19302" },
         {
-          urls: "turn:localhost:3478",
+          urls: "turn:i12a601.p.ssafy.io:3478",
           username: "user",
           credential: "password",
         },

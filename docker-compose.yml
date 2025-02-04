@@ -28,6 +28,19 @@ services:
     env_file:
       - ./nginx/.env
 
+  coturn:
+    image: coturn/coturn:latest
+    container_name: coturn
+    restart: unless-stopped
+    ports:
+      - "3478:3478/udp"  # TURN 기본 포트 (UDP)
+      - "3478:3478/tcp"  # TURN 기본 포트 (TCP)
+      - "5349:5349/tcp"  # TURN over TLS/DTLS
+      - "50000-51000:50000-51000/udp"  # TURN relay 포트
+    volumes:
+      - ./coturn/turnserver.conf:/etc/coturn/turnserver.conf
+    networks:
+      - app-network
 networks:
   app-network:
     driver: bridge
