@@ -7,8 +7,8 @@ import {
   Landmark,
   PoseLandmarker,
   PoseLandmarkerResult,
+  DrawingUtils,
 } from "@mediapipe/tasks-vision";
-import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
 
 import useWebRTC from "../../hooks/useWebRTC";
 
@@ -90,21 +90,18 @@ const WebCam = () => {
     canvasContext.translate(canvas.width, 0);
     canvasContext.scale(-1, 1);
 
+    const drawingUtils = new DrawingUtils(canvasContext);
+
     for (const landmark of poses.landmarks) {
-      drawLandmarks(canvasContext, landmark, {
+      drawingUtils.drawLandmarks(landmark, {
         radius: 4,
         color: "#00FF09",
       });
 
-      drawConnectors(
-        canvasContext,
-        landmark,
-        PoseLandmarker.POSE_CONNECTIONS.map(({ start, end }) => [start, end]),
-        {
-          color: "#00FF09",
-          lineWidth: 2,
-        }
-      );
+      drawingUtils.drawConnectors(landmark, PoseLandmarker.POSE_CONNECTIONS, {
+        color: "#00FF09",
+        lineWidth: 2,
+      });
     }
 
     canvasContext.restore();
@@ -144,8 +141,6 @@ const WebCam = () => {
     if (poses.landmarks.length > 0) {
       pushLandmark(poses.landmarks[0]);
       drawLandmarkers(poses);
-
-      console.log(JSON.stringify(landmarkStorageRef.current));
     }
 
     requestAnimationFrame(detectPose);
