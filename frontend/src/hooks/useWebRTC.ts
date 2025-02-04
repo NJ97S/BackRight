@@ -67,7 +67,7 @@ const useWebRTC = ({ serverUrl }: useWebRTCProps) => {
         { urls: "stun:stun.l.google.com:19302" },
         {
           urls: "turn:i12a601.p.ssafy.io:3478",
-          username: "user",
+          username: "username",
           credential: "password",
         },
       ],
