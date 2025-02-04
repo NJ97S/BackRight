@@ -5,7 +5,6 @@ import com.example.posturepro.api.oauth.utils.JwtUtil;
 import com.example.posturepro.domain.member.Member;
 import com.example.posturepro.domain.member.service.MemberService;
 import com.example.posturepro.api.oauth.service.TokenService;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,10 +22,8 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
 import java.io.IOException;
 import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,45 +78,20 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		String jwtAccessToken = tokenService.createAccessToken(member.getKakaoId().toString());
 		String jwtRefreshToken = tokenService.createRefreshToken(member.getKakaoId().toString());
 
-		Cookie accessCookie = CookieUtil.createCookie(
-			"access-token",
-			jwtAccessToken,
-			true,
-			false,  // 프로덕션 환경에서는 true로 변경 필요
-			"/",
-			3600,
-			"Strict"
-		);
+		Cookie accessCookie = CookieUtil.createAccessCookie(jwtAccessToken, false);
 		response.addCookie(accessCookie);
 
 		if (jwtRefreshToken != null) {
-			Cookie refreshCookie = CookieUtil.createCookie(
-				"refresh-token",
-				jwtRefreshToken,
-				true,
-				false,  // 프로덕션 환경에서는 true로 변경 필요
-				"/",
-				604800,
-				"Strict"
-			);
+			Cookie refreshCookie = CookieUtil.createRefreshCookie(jwtRefreshToken, false);
 			response.addCookie(refreshCookie);
 		}
 		response.sendRedirect("http://localhost:5173/");
 	}
 
-
-	private void onNewMember(Long kakaoId, HttpServletResponse response) throws IOException {
-		String tempToken = jwtUtil.generateTempToken(kakaoId.toString());
-		Cookie tempTokenCookie = CookieUtil.createCookie(
-			"temp-token",
-			tempToken,
-			true,
-			true,
-			"/",
-			300,
-			"Strict"
-		);
-		response.addCookie(tempTokenCookie);
+	private void onNewMember(String providerId, HttpServletResponse response) throws IOException {
+		String tempToken = jwtUtil.generateTempToken(providerId);
+		Cookie tempCookie = CookieUtil.createTempCookie(tempToken, false);
+		response.addCookie(tempCookie);
 		response.sendRedirect("http://localhost:5173/sign-up");
 	}
 
