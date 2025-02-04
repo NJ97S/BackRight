@@ -29,19 +29,19 @@ public class MemberService {
 	}
 
 	@Transactional
-	public Optional<Member> findByKakaoId(Long kakaoId) {
-		return memberRepository.findByKakaoId(kakaoId);
+	public Optional<Member> findByProviderId(String providerId) {
+		return memberRepository.findByProviderId(providerId);
 	}
 
 	@Transactional
-	public Member createMember(Long kakaoId, String name, String nickname, LocalDate birthDate, Gender gender) {
-		Optional<Member> existingMember = memberRepository.findByKakaoId(kakaoId);
+	public Member createMember(String providerId, String name, String nickname, LocalDate birthDate, Gender gender) {
+		Optional<Member> existingMember = memberRepository.findByProviderId(providerId);
 		if (existingMember.isPresent()) {
 			throw new IllegalArgumentException("이미 존재하는 사용자입니다.");
 		}
 
 		Member newMember = Member.builder()
-			.kakaoId(kakaoId)
+			.providerId(providerId)
 			.name(name)
 			.nickname(nickname)
 			.birthDate(birthDate)
@@ -54,7 +54,7 @@ public class MemberService {
 	@Transactional
 	public Member signUpAndIssueTokens(Long kakaoId, SignUpRequest signUpRequest, HttpServletResponse response) {
 		Member newMember = createMember(
-			kakaoId,
+			providerId,
 			signUpRequest.getName(),
 			signUpRequest.getNickname(),
 			signUpRequest.getBirthDate(),
