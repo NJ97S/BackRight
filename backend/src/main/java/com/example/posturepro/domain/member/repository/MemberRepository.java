@@ -9,6 +9,5 @@ import com.example.posturepro.domain.member.Member;
 
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
-	Optional<Member> findByKakaoId(Long kakaoId);
-
+	Optional<Member> findByProviderId(String providerId);
 }
