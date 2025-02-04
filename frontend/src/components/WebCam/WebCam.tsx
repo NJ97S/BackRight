@@ -29,7 +29,7 @@ const WebCam = () => {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [elapsedTime, setElapsedTime] = useState(0);
 
-  const { startConnection, sendMessage } = useWebRTC({
+  const { startConnection, sendMessage, receivedData } = useWebRTC({
     serverUrl: "ws://127.0.0.1:8080/helloworld",
   }); // TODO: serverURL 환경 변수 설정
 
@@ -216,6 +216,12 @@ const WebCam = () => {
           <S.RecordingIcon src={recordingIcon} alt="녹화중" />
           {formatTime(elapsedTime)}
         </S.ElapsedTimeContainer>
+
+        <S.RealtimeAlert
+          haveProblem={receivedData && receivedData.problemCode !== 0}
+        >
+          자세 경고가 감지되었습니다. 바른 자세를 취해주세요.
+        </S.RealtimeAlert>
       </S.VideoContainer>
 
       <S.RecordingStopButton
