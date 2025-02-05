@@ -549,3 +549,59 @@ Docker는 **컨테이너 기반의 가상화 기술**을 제공하는 플랫폼�
 - **도메인 연결 (Nginx) & 보안 그룹 설정**  
 
 ---
+
+
+## 📅 날짜
+
+- 2025-02-04
+
+---
+
+## ✏️ 배운 것
+
+## Nginx 개념 및 설정
+
+### 웹 서버 & 리버스 프록시 역할
+- 정적 파일 제공 및 로드 밸런싱 기능 수행
+- 클라이언트 요청을 백엔드 서버로 전달 (Reverse Proxy)
+
+### `nginx.conf` 설정 방법
+- `/etc/nginx/nginx.conf` 수정
+- 서버 블록(`server {}`)에서 포트, 도메인, 프록시 설정 가능
+
+### Spring Boot + Nginx + Docker 연동
+1. Spring Boot 컨테이너 실행 (`docker run -d -p 8080:8080 app`)
+2. Nginx 컨테이너 실행 (`docker run -d -p 80:80 -v /path/nginx.conf:/etc/nginx/nginx.conf nginx`)
+3. `nginx.conf`에서 `proxy_pass http://app:8080;` 설정
+
+
+---
+
+
+## 📅 날짜
+
+- 2025-02-05
+
+---
+
+## ✏️ 배운 것
+
+## EC2에 Docker 배포하는 방법
+
+### EC2에 Docker 설치
+```sh
+sudo apt update && sudo apt install -y docker.io
+sudo systemctl enable --now docker
+```
+
+### Docker Compose 실행
+```sh
+docker compose up -d
+```
+
+### 도메인 연결 (Nginx) & 보안 그룹 설정
+- Route 53에서 도메인 설정 후, EC2 퍼블릭 IP와 연결
+- 보안 그룹에서 80, 443, 22 포트 허용
+- Nginx `server_name`에 도메인 입력 후 적용 (`nginx -s reload`)
+
+---
