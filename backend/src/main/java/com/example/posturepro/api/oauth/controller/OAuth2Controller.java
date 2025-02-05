@@ -1,13 +1,18 @@
 package com.example.posturepro.api.oauth.controller;
 
+import com.example.posturepro.api.oauth.handler.CustomAuthenticationSuccessHandler;
 import com.example.posturepro.api.oauth.utils.CookieUtil;
 import com.example.posturepro.api.oauth.utils.JwtUtil;
 import com.example.posturepro.domain.member.Member;
 import com.example.posturepro.domain.member.service.MemberService;
 import com.example.posturepro.api.oauth.service.TokenService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.Cookie;
@@ -21,6 +26,7 @@ public class OAuth2Controller {
 
 	private final MemberService memberService;
 	private final TokenService tokenService;
+	private static final Logger logger = LoggerFactory.getLogger(CustomAuthenticationSuccessHandler.class);
 
 	public OAuth2Controller(MemberService memberService, TokenService tokenService) {
 
@@ -29,8 +35,12 @@ public class OAuth2Controller {
 	}
 
 	@PostMapping("/refresh-token")
-	public ResponseEntity<?> refreshToken(@CookieValue Map<String, String> tokens, HttpServletResponse response) {
+	public ResponseEntity<?> refreshToken(@CookieValue Map<String, String> tokens, HttpServletResponse response, Authentication authentication) {
 		String refreshToken = tokens.get("refresh-token");
+		OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
+		String registrationId = oauthToken.getAuthorizedClientRegistrationId();
+
+
 		if (refreshToken == null || refreshToken.isEmpty()) {
 			return ResponseEntity.badRequest().body("Refresh token is missing");
 		}
@@ -46,14 +56,18 @@ public class OAuth2Controller {
 		}
 		Member member = memberOpt.get();
 
-		String newAccessToken = tokenService.createAccessToken(member.getProviderId());
-		String newRefreshToken = tokenService.createRefreshToken(providerId);
+		String newAccessToken = tokenService.createAccessToken(member.getProviderId(), registrationId);
+		String newRefreshToken = tokenService.createRefreshToken(providerId ,registrationId);
+
+		logger.info("New access token: " + newAccessToken);
 
 		Cookie accessCookie = CookieUtil.createAccessCookie(newAccessToken, false);
 		response.addCookie(accessCookie);
 
 		Cookie refreshCookie = CookieUtil.createRefreshCookie(newRefreshToken, false);
 		response.addCookie(refreshCookie);
+
+		logger.info("New refresh token: " + newRefreshToken);
 
 		return ResponseEntity.ok(Map.of("message", "Token refreshed"));
 	}

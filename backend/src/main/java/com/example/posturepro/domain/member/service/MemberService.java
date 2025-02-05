@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import com.example.posturepro.domain.member.Gender;
@@ -50,7 +52,7 @@ public class MemberService {
 	}
 
 	@Transactional
-	public SignUpToken signUpToken(String providerId, SignUpRequest signUpRequest) {
+	public SignUpToken signUpToken(String providerId, String registrationId, SignUpRequest signUpRequest) {
 		Member newMember = createMember(
 			providerId,
 			signUpRequest.getName(),
@@ -59,9 +61,8 @@ public class MemberService {
 			signUpRequest.getGender()
 		);
 
-		String jwtAccessToken = tokenService.createAccessToken(newMember.getProviderId());
-		String jwtRefreshToken = tokenService.createRefreshToken(newMember.getProviderId()
-		);
+		String jwtAccessToken = tokenService.createAccessToken(newMember.getProviderId(), registrationId);
+		String jwtRefreshToken = tokenService.createRefreshToken(newMember.getProviderId(), registrationId);
 
 		return new SignUpToken(newMember,jwtAccessToken,jwtRefreshToken);
 	}

@@ -34,26 +34,27 @@ public class JwtUtil {
 		this.TEMP_TOKEN_EXPIRATION = tempTokenExpiration;
 	}
 
-	private String generateToken(String userId, long expirationMillis) {
+	private String generateToken(String userId, long expirationMillis, String registrationId) {
 		long now =  System.currentTimeMillis();
 		return Jwts.builder()
 			.setSubject(userId)
+			.claim("registrationId", registrationId)
 			.setIssuedAt(new Date(now))
 			.setExpiration(new Date(now+expirationMillis))
 			.signWith(key, SignatureAlgorithm.HS256)
 			.compact();
 	}
 
-	public String generateAccessToken(String userId) {
-		return generateToken(userId, ACCESS_TOKEN_EXPIRATION);
+	public String generateAccessToken(String userId, String registrationId) {
+		return generateToken(userId, ACCESS_TOKEN_EXPIRATION, registrationId);
 	}
 
-	public String generateRefreshToken(String userId) {
-		return generateToken(userId, REFRESH_TOKEN_EXPIRATION);
+	public String generateRefreshToken(String userId, String registrationId) {
+		return generateToken(userId, REFRESH_TOKEN_EXPIRATION, registrationId);
 	}
 
-	public String generateTempToken(String userId) {
-		return generateToken(userId, TEMP_TOKEN_EXPIRATION);
+	public String generateTempToken(String userId, String registrationId) {
+		return generateToken(userId, TEMP_TOKEN_EXPIRATION, registrationId);
 	}
 
 	public Claims parseToken(String token) {

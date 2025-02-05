@@ -66,9 +66,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
 		Member member = memberService.findByProviderId(providerId).orElse(null);
 		if (member != null) {
-			onMemberLogin(member, response);
+			onMemberLogin(member, registrationId, response);
 		} else {
-			onNewMember(providerId, response);
+			onNewMember(providerId, registrationId, response);
 		}
 	}
 
@@ -94,9 +94,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		return providerId.toString();
 	}
 
-	private void onMemberLogin(Member member, HttpServletResponse response) throws IOException {
-		String jwtAccessToken = tokenService.createAccessToken(member.getProviderId());
-		String jwtRefreshToken = tokenService.createRefreshToken(member.getProviderId());
+	private void onMemberLogin(Member member, String registrationId, HttpServletResponse response) throws IOException {
+		String jwtAccessToken = tokenService.createAccessToken(member.getProviderId(), registrationId);
+		String jwtRefreshToken = tokenService.createRefreshToken(member.getProviderId(), registrationId);
 
 		Cookie accessCookie = CookieUtil.createAccessCookie(jwtAccessToken, false);
 		response.addCookie(accessCookie);
@@ -105,12 +105,12 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 			Cookie refreshCookie = CookieUtil.createRefreshCookie(jwtRefreshToken, false);
 			response.addCookie(refreshCookie);
 		}
-
+		logger.info("New refresh token: {}", jwtRefreshToken);
 		response.sendRedirect("http://localhost:5173/");
 	}
 
-	private void onNewMember(String providerId, HttpServletResponse response) throws IOException {
-		String tempToken = jwtUtil.generateTempToken(providerId);
+	private void onNewMember(String providerId, String registrationId, HttpServletResponse response) throws IOException {
+		String tempToken = jwtUtil.generateTempToken(providerId ,registrationId);
 		Cookie tempCookie = CookieUtil.createTempCookie(tempToken, false);
 		response.addCookie(tempCookie);
 		response.sendRedirect("http://localhost:5173/sign-up");

@@ -3,6 +3,8 @@ package com.example.posturepro.domain.member.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,14 +38,17 @@ public class MemberController {
 	@PostMapping("/signup")
 	public ResponseEntity<?> signUp(@RequestBody @Valid SignUpRequest signUpRequest,
 		HttpServletRequest request,
-		HttpServletResponse response) {
+		HttpServletResponse response,
+		Authentication authentication) {
 		String providerId = extractAndValidateTempToken(request);
+		OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
+		String registrationId = oauthToken.getAuthorizedClientRegistrationId();
 		if (providerId == null) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효한 인증 정보가 없습니다. 다시 로그인해주세요.");
 		}
 
 		try {
-			SignUpToken result = memberService.signUpToken(providerId, signUpRequest);
+			SignUpToken result = memberService.signUpToken(providerId, registrationId, signUpRequest);
 
 			Cookie accessCookie = CookieUtil.createAccessCookie(result.getAccessToken(),false);
 			response.addCookie(accessCookie);

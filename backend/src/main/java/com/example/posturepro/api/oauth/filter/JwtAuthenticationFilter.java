@@ -10,6 +10,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -46,7 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		if (request.getCookies() == null) return null;
 
 		for (Cookie cookie : request.getCookies()) {
-			if ("access_token".equals(cookie.getName())) {
+			if ("access-token".equals(cookie.getName())) {
 				return cookie.getValue();
 			}
 		}
