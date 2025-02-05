@@ -35,9 +35,10 @@ const WebCam = () => {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [elapsedTime, setElapsedTime] = useState(0);
 
-  const { startConnection, sendMessage, receivedData } = useWebRTC({
-    serverUrl: "ws://127.0.0.1:8080/helloworld",
-  }); // TODO: serverURL 환경 변수 설정
+  const { startConnection, sendMessage, closeConnection, receivedData } =
+    useWebRTC({
+      serverUrl: "ws://127.0.0.1:8080/helloworld",
+    }); // TODO: serverURL 환경 변수 설정
 
   const setupCamera = async () => {
     const video = videoRef.current;
@@ -194,6 +195,9 @@ const WebCam = () => {
       sendMessage(landmarkStorageRef.current);
       landmarkStorageRef.current = [];
     }
+
+    // WebRTC 연결 종료
+    closeConnection();
 
     stream.getTracks().forEach((track) => track.stop());
     setStream(null);

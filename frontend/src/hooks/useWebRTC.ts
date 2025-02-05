@@ -170,6 +170,19 @@ const useWebRTC = ({ serverUrl }: useWebRTCProps) => {
     dataChannel.send(JSON.stringify(data));
   };
 
+  const closeConnection = () => {
+    peerConnectionRef.current?.close();
+    peerConnectionRef.current = null;
+
+    dataChannelRef.current?.close();
+    dataChannelRef.current = null;
+
+    signalingServerConnectionRef.current?.close();
+    signalingServerConnectionRef.current = null;
+
+    setReceivedData(null);
+  };
+
   useEffect(
     () => () => {
       peerConnectionRef.current?.close();
@@ -181,6 +194,7 @@ const useWebRTC = ({ serverUrl }: useWebRTCProps) => {
   return {
     startConnection,
     sendMessage,
+    closeConnection,
     receivedData,
   };
 };
