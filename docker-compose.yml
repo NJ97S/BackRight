@@ -1,0 +1,32 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: backend
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend
+    networks:
+      - app-network
+
+  proxy:
+    build:
+      context: ./nginx
+    container_name: proxy
+    ports:
+      - "443:443"
+      - "80:80"
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - app-network
+    env_file:
+      - ./nginx/.env
+networks:
+  app-network:
+    driver: bridge

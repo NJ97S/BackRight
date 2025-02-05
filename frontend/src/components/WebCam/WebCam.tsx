@@ -37,7 +37,7 @@ const WebCam = () => {
 
   const { startConnection, sendMessage, closeConnection, receivedData } =
     useWebRTC({
-      serverUrl: "ws://127.0.0.1:8080/helloworld",
+      serverUrl: "wss://i12a601.p.ssafy.io/api/helloworld",
     }); // TODO: serverURL 환경 변수 설정
 
   const setupCamera = async () => {
