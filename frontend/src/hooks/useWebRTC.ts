@@ -64,13 +64,14 @@ const useWebRTC = ({ serverUrl }: useWebRTCProps) => {
   const createPeerConnection = () => {
     const pc = new RTCPeerConnection({
       iceServers: [
-        { urls: "stun:stun.l.google.com:19302" },
+        // { urls: "stun:stun.l.google.com:19302" },
         {
-          urls: "turn:localhost:3478",
-          username: "user",
+          urls: "turn:i12a601.p.ssafy.io:3478",
+          username: "username",
           credential: "password",
         },
       ],
+      iceTransportPolicy: "relay",
     });
 
     pc.onnegotiationneeded = sendOffer;
@@ -170,6 +171,19 @@ const useWebRTC = ({ serverUrl }: useWebRTCProps) => {
     dataChannel.send(JSON.stringify(data));
   };
 
+  const closeConnection = () => {
+    peerConnectionRef.current?.close();
+    peerConnectionRef.current = null;
+
+    dataChannelRef.current?.close();
+    dataChannelRef.current = null;
+
+    signalingServerConnectionRef.current?.close();
+    signalingServerConnectionRef.current = null;
+
+    setReceivedData(null);
+  };
+
   useEffect(
     () => () => {
       peerConnectionRef.current?.close();
@@ -181,6 +195,7 @@ const useWebRTC = ({ serverUrl }: useWebRTCProps) => {
   return {
     startConnection,
     sendMessage,
+    closeConnection,
     receivedData,
   };
 };

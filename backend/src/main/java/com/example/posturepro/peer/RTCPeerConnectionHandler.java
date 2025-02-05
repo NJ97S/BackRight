@@ -25,6 +25,7 @@ import dev.onvoid.webrtc.RTCDataChannelObserver;
 import dev.onvoid.webrtc.RTCIceCandidate;
 import dev.onvoid.webrtc.RTCIceConnectionState;
 import dev.onvoid.webrtc.RTCIceServer;
+import dev.onvoid.webrtc.RTCIceTransportPolicy;
 import dev.onvoid.webrtc.RTCPeerConnection;
 import dev.onvoid.webrtc.RTCSessionDescription;
 
@@ -48,10 +49,12 @@ public class RTCPeerConnectionHandler implements PeerConnectionObserver {
 		this.logger = logger;
 		RTCConfiguration config = new RTCConfiguration();
 		RTCIceServer iceServer = new RTCIceServer();
-		iceServer.urls.add("stun:stun.l.google.com:19302");
-		iceServer.urls.add("turn:localhost:3478");
+		// iceServer.urls.add("stun:stun.l.google.com:19302");
+		iceServer.urls.add("turn:i12a601.p.ssafy.io:3478");
 		iceServer.username = "username";
 		iceServer.password = "password";
+		config.iceTransportPolicy = RTCIceTransportPolicy.RELAY;
+
 		config.iceServers.add(iceServer);
 
 		localPeerConnection = factory.createPeerConnection(config, this);

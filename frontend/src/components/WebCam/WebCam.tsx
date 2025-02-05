@@ -12,11 +12,16 @@ import {
 
 import useWebRTC from "../../hooks/useWebRTC";
 
+import formatTime from "../../utils/formatTime";
+import {
+  ERROR_CONNECTIONS,
+  ERROR_POINTS,
+} from "../../constants/errorConnections";
+
 import * as S from "./WebCamStyle";
 
 import recordingIcon from "../../assets/icons/recording.svg";
 import recordingStopIcon from "../../assets/icons/recording-stop.svg";
-import formatTime from "../../utils/formatTime";
 
 const WebCam = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -24,14 +29,16 @@ const WebCam = () => {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const landmarkStorageRef = useRef<Landmark[][]>([]);
   const lastVideoTime = useRef(-1);
+  const problemCode = useRef(0);
 
   const [landmarker, setLandmarker] = useState<PoseLandmarker | null>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [elapsedTime, setElapsedTime] = useState(0);
 
-  const { startConnection, sendMessage, receivedData } = useWebRTC({
-    serverUrl: "ws://127.0.0.1:8080/helloworld",
-  }); // TODO: serverURL 환경 변수 설정
+  const { startConnection, sendMessage, closeConnection, receivedData } =
+    useWebRTC({
+      serverUrl: "wss://i12a601.p.ssafy.io/api/helloworld",
+    }); // TODO: serverURL 환경 변수 설정
 
   const setupCamera = async () => {
     const video = videoRef.current;
@@ -102,6 +109,25 @@ const WebCam = () => {
         color: "#00FF09",
         lineWidth: 2,
       });
+
+      // 경고 받은 부위 빨간색으로 표시
+      if (problemCode.current === 0) return;
+
+      ERROR_POINTS[problemCode.current].forEach((point) => {
+        drawingUtils.drawLandmarks([landmark[point]], {
+          radius: 4,
+          color: "#FF0000",
+        });
+      });
+
+      drawingUtils.drawConnectors(
+        landmark,
+        ERROR_CONNECTIONS[problemCode.current],
+        {
+          color: "#FF0000",
+          lineWidth: 2,
+        }
+      );
     }
 
     canvasContext.restore();
@@ -170,6 +196,9 @@ const WebCam = () => {
       landmarkStorageRef.current = [];
     }
 
+    // WebRTC 연결 종료
+    closeConnection();
+
     stream.getTracks().forEach((track) => track.stop());
     setStream(null);
 
@@ -196,6 +225,12 @@ const WebCam = () => {
   useEffect(() => {
     if (landmarker) detectPose();
   }, [landmarker, detectPose]);
+
+  useEffect(() => {
+    if (!receivedData) return;
+
+    problemCode.current = receivedData.problemCode;
+  }, [receivedData]);
 
   return (
     <S.WebCamContainer>
