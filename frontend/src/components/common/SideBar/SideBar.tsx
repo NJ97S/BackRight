@@ -30,13 +30,13 @@ const SideBar = ({ isExpanded }: SideBarProps) => {
   return (
     <S.SideBarContainer isExpanded={isExpanded}>
       <S.ImageContainer isExpanded={isExpanded}>
-        <S.IconLink to="#" isExpanded={isExpanded}>
+        <S.IconLink to="/" isExpanded={isExpanded}>
           <S.Icon src={recordIcon} alt="자세분석" />
           <S.LinkName isExpanded={isExpanded}>자세 분석</S.LinkName>
         </S.IconLink>
 
         <S.ReportMenuContainer>
-          <S.IconLink to="#" onClick={handleReportIconClick} isExpanded={isExpanded}>
+          <S.IconLink to="/report" onClick={handleReportIconClick} isExpanded={isExpanded}>
             <S.Icon src={reportIcon} alt="보고서" />
             <S.LinkName isExpanded={isExpanded}>보고서</S.LinkName>
             <S.ArrowIcon src={arrowIcon} isExpanded={isExpanded} isReportMenuOpened={isReportMenuOpened} />
@@ -51,18 +51,18 @@ const SideBar = ({ isExpanded }: SideBarProps) => {
           </S.SubMenuContainer>
         </S.ReportMenuContainer>
 
-        <S.IconLink to="#" isExpanded={isExpanded}>
+        <S.IconLink to="/profile" isExpanded={isExpanded}>
           <S.Icon src={myPageIcon} alt="마이페이지" />
           <S.LinkName isExpanded={isExpanded}>마이페이지</S.LinkName>
         </S.IconLink>
       </S.ImageContainer>
 
       <S.ImageContainer isExpanded={isExpanded}>
-        <S.IconLink to="#" isExpanded={isExpanded}>
+        <S.IconLink to="/setting" isExpanded={isExpanded}>
           <S.Icon src={settingIcon} alt="환경설정" />
           <S.LinkName isExpanded={isExpanded}>환경설정</S.LinkName>
         </S.IconLink>
-        <S.IconLink to="#" isExpanded={isExpanded}>
+        <S.IconLink to="/help" isExpanded={isExpanded}>
           <S.Icon src={helpIcon} alt="도움말" />
           <S.LinkName isExpanded={isExpanded}>도움말</S.LinkName>
         </S.IconLink>

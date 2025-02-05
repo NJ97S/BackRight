@@ -17,7 +17,7 @@ const Header = ({ onToggleSideBar }: HeaderProps) => (
       <S.IconLink to="#">
         <S.Icon src={bellIcon} alt="알림 아이콘" />
       </S.IconLink>
-      <S.IconLink to="#">
+      <S.IconLink to="/profile">
         <S.ProfileImage />
       </S.IconLink>
     </S.SideContainer>
