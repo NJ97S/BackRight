@@ -48,10 +48,12 @@ public class RTCPeerConnectionHandler implements PeerConnectionObserver {
 		this.logger = logger;
 		RTCConfiguration config = new RTCConfiguration();
 		RTCIceServer iceServer = new RTCIceServer();
-		iceServer.urls.add("stun:stun.l.google.com:19302");
+		// iceServer.urls.add("stun:stun.l.google.com:19302");
 		iceServer.urls.add("turn:i12a601.p.ssafy.io:3478");
 		iceServer.username = "username";
 		iceServer.password = "password";
+		config.iceTransportPolicy = RTCIceTransportPolicy.RELAY;
+
 		config.iceServers.add(iceServer);
 
 		localPeerConnection = factory.createPeerConnection(config, this);
