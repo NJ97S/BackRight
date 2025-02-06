@@ -20,6 +20,7 @@ dist-electon/*
 release/*
 .idea
 .DS_Store
+.env.*
 *.suo
 *.ntvs*
 *.njsproj

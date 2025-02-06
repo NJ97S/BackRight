@@ -23,6 +23,8 @@ import * as S from "./WebCamStyle";
 import recordingIcon from "../../assets/icons/recording.svg";
 import recordingStopIcon from "../../assets/icons/recording-stop.svg";
 
+const WEBSOCKET_URL = import.meta.env.VITE_WEBSOCKET_URL;
+
 const WebCam = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -37,8 +39,8 @@ const WebCam = () => {
 
   const { startConnection, sendMessage, closeConnection, receivedData } =
     useWebRTC({
-      serverUrl: "wss://i12a601.p.ssafy.io/api/helloworld",
-    }); // TODO: serverURL 환경 변수 설정
+      serverUrl: WEBSOCKET_URL,
+    });
 
   const setupCamera = async () => {
     const video = videoRef.current;

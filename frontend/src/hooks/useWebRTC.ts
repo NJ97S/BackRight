@@ -64,14 +64,13 @@ const useWebRTC = ({ serverUrl }: useWebRTCProps) => {
   const createPeerConnection = () => {
     const pc = new RTCPeerConnection({
       iceServers: [
-        // { urls: "stun:stun.l.google.com:19302" },
+        // urls: "stun:stun.l.google.com:19302",
         {
           urls: "turn:i12a601.p.ssafy.io:3478",
           username: "username",
           credential: "password",
         },
       ],
-      iceTransportPolicy: "relay",
     });
 
     pc.onnegotiationneeded = sendOffer;
