@@ -1,5 +1,6 @@
 package com.example.posturepro.pose;
 
+import com.example.posturepro.detection.entity.DetectionType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -7,15 +8,15 @@ import lombok.Data;
 
 @Data
 public class PoseResponse {
-	boolean initialSet;
-	boolean detected;
-	String videoUrl;
-	int problemCode;    // neck = 1<<3, left shoulder = 1<<2, right shoulder = 1<<1, back = 1
+	private boolean initialSet;
+	private boolean detected;
+	private String videoUrl;
+	private PostureStatus postureStatus;
 
 	public PoseResponse() {
 		initialSet = true;
 		detected = false;
-		problemCode = 0;
+		this.postureStatus = new PostureStatus();
 	}
 
 	public String JSONString() {
@@ -23,25 +24,29 @@ public class PoseResponse {
 		try {
 			return objectMapper.writeValueAsString(this);
 		} catch (JsonProcessingException e) {
-
+			e.printStackTrace();
 			return "{}";  // 오류 발생 시 빈 JSON 반환
 		}
 	}
 
-	public void addError(int errorCode) {
-		switch (errorCode) {
-			case 0: // neck
-				problemCode += 1 << 3;
-				break;
-			case 1: // left shoulder
-				problemCode += 1 << 2;
-				break;
-			case 2: // right shoulder
-				problemCode += 1 << 1;
-				break;
-			case 3: // back
-				problemCode += 1;
-				break;
+	public void markDetection(DetectionType detectionEnum) {
+		postureStatus.markDetection(detectionEnum);
+	}
+
+	@Data
+	private static class PostureStatus {
+		private boolean neck = true;
+		private boolean leftShoulder = true;
+		private boolean rightShoulder = true;
+		private boolean back = true;
+
+		public void markDetection(DetectionType detectionEnum) {
+			switch (detectionEnum) {
+				case NECK -> neck = false;
+				case LEFT_SHOULDER -> leftShoulder = false;
+				case RIGHT_SHOULDER -> rightShoulder = false;
+				case BACK -> back = false;
+			}
 		}
 	}
 }

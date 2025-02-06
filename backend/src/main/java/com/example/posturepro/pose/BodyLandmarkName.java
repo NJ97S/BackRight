@@ -1,0 +1,17 @@
+package com.example.posturepro.pose;
+
+public enum BodyLandmarkName {
+	NOSE,
+	LEFT_EYE_INNER,
+	LEFT_EYE,
+	LEFT_EYE_OUTER,
+	RIGHT_EYE_INNER,
+	RIGHT_EYE,
+	RIGHT_EYE_OUTER,
+	LEFT_EAR,
+	RIGHT_EAR,
+	MOUTH_LEFT,
+	MOUTH_RIGHT,
+	LEFT_SHOULDER,
+	RIGHT_SHOULDER
+}

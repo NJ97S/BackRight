@@ -12,7 +12,8 @@ import org.slf4j.Logger;
 
 import com.example.posturepro.peer.observer.CreateDescriptionObserver;
 import com.example.posturepro.peer.observer.SetDescriptionObserver;
-import com.example.posturepro.pose.PoseDataProcessor;
+import com.example.posturepro.pose.PoseAnalyzer;
+import com.example.posturepro.pose.PoseAnalyzerFactory;
 import com.example.posturepro.signaling.IceCandidateListener;
 
 import dev.onvoid.webrtc.PeerConnectionFactory;
@@ -40,10 +41,10 @@ public class RTCPeerConnectionHandler implements PeerConnectionObserver {
 	private final IceCandidateListener listener;
 
 	private final Logger logger;
-	private final PoseDataProcessor poseDataProcessor;
+	private final PoseAnalyzer poseAnalyzer;
 
 	public RTCPeerConnectionHandler(PeerConnectionFactory factory, String sessionId, IceCandidateListener listener,
-		Logger logger) {
+		Logger logger, PoseAnalyzerFactory poseAnalyzerFactory) {
 		this.sessionId = sessionId;
 		this.listener = listener;
 		this.logger = logger;
@@ -58,7 +59,7 @@ public class RTCPeerConnectionHandler implements PeerConnectionObserver {
 
 		localPeerConnection = factory.createPeerConnection(config, this);
 
-		poseDataProcessor = new PoseDataProcessor();
+		this.poseAnalyzer = poseAnalyzerFactory.create();
 		receivedTexts = new ArrayList<>();
 	}
 
@@ -102,12 +103,12 @@ public class RTCPeerConnectionHandler implements PeerConnectionObserver {
 
 			@Override
 			public void onMessage(RTCDataChannelBuffer buffer) {
+
+				String receivedText = decodeMessage(buffer);
+				String sendingText = poseAnalyzer.analyzePoseDataProcess(receivedText);
 				try {
-					String receivedText = decodeMessage(buffer);
 					// String sendingText = "Received Message" + receivedText;
 					// logger.info(sendingText);
-
-					String sendingText = poseDataProcessor.processPoseData(receivedText);
 
 					sendTextMessage(sendingText);
 				} catch (Exception e) {
