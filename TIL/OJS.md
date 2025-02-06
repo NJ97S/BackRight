@@ -350,3 +350,18 @@
 - 여전히 정확한 이유는 파악하지 못했지만 relay만으로 TURN이 되도록 구현했을 때 연결 설립이 불안정한 것으로 보인다.
 - IceTranspolicy를 ALL로 두고 TURN 서버 설정을 해두면 일단은 문제없이 작동하는 것으로 보인다.
 - 매우 답답하다...
+
+## 2025-02-06
+
+### Pose 처리 관련 의존성 관리
+
+- Pose를 분석하는 객체가 분석 세션, 탐지의 시작과 종료를 담당할 Service들을 의존해야한다.
+- 이 의존성을 주입시켜주기 위해서는 의존성이 Signaling Handler까지 전파된다.
+- Factory 패턴을 사용하면 Factory는 SessionService와 DetectionService를 의존하지만 SignalingHandler는 그렇지 않다.
+- 여전히 뭔가 좀 의존 관계가 깔끔해보이지 않는다.
+
+### .sh 파일의 EOL 처리
+
+- certbot-renew.sh 파일이 다른 팀원이 로컬에서 docker compose up 했을 때 not found라고 나오는 이슈가 있었다.
+- not found라고 하지만 exec로 직접 들어가서 확인하면 파일은 있었다.
+- 정확한 이유를 알아보니 Windows에서 저장된 파일이 CRLF로 저장되어 linux 환경에서 제대로 인식되지 않아서 발생한 문제였다.
