@@ -53,7 +53,6 @@ public class RTCPeerConnectionHandler implements PeerConnectionObserver {
 		iceServer.urls.add("turn:i12a601.p.ssafy.io:3478");
 		iceServer.username = "username";
 		iceServer.password = "password";
-		config.iceTransportPolicy = RTCIceTransportPolicy.RELAY;
 
 		config.iceServers.add(iceServer);
 

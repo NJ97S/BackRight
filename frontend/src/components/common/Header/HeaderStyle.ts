@@ -15,6 +15,11 @@ export const HeaderContainer = styled.div`
   box-shadow: rgba(0, 0, 0, 0.24) 0px 2px 4px;
 `;
 
+export const IconButton = styled.button`
+  width: 2rem;
+  height: 2rem;
+`;
+
 export const IconLink = styled(Link)`
   width: 2rem;
   height: 2rem;
