@@ -1,8 +1,7 @@
 package com.example.posturepro.api.oauth.controller;
 
-import com.example.posturepro.api.oauth.handler.CustomAuthenticationSuccessHandler;
+import com.example.posturepro.api.oauth.dto.RefreshTokenResponse;
 import com.example.posturepro.api.oauth.utils.CookieUtil;
-import com.example.posturepro.api.oauth.utils.JwtUtil;
 import com.example.posturepro.domain.member.Member;
 import com.example.posturepro.domain.member.service.MemberService;
 import com.example.posturepro.api.oauth.service.TokenService;
@@ -26,40 +25,40 @@ public class OAuth2Controller {
 
 	private final MemberService memberService;
 	private final TokenService tokenService;
-	private static final Logger logger = LoggerFactory.getLogger(CustomAuthenticationSuccessHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(OAuth2Controller.class);
 
 	public OAuth2Controller(MemberService memberService, TokenService tokenService) {
-
 		this.memberService = memberService;
 		this.tokenService = tokenService;
 	}
 
 	@PostMapping("/refresh-token")
-	public ResponseEntity<?> refreshToken(@CookieValue Map<String, String> tokens, HttpServletResponse response, Authentication authentication) {
+	public ResponseEntity<RefreshTokenResponse> refreshToken(@CookieValue Map<String, String> tokens,
+		HttpServletResponse response, Authentication authentication) {
 		String refreshToken = tokens.get("refresh-token");
 		OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
 		String registrationId = oauthToken.getAuthorizedClientRegistrationId();
 
-
 		if (refreshToken == null || refreshToken.isEmpty()) {
-			return ResponseEntity.badRequest().body("Refresh token is missing");
+			return ResponseEntity.badRequest().body(new RefreshTokenResponse("Refresh token is missing", null, null));
 		}
 		if (!tokenService.validateToken(refreshToken)) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new RefreshTokenResponse("Invalid refresh token", null, null));
 		}
 
 		String providerId = tokenService.getUserIdFromToken(refreshToken);
-
 		Optional<Member> memberOpt = memberService.findByProviderId(providerId);
-		if (!memberOpt.isPresent()) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
-		}
-		Member member = memberOpt.get();
 
+		if (!memberOpt.isPresent()) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new RefreshTokenResponse("User not found", null, null));
+		}
+
+		Member member = memberOpt.get();
 		String newAccessToken = tokenService.createAccessToken(member.getProviderId(), registrationId);
-		String newRefreshToken = tokenService.createRefreshToken(providerId ,registrationId);
+		String newRefreshToken = tokenService.createRefreshToken(providerId, registrationId);
 
 		logger.info("New access token: " + newAccessToken);
+		logger.info("New refresh token: " + newRefreshToken);
 
 		Cookie accessCookie = CookieUtil.createAccessCookie(newAccessToken, false);
 		response.addCookie(accessCookie);
@@ -67,9 +66,6 @@ public class OAuth2Controller {
 		Cookie refreshCookie = CookieUtil.createRefreshCookie(newRefreshToken, false);
 		response.addCookie(refreshCookie);
 
-		logger.info("New refresh token: " + newRefreshToken);
-
-		return ResponseEntity.ok(Map.of("message", "Token refreshed"));
+		return ResponseEntity.ok(new RefreshTokenResponse("Token refreshed", newAccessToken, newRefreshToken));
 	}
-
 }

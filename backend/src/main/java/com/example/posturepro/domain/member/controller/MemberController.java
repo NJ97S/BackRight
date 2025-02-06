@@ -15,6 +15,7 @@ import com.example.posturepro.domain.member.service.MemberService;
 import com.example.posturepro.domain.member.Member;
 import com.example.posturepro.dto.SignUpRequest;
 import com.example.posturepro.api.oauth.service.TokenService;
+import com.example.posturepro.dto.SignUpResponse;
 import com.example.posturepro.dto.SignUpToken;
 
 import jakarta.servlet.http.Cookie;
@@ -36,7 +37,7 @@ public class MemberController {
 	}
 
 	@PostMapping("/signup")
-	public ResponseEntity<?> signUp(@RequestBody @Valid SignUpRequest signUpRequest,
+	public ResponseEntity<SignUpResponse> signUp(@RequestBody @Valid SignUpRequest signUpRequest,
 		HttpServletRequest request,
 		HttpServletResponse response,
 		Authentication authentication) {
@@ -44,7 +45,8 @@ public class MemberController {
 		OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
 		String registrationId = oauthToken.getAuthorizedClientRegistrationId();
 		if (providerId == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("유효한 인증 정보가 없습니다. 다시 로그인해주세요.");
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+				.body(new SignUpResponse("유효한 인증 정보가 없습니다. 다시 로그인해주세요.", null, null));
 		}
 
 		try {
@@ -61,11 +63,12 @@ public class MemberController {
 			Cookie tempCookie = CookieUtil.deleteCookie("temp-token", false, "/", "Strict");
 			response.addCookie(tempCookie);
 
-			return ResponseEntity.ok("회원 가입이 완료되었습니다.");
+			return ResponseEntity.ok(new SignUpResponse("회원 가입이 완료되었습니다.", result.getAccessToken(), result.getRefreshToken()));
 		} catch (IllegalArgumentException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
+			return ResponseEntity.badRequest().body(new SignUpResponse(e.getMessage(), null, null));
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원 가입에 실패했습니다.");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body(new SignUpResponse("회원 가입에 실패했습니다.", null, null));
 		}
 	}
 
