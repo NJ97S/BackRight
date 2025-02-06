@@ -799,3 +799,59 @@ Python의 타입 힌트는 동적 타이핑 언어인 Python에 정적 타입 �
 - 정기적인 코드 리뷰 시간 배정
 
 이러한 방법들을 통해 코드 리뷰는 팀의 생산성과 코드 품질을 높이는 효과적인 도구가 될 수 있습니다.
+
+## 📅 날짜
+
+### 2025-02-04
+
+### ✏️ 오늘 한 거:
+
+#### .env 파일과 환경별 Path 설정 관리
+
+##### 1. .env 파일의 기본 구성요소
+- API 키 및 시크릿 (예: KAKAO_API_KEY)
+- 데이터베이스 접속 정보
+- 서버 포트 설정
+- 환경 구분자 (NODE_ENV)
+- 경로(path) 설정값
+
+##### 2. Path 설정 방법
+1. **기본 구조**
+```javascript
+paths: {
+    uploads: process.env.NODE_ENV === 'production' 
+      ? '/var/www/uploads'  // 프로덕션 경로
+      : './uploads',        // 개발 환경 경로
+}
+```
+
+2. **주요 path 종류**
+- uploads: 파일 업로드 저장 경로
+- static: 정적 파일 경로 (이미지, CSS, JS)
+- logs: 로그 파일 저장 경로
+- views: 템플릿 파일 경로
+- temp: 임시 파일 저장 경로
+
+##### 3. 환경별 관리 방법
+1. **환경별 .env 파일 분리**
+```plaintext
+.env.development
+.env.production
+.env.test
+```
+
+2. **설정 관리 도구**
+- node-config: 환경별 설정을 JSON/YAML로 관리
+- dotenv-flow: 다중 .env 파일 자동 로드
+
+##### 4. 주의사항
+- path.join 또는 path.resolve 사용으로 운영체제 호환성 확보
+- 민감한 정보는 반드시 .gitignore에 포함
+- 환경별 기본값 설정 필요
+
+##### 5. 장점
+- 환경에 따른 자동 경로 전환
+- 하드코딩 제거로 유지보수성 향상
+- 중앙화된 경로 관리
+- 배포 환경 변경 시 설정 파일만 수정
+
