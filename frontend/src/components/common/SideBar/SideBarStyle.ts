@@ -70,7 +70,8 @@ export const ReportMenuContainer = styled.div`
 `;
 
 export const ArrowIcon = styled.img.withConfig({
-  shouldForwardProp: (prop) => prop !== "isReportMenuOpened" && prop !== "isExpanded",
+  shouldForwardProp: (prop) =>
+    prop !== "isReportMenuOpened" && prop !== "isExpanded",
 })<ArrowDownIconProps>`
   position: absolute;
   right: 0;
@@ -79,19 +80,26 @@ export const ArrowIcon = styled.img.withConfig({
 
   opacity: ${({ isExpanded }) => (isExpanded ? 1 : 0)};
   visibility: ${({ isExpanded }) => (isExpanded ? "visible" : "hidden")};
-  transform: ${({ isReportMenuOpened }) => (isReportMenuOpened ? "rotate(180deg)" : "rotate(0)")};
-  transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out, transform 0.3s ease-in-out;
+  transform: ${({ isReportMenuOpened }) =>
+    isReportMenuOpened ? "rotate(180deg)" : "rotate(0)"};
+  transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out,
+    transform 0.3s ease-in-out;
   ${({ isExpanded }) => !isExpanded && "transition: none;"}
 `;
 
+interface SubMenuContainerProps {
+  isReportMenuOpened: boolean;
+}
+
 export const SubMenuContainer = styled.div.withConfig({
   shouldForwardProp: (prop) => prop !== "isReportMenuOpened",
-})<ArrowDownIconProps>`
+})<SubMenuContainerProps>`
   display: flex;
   flex-direction: column;
   gap: 1rem;
   padding-left: 0.75rem;
-  max-height: ${({ isReportMenuOpened }) => (isReportMenuOpened ? "10rem" : "0")};
+  max-height: ${({ isReportMenuOpened }) =>
+    isReportMenuOpened ? "10rem" : "0"};
 
   opacity: ${({ isReportMenuOpened }) => (isReportMenuOpened ? 1 : 0)};
   transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;

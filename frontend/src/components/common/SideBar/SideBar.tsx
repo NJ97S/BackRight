@@ -62,10 +62,7 @@ const SideBar = ({ isExpanded }: SideBarProps) => {
               isReportMenuOpened={isReportMenuOpened}
             />
           </S.IconLink>
-          <S.SubMenuContainer
-            isExpanded={isExpanded}
-            isReportMenuOpened={isReportMenuOpened}
-          >
+          <S.SubMenuContainer isReportMenuOpened={isReportMenuOpened}>
             {SUBMENU_ITEMS.map((item) => (
               <S.SubMenuItem key={item.name} to={item.path}>
                 <S.Icon src={docsIcon} alt="문서아이콘" />
