@@ -1,4 +1,4 @@
-package com.example.posturepro.api.s3.service;
+package com.example.posturepro.api.s3.component;
 
 import java.net.URL;
 import java.time.Duration;
@@ -7,13 +7,13 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
-@Service
-public class S3Service {
+@Component
+public class S3Component {
 
 	private final S3Presigner presigner;
 
@@ -23,16 +23,15 @@ public class S3Service {
 	@Value("${cloud.aws.s3.profileimg-bucket}")
 	private String profileImgBucket;
 
-	public S3Service(S3Presigner presigner) {
+	public S3Component(S3Presigner presigner) {
 		this.presigner = presigner;
 	}
 
-	public Map<String, String> generatePreSignedUrl(String videoFileName, String profileImgFileName) {
+	public Map<String, String> generatePreSignedUrls(String videoFileName, String profileImgFileName) {
 		Map<String, String> urls = new HashMap<>();
 
-		// 영상용 url 생성
-		if(videoFileName != null && !videoFileName.isEmpty()) {
-			String videoKey = "uploads/video/" + UUID.randomUUID() + "_" + videoFileName;
+		if (videoFileName != null && !videoFileName.isEmpty()) {
+			String videoKey = "uploads/videos/" + UUID.randomUUID() + "_" + videoFileName;
 			URL videoPreSignedUrl = presigner.presignPutObject(PutObjectPresignRequest.builder()
 				.signatureDuration(Duration.ofMinutes(10))
 				.putObjectRequest(req -> req.bucket(videoBucket).key(videoKey).contentType("video/mp4"))
@@ -42,9 +41,8 @@ public class S3Service {
 			urls.put("videoKey", videoKey);
 		}
 
-		// 프로필 이미지용 url 생성
-		if(profileImgFileName != null && !profileImgFileName.isEmpty()) {
-			String profileImgKey = "uploads/profileImg/" + UUID.randomUUID() + "_" + profileImgFileName;
+		if (profileImgFileName != null && !profileImgFileName.isEmpty()) {
+			String profileImgKey = "uploads/profile/" + UUID.randomUUID() + "_" + profileImgFileName;
 			URL profileImgPreSignedUrl = presigner.presignPutObject(PutObjectPresignRequest.builder()
 				.signatureDuration(Duration.ofMinutes(10))
 				.putObjectRequest(req -> req.bucket(profileImgBucket).key(profileImgKey).contentType("image/jpeg"))
