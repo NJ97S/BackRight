@@ -121,6 +121,9 @@ fabric.properties
 # Log file
 *.log
 
+# 환경 변수 파일
+.env
+
 # BlueJ files
 *.ctxt
 
