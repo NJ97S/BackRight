@@ -6,10 +6,14 @@ import SettingPage from "./pages/SettingPage/SettingPage";
 import HelpPage from "./pages/HelpPage/HelpPage";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import ReportPage from "./pages/ReportPage/ReportPage";
+import SignInPage from "./pages/SignInPage/SignInPage";
+import SignUpPage from "./pages/SignUpPage/SignUpPage";
 
 const Router = () => (
   <BrowserRouter>
     <Routes>
+      <Route path="sign-in" element={<SignInPage />} />
+      <Route path="sign-up" element={<SignUpPage />} />
       <Route path="/" element={<AppLayout />}>
         <Route index element={<HomePage />} />
         <Route path="report" element={<ReportPage />} />
