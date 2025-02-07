@@ -70,7 +70,7 @@ const CalendarSection: React.FC<CalendarSectionProps> = ({
           onChange={handleDateChange}
           activeStartDate={currentDate}
           showNavigation={false}
-          locale="ko-KR"
+          locale="en"
           formatDay={(_, date) => date.getDate().toString()}
         />
       </StyledCalendar>

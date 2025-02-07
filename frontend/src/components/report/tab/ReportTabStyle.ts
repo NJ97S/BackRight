@@ -1,30 +1,44 @@
+// src/components/report/tab/ReportTabStyle.ts
 import styled from "styled-components";
 
 export const TabContainer = styled.div`
-  width: 537.2px;
-  height: 44px;
-  position: absolute;
-  left: 12.59px;
-  top: 0;
+  width: 33.58rem;
+  height: 2.75rem;
+  display: flex;
+  margin-left: 1.25rem;
 `;
 
-export const TabItem = styled.div<{ isActive: boolean }>`
-  width: 167.88px;
-  height: 44px;
-  position: relative;
-  background: ${(props) => (props.isActive ? "#EEEEEE" : "#76ABAE")};
+interface TabItemProps {
+  isActive: boolean;
+}
+
+// withConfig를 사용하여 isActive prop이 DOM으로 전달되는 것을 방지
+export const TabItem = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== "isActive",
+})<TabItemProps>`
+  width: 10.49rem;
+  height: 2.75rem;
+  background: ${({ isActive }) => (isActive ? "var(--cream)" : "var(--mint)")};
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  margin-right: 1.06rem;
+  z-index: ${({ isActive }) => (isActive ? "5" : "0")};
+
+  &:last-child {
+    margin-right: 0;
+  }
 `;
 
-export const TabText = styled.div<{ isActive: boolean }>`
-  width: 77.64px;
-  height: 16.08px;
-  position: absolute;
-  left: 46.17px;
-  top: 14.39px;
-  color: ${(props) => (props.isActive ? "#76ABAE" : "#EEEEEE")};
-  font-size: 16px;
+// TabText도 마찬가지로 withConfig 적용
+export const TabText = styled.span.withConfig({
+  shouldForwardProp: (prop) => prop !== "isActive",
+})<TabItemProps>`
+  color: ${({ isActive }) => (isActive ? "var(--mint)" : "var(--cream)")};
+  font-size: 1rem;
   font-family: "Pretendard";
-  font-weight: ${(props) => (props.isActive ? "700" : "400")};
+  font-weight: ${({ isActive }) => (isActive ? "800" : "400")};
 `;
