@@ -11,6 +11,7 @@ import {
 } from "@mediapipe/tasks-vision";
 
 import useWebRTC from "../../hooks/useWebRTC";
+import useRecording from "../../hooks/useRecording";
 
 import formatTime from "../../utils/formatTime";
 import {
@@ -41,6 +42,7 @@ const WebCam = () => {
     useWebRTC({
       serverUrl: WEBSOCKET_URL,
     });
+  const { startRecording, stopRecording } = useRecording();
 
   const setupCamera = async () => {
     const video = videoRef.current;
@@ -227,6 +229,11 @@ const WebCam = () => {
   useEffect(() => {
     if (landmarker) detectPose();
   }, [landmarker, detectPose]);
+
+  useEffect(() => {
+    if (stream === null) stopRecording();
+    else startRecording(stream);
+  }, [stream]);
 
   useEffect(() => {
     if (!receivedData) return;
