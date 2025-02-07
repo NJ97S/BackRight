@@ -6,9 +6,9 @@ jwt:
 
 spring:
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: ${MYSQL_URL}
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -39,7 +39,6 @@ spring:
             scope:
               - profile_nickname
               - profile_image
-
         provider:
           naver:
             authorization-uri: https://nid.naver.com/oauth2.0/authorize
@@ -57,3 +56,4 @@ server:
   servlet:
     session:
       tracking-modes: cookie
+
