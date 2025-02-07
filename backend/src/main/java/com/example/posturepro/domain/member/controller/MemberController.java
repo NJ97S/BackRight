@@ -3,6 +3,7 @@ package com.example.posturepro.domain.member.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,9 +42,19 @@ public class MemberController {
 		HttpServletRequest request,
 		HttpServletResponse response,
 		Authentication authentication) {
+
 		String providerId = extractAndValidateTempToken(request);
-		OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
-		String registrationId = oauthToken.getAuthorizedClientRegistrationId();
+
+		// Authentication 타입 체크 후 처리
+		String registrationId = null;
+		if (authentication instanceof OAuth2AuthenticationToken oauthToken) {
+			registrationId = oauthToken.getAuthorizedClientRegistrationId();
+		} else if (authentication instanceof UsernamePasswordAuthenticationToken) {
+			// JWT 인증을 통해 접근한 경우, registrationId를 따로 설정할 수 없음
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+				.body(new SignUpResponse("OAuth2 인증이 필요합니다.", null, null));
+		}
+
 		if (providerId == null) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
 				.body(new SignUpResponse("유효한 인증 정보가 없습니다. 다시 로그인해주세요.", null, null));
@@ -52,11 +63,11 @@ public class MemberController {
 		try {
 			SignUpToken result = memberService.signUpToken(providerId, registrationId, signUpRequest);
 
-			Cookie accessCookie = CookieUtil.createAccessCookie(result.getAccessToken(),false);
+			Cookie accessCookie = CookieUtil.createAccessCookie(result.getAccessToken(), true);
 			response.addCookie(accessCookie);
 
 			if (result.getRefreshToken() != null) {
-				Cookie refreshCookie = CookieUtil.createRefreshCookie(result.getRefreshToken(),false);
+				Cookie refreshCookie = CookieUtil.createRefreshCookie(result.getRefreshToken(), false);
 				response.addCookie(refreshCookie);
 			}
 
