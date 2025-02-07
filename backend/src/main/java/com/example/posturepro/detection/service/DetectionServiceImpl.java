@@ -19,7 +19,7 @@ public class DetectionServiceImpl implements DetectionService {
 
 	@Override
 	@Transactional
-	public void insertDetection(DetectionDto detectionData, AnalyzingSession session) {
+	public void createDetection(DetectionDto detectionData, AnalyzingSession session) {
 		Detection detection = Detection.fromDto(detectionData, session);
 		detectionRepository.save(detection);
 	}

@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.example.posturepro.detection.entity.Detection;
 
 @Repository
-public interface DetectionRepository extends JpaRepository<Detection, String> {
+public interface DetectionRepository extends JpaRepository<Detection, Long> {
 
 }

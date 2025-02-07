@@ -7,5 +7,5 @@ import com.example.posturepro.detection.entity.DetectionDto;
 
 @Service
 public interface DetectionService {
-	void insertDetection(DetectionDto detectionData, AnalyzingSession session);
+	void createDetection(DetectionDto detectionData, AnalyzingSession session);
 }

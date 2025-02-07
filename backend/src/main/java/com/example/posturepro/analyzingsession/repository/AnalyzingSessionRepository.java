@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import com.example.posturepro.analyzingsession.entity.AnalyzingSession;
 
 @Repository
-public interface AnalyzingSessionRepository extends JpaRepository<AnalyzingSession, String> {
+public interface AnalyzingSessionRepository extends JpaRepository<AnalyzingSession, Long> {
 }

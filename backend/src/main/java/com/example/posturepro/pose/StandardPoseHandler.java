@@ -3,14 +3,28 @@ package com.example.posturepro.pose;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.EnumMap;
 import java.util.List;
+
+import com.example.posturepro.detection.entity.DetectionType;
 
 import lombok.Getter;
 
 public class StandardPoseHandler {
-	private final Deque<BodyLandmark[]> poseHistoryQueue;     // 최근 포즈 데이터를 유지하는 큐
-	private final BodyLandmark[] referencePose;            // 기준 포즈
 	private static final int MAX_HISTORY_SIZE = 50;        // 큐의 최대 크기
+	private static final int[] USED_LANDMARK_INDEXES = {   // 사용할 BodyLandmarkName의 인덱스 배열
+		BodyLandmarkName.NOSE.ordinal(),
+		BodyLandmarkName.LEFT_EAR.ordinal(),
+		BodyLandmarkName.RIGHT_EAR.ordinal(),
+		BodyLandmarkName.LEFT_SHOULDER.ordinal(),
+		BodyLandmarkName.RIGHT_SHOULDER.ordinal(),
+		BodyLandmarkName.LEFT_HIP.ordinal(),
+		BodyLandmarkName.RIGHT_HIP.ordinal()
+	};
+
+	private final Deque<BodyLandmark[]> poseHistoryQueue;  // 최근 포즈 데이터를 유지하는 큐
+	private final BodyLandmark[] referencePose;            // 기준 포즈
+
 	@Getter
 	private boolean isPoseSet;                             // 기준 포즈 설정 여부
 
@@ -19,14 +33,8 @@ public class StandardPoseHandler {
 		this.poseHistoryQueue = new ArrayDeque<>();
 		this.referencePose = new BodyLandmark[BodyLandmarkName.values().length];
 		this.isPoseSet = false;
+
 		resetReferencePose();
-		// // 각 BodyLandmark에 이름 설정
-		// int index = 0;
-		// for (BodyLandmarkName landmarkName : BodyLandmarkName.values()) {
-		// 	referencePose[index] = new BodyLandmark();
-		// 	referencePose[index].setName(landmarkName.name());
-		// 	index++;
-		// }
 	}
 
 	// 초기자세 초기화
@@ -76,12 +84,34 @@ public class StandardPoseHandler {
 	}
 
 	// 현재 포즈가 기준 포즈와 일치하는지 검사
-	public boolean[] isPoseMatching(BodyLandmark[] pose) {
-		boolean[] validationResults = new boolean[pose.length];
+	public EnumMap<DetectionType, Boolean> isPoseMatching(BodyLandmark[] pose) {
+		EnumMap<DetectionType, Boolean> validationResults = new EnumMap<>(DetectionType.class);
 
-		// 각 노드의 y 값 차이가 0.03을 초과하면 포즈가 기준에서 벗어났다고 판단
-		for (int i = 0; i < referencePose.length; i++) {
-			validationResults[i] = Math.abs(pose[i].y - referencePose[i].y) < 0.03;
+		// 데이터 확인용
+		// for (int i: USED_LANDMARK_INDEXES) {
+		// 	System.out.println(i+"\t- x:"+pose[i].x+"\ty:"+pose[i].y+" \tz:"+pose[i].z);
+		// }
+		// System.out.println("============================");
+
+		// 특정 노드의 y 값 차이가 0.03을 초과하면 포즈가 기준에서 벗어났다고 판단
+		// todo 로직 완성 필요 부위마다 로직을 짜야할 것 같습니다.
+		for (int index : USED_LANDMARK_INDEXES) {
+			BodyLandmarkName landmarkName = BodyLandmarkName.values()[index];
+			switch (landmarkName) {
+				case NOSE:
+					validationResults.put(DetectionType.NECK, Math.abs(pose[index].y - referencePose[index].y) < 0.03);
+					break;
+				case LEFT_SHOULDER:
+					validationResults.put(DetectionType.LEFT_SHOULDER,
+						Math.abs(pose[index].y - referencePose[index].y) < 0.03);
+					break;
+				case RIGHT_SHOULDER:
+					validationResults.put(DetectionType.RIGHT_SHOULDER,
+						Math.abs(pose[index].y - referencePose[index].y) < 0.03);
+					break;
+
+			}
+			// validationResults.put(landmarkName, Math.abs(pose[index].y - referencePose[index].y) < 0.03);
 		}
 
 		return validationResults;

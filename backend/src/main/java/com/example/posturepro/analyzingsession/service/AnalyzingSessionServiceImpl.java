@@ -16,12 +16,12 @@ public class AnalyzingSessionServiceImpl implements AnalyzingSessionService {
 
 	@Override
 	public AnalyzingSession getSessionById(long sessionId) {
-		return null;
+		return analyzingSessionRepository.findById(sessionId).orElse(null);
 	}
 
 	@Override
 	public AnalyzingSession createSession() {
 		AnalyzingSession session = new AnalyzingSession();
-		return analyzingSessionRepository.saveAndFlush(session);
+		return analyzingSessionRepository.save(session);
 	}
 }

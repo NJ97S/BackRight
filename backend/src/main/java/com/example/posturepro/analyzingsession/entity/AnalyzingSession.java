@@ -12,10 +12,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import lombok.Data;
 
 @Entity
-@Data
 public class AnalyzingSession {
 
 	@Id
@@ -23,10 +21,10 @@ public class AnalyzingSession {
 	@Column(name = "id", insertable = false, updatable = false)
 	private Long id;
 
-	@Column(name = "analyzing_session_start_time", columnDefinition = "TIMESTAMP")
+	@Column(name = "analyzing_session_start_at", columnDefinition = "TIMESTAMP")
 	private Instant sessionStartTime;
 
-	@Column(name = "analyzing_session_end_time", columnDefinition = "TIMESTAMP")
+	@Column(name = "analyzing_session_end_at", columnDefinition = "TIMESTAMP")
 	private Instant sessionEndTime;
 
 	@OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)

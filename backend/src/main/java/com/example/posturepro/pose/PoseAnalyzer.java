@@ -57,7 +57,7 @@ public class PoseAnalyzer {
 
 		for (BodyLandmark[] pose : parsedPoseDataList) {
 			if (handleInitialPoseSetup(pose, response)) {
-				boolean[] poseMatchingData = standardPoseHandler.isPoseMatching(pose);
+				EnumMap<DetectionType, Boolean> poseMatchingData = standardPoseHandler.isPoseMatching(pose);
 				analyzePoseDetectionData(poseMatchingData);
 			}
 		}
@@ -90,19 +90,19 @@ public class PoseAnalyzer {
 		return parsedPosesData;
 	}
 
-	public void analyzePoseDetectionData(boolean[] poseMatchingData) {
+	public void analyzePoseDetectionData(EnumMap<DetectionType, Boolean> poseMatchingData) {
 		// todo. 얼굴 쪽 유효성 확인
 
 		// 왼쪽 어깨 유효성 확인
-		if (!poseMatchingData[11])
+		if (!poseMatchingData.get(DetectionType.LEFT_SHOULDER))
 			detectionCounts.compute(DetectionType.LEFT_SHOULDER, (key, val) -> val + 1);
 
 		// 오른쪽 어꺠 유효성 확인
-		if (!poseMatchingData[12])
+		if (!poseMatchingData.get(DetectionType.RIGHT_SHOULDER))
 			detectionCounts.compute(DetectionType.RIGHT_SHOULDER, (key, val) -> val + 1);
 
 		// 양쪽 어깨 = 허리 유효성 확인
-		if (!poseMatchingData[11] && !poseMatchingData[12])
+		if (!poseMatchingData.get(DetectionType.LEFT_SHOULDER) && !poseMatchingData.get(DetectionType.RIGHT_SHOULDER))
 			detectionCounts.compute(DetectionType.BACK, (key, val) -> val + 1);
 	}
 
@@ -126,7 +126,7 @@ public class PoseAnalyzer {
 					continuousDetectionCount++;
 					countUp = true;
 				}
-				response.markDetection(entry.getKey());
+				response.markProblem(entry.getKey());
 			}
 		}
 
@@ -134,7 +134,7 @@ public class PoseAnalyzer {
 			if (detectionDto != null) {
 				detectionDto.setDetectionEndTime(Instant.now());
 				// todo DB에 detection 등록
-				detectionService.insertDetection(detectionDto, session);
+				detectionService.createDetection(detectionDto, session);
 
 				detectionDto = null;
 			}
@@ -146,6 +146,7 @@ public class PoseAnalyzer {
 		response.setDetected(true);
 		if (detectionDto == null) {
 			detectionDto = new DetectionDto();
+			detectionDto.setDetected(response.getProblemPart());
 			// todo 비디오 URL 가져오기 로직 추가
 			String videoUrl = "";
 			detectionDto.setVideoUrl(videoUrl);

@@ -23,12 +23,12 @@ public class Detection {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", insertable = false, updatable = false)
-	private long id;
+	private Long id;
 
-	@Column(name = "detection_start_time", columnDefinition = "TIMESTAMP")
+	@Column(name = "detection_start_at", columnDefinition = "TIMESTAMP")
 	private Instant detectionStartTime;
 
-	@Column(name = "detection_end_time", columnDefinition = "TIMESTAMP")
+	@Column(name = "detection_end_at", columnDefinition = "TIMESTAMP")
 	private Instant detectionEndTime;
 
 	@Column(name = "video_url")

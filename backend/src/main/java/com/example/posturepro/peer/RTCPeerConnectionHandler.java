@@ -26,7 +26,6 @@ import dev.onvoid.webrtc.RTCDataChannelObserver;
 import dev.onvoid.webrtc.RTCIceCandidate;
 import dev.onvoid.webrtc.RTCIceConnectionState;
 import dev.onvoid.webrtc.RTCIceServer;
-import dev.onvoid.webrtc.RTCIceTransportPolicy;
 import dev.onvoid.webrtc.RTCPeerConnection;
 import dev.onvoid.webrtc.RTCSessionDescription;
 
@@ -105,14 +104,15 @@ public class RTCPeerConnectionHandler implements PeerConnectionObserver {
 			public void onMessage(RTCDataChannelBuffer buffer) {
 
 				String receivedText = decodeMessage(buffer);
-				String sendingText = poseAnalyzer.analyzePoseDataProcess(receivedText);
-				try {
-					// String sendingText = "Received Message" + receivedText;
-					// logger.info(sendingText);
+				// logger.info("Received Text {}",receivedText);
 
+				String sendingText = poseAnalyzer.analyzePoseDataProcess(receivedText);
+				// logger.info("Sending Text {}",sendingText);
+
+				try {
 					sendTextMessage(sendingText);
 				} catch (Exception e) {
-					throw new RuntimeException("Decode Failed.");
+					throw new RuntimeException("Send Text Message Failed.");
 				}
 			}
 		});
