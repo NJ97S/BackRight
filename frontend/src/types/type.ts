@@ -4,3 +4,10 @@ export interface ReceivedDataType {
   videoUrl: string | null;
   problemCode: number;
 }
+
+export interface SignUpInfoType {
+  name: string;
+  nickname: string;
+  birthDate: string;
+  gender: "FEMALE" | "MALE";
+}
