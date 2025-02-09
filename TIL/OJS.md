@@ -365,3 +365,10 @@
 - certbot-renew.sh 파일이 다른 팀원이 로컬에서 docker compose up 했을 때 not found라고 나오는 이슈가 있었다.
 - not found라고 하지만 exec로 직접 들어가서 확인하면 파일은 있었다.
 - 정확한 이유를 알아보니 Windows에서 저장된 파일이 CRLF로 저장되어 linux 환경에서 제대로 인식되지 않아서 발생한 문제였다.
+
+## 2025-02-07
+
+### nginx 설정
+
+- nginx 에서 /api/ 로 온 요청을 backend:8080/으로 보내면 /api/는 떨어지고 바로 root로 가는 거였다.
+- 이게 알듯 말듯 해서 오늘 Spring Security merge된 코드에서 요청이 넘어가질 않았다.
