@@ -2,10 +2,10 @@
 import styled from "styled-components";
 
 export const TabContainer = styled.div`
-  width: 33.58rem;
   height: 2.75rem;
   display: flex;
-  margin-left: 1.25rem;
+  padding-left: 1.25rem;
+  box-sizing: border-box;
 `;
 
 interface TabItemProps {
@@ -16,7 +16,8 @@ interface TabItemProps {
 export const TabItem = styled.div.withConfig({
   shouldForwardProp: (prop) => prop !== "isActive",
 })<TabItemProps>`
-  width: 10.49rem;
+  flex: 1;
+  max-width: 10.49rem;
   height: 2.75rem;
   background: ${({ isActive }) => (isActive ? "var(--cream)" : "var(--mint)")};
   border-top-left-radius: 12px;

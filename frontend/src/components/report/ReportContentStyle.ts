@@ -1,41 +1,24 @@
 // src/components/report/ReportContentStyle.ts
 import styled from "styled-components";
 
-// 추가한 코드
 export const ReportContentContainer = styled.div`
   display: flex;
   flex-direction: column;
+  width: 100%; //애넬 꼭 넣어야하더라
+  height: 100%; //애넬 꼭 넣어야하더라
+  overflow: hidden;
 `;
 
-// 메인 컨텐츠 영역
 export const MainContent = styled.div`
+  flex: 1;
+  min-height: 0;
   display: grid;
-  grid-template-columns: 3fr 1fr;
-  grid-template-rows: 1fr 1.35fr;
-  gap: 1.44rem; // 23px을 rem으로 변환
-  padding: 2.88rem 2.63rem; // 46px 42px를 rem으로 변환
+  grid-template-columns: 2.5fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 2.88rem;
+  padding: 2.88rem 2.88rem;
   background: var(--cream);
   box-shadow: 0px 0px 0.25rem rgba(0, 0, 0, 0.25);
   border-radius: 12px;
+  overflow: auto;
 `;
-
-// // 섹션 컴포넌트들 - 모두 100% 사용
-// export const TopLeftSection = styled.div`
-//   background: var(--white);
-//   border-radius: 12px;
-// `;
-
-// export const TopRightSection = styled.div`
-//   background: var(--white);
-//   border-radius: 12px;
-// `;
-
-// export const BottomLeftSection = styled.div`
-//   background: var(--white);
-//   border-radius: 12px;
-// `;
-
-// export const BottomRightSection = styled.div`
-//   background: var(--white);
-//   border-radius: 12px;
-// `;

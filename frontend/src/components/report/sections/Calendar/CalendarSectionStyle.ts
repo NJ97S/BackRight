@@ -10,7 +10,6 @@ export const CalendarContainer = styled.div`
   border-radius: 12px;
   padding: 1.5rem;
   align-content: center;
-  justify-content: center;
 `;
 
 // 캘린더 헤더 - 기존 마진 대신 gap 사용
@@ -34,7 +33,7 @@ export const StyledCalendar = styled.div`
 
     // 네비게이션 버튼 (화살표)
     .react-calendar__navigation {
-      display: none; // 우리는 커스텀 화살표를 사용할 것이므로
+      display: none;
     }
 
     // 요일 행
@@ -49,13 +48,11 @@ export const StyledCalendar = styled.div`
         border: none;
       }
 
-      // 일요일
       .react-calendar__month-view__weekdays__weekday:last-child {
         color: var(--red);
       }
 
-      // 토요일
-      .react-calendar__month-view__weekdays__weekday: nth-child(6) {
+      .react-calendar__month-view__weekdays__weekday:nth-child(6) {
         color: var(--blue);
       }
     }
@@ -64,28 +61,52 @@ export const StyledCalendar = styled.div`
     .react-calendar__tile {
       padding: 0.5rem;
       font-size: 0.75rem;
+      position: relative;
 
       &.react-calendar__month-view__days__day--weekend {
-        color: var(
-          --black
-        ); // 요거를 안하면, 기본적으로 react-calendar는 토욜 날짜 일욜 날짜에 색을 입힘!
+        color: var(--black);
       }
 
       &--now {
-        background: none;
-        color: var(--black);
+        background: var(--mint) !important;
+        color: white !important;
         font-weight: 700;
+        border-radius: 12px;
+
+        &:hover {
+          opacity: 0.9;
+        }
+
+        // 오늘 날짜가 선택되었을 때
+        &.react-calendar__tile--active {
+          background: var(--mint) !important;
+          color: white !important;
+          font-weight: 700;
+        }
       }
 
-      &--active {
+      // 다른 날짜가 선택되었을 때
+      &--active:not(.react-calendar__tile--now) {
         background: var(--mint) !important;
         color: white;
         border-radius: 12px;
+        font-weight: normal;
       }
 
-      // 이전/다음 달 날짜
       &.react-calendar__month-view__days__day--neighboringMonth {
         color: var(--gray-300);
+      }
+
+      &:enabled:hover {
+        background-color: rgba(118, 171, 174, 0.1) !important;
+        border-radius: 12px;
+      }
+
+      // 오늘 날짜가 아닌 날짜가 선택되었을 때 오늘 날짜의 스타일
+      &--now:not(.react-calendar__tile--active) {
+        background: none !important;
+        color: var(--black) !important;
+        font-weight: 700;
       }
     }
   }

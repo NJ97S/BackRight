@@ -1,8 +1,6 @@
 // src/sections/Calendar/CalendarSection.tsx
 import React, { useState } from "react";
 import Calendar, { Value } from "react-calendar";
-// Value 타입 추가
-import "react-calendar/dist/Calendar.css";
 import {
   CalendarContainer,
   CalendarHeader,
@@ -11,15 +9,9 @@ import {
   ArrowButton,
 } from "./CalendarSectionStyle";
 
-interface CalendarSectionProps {
-  selectedDate: Date;
-  onDateChange: (date: Date) => void;
-}
-
-const CalendarSection: React.FC<CalendarSectionProps> = ({
-  selectedDate,
-  onDateChange,
-}) => {
+const CalendarSection = () => {
+  // 오늘 날짜를 초기값으로 설정
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const handlePrevMonth = () => {
@@ -34,16 +26,15 @@ const CalendarSection: React.FC<CalendarSectionProps> = ({
     );
   };
 
-  // handleDateChange 함수 수정
   const handleDateChange = (value: Value) => {
     if (value instanceof Date) {
-      onDateChange(value);
+      setSelectedDate(value);
     } else if (
       Array.isArray(value) &&
       value.length > 0 &&
       value[0] instanceof Date
     ) {
-      onDateChange(value[0]);
+      setSelectedDate(value[0]);
     }
   };
 
@@ -69,6 +60,8 @@ const CalendarSection: React.FC<CalendarSectionProps> = ({
           value={selectedDate}
           onChange={handleDateChange}
           activeStartDate={currentDate}
+          defaultValue={new Date()} // 오늘 날짜를 기본값으로 설정
+          defaultActiveStartDate={new Date()} // 초기 표시되는 월도 오늘이 속한 월로 설정
           showNavigation={false}
           locale="en"
           formatDay={(_, date) => date.getDate().toString()}

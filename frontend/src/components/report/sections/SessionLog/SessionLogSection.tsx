@@ -1,20 +1,11 @@
 // SessionLogSection.tsx
-
+import { useState, useCallback, memo } from "react";
+import type { Session, Warning } from "./types";
+import { MOCK_SESSION_DATA } from "./constants";
 import * as S from "./SessionLogSectionStyle";
 
-// 세션 상태를 정의하는 타입
-type SessionStatus = "정상 종료" | "강제 종료";
-
-// 세션 데이터의 인터페이스 정의
-interface SessionData {
-  id: number;
-  time: string;
-  warningCount: number;
-  status: SessionStatus;
-}
-
-// 상태 아이콘 컴포넌트
-const StatusIcon = ({ status }: { status: SessionStatus }) => {
+// StatusIcon 컴포넌트 - 메모이제이션 적용
+const StatusIcon = memo<{ status: SessionStatus }>(({ status }) => {
   if (status === "정상 종료") {
     return (
       <svg
@@ -52,49 +43,141 @@ const StatusIcon = ({ status }: { status: SessionStatus }) => {
       />
     </svg>
   );
-};
+});
 
-// 임시 더미 데이터
-const MOCK_SESSION_DATA: SessionData[] = [
-  { id: 1, time: "22:10 ~ 23:58", warningCount: 12, status: "정상 종료" },
-  { id: 2, time: "19:03 ~ 19:28", warningCount: 7, status: "강제 종료" },
-  { id: 3, time: "15:51 ~ 16:30", warningCount: 20, status: "정상 종료" },
-  { id: 4, time: "10:20 ~ 12:01", warningCount: 34, status: "정상 종료" },
-  { id: 5, time: "08:00 ~ 09:10", warningCount: 12, status: "정상 종료" },
-];
+StatusIcon.displayName = "StatusIcon";
 
+// SessionItem 컴포넌트 - 메모이제이션 적용
+const SessionItem = memo<{
+  session: Session;
+  onClick: (session: Session) => void;
+}>(({ session, onClick }) => {
+  const handleClick = useCallback(() => {
+    onClick(session);
+  }, [session, onClick]);
+
+  return (
+    <S.SessionItem onClick={handleClick}>
+      <S.TimelineDot />
+      <S.SessionContent>
+        <S.SessionHeader>
+          <S.SessionTime>
+            {formatTimeRange(session.startTime, session.endTime)}
+          </S.SessionTime>
+          <S.StatusBadge status={session.status}>
+            <StatusIcon status={session.status} />
+            <span>{session.status}</span>
+          </S.StatusBadge>
+        </S.SessionHeader>
+        <S.WarningCount>경고 {session.warningCount}회</S.WarningCount>
+      </S.SessionContent>
+    </S.SessionItem>
+  );
+});
+
+SessionItem.displayName = "SessionItem";
+
+// WarningItem 컴포넌트 - 메모이제이션 적용
+const WarningItem = memo<{
+  warning: Warning;
+  onClick: (warning: Warning) => void;
+}>(({ warning, onClick }) => {
+  const handleClick = useCallback(() => {
+    onClick(warning);
+  }, [warning, onClick]);
+
+  return (
+    <S.WarningItem onClick={handleClick}>
+      <S.WarningTime>{formatTime(warning.timestamp)}</S.WarningTime>
+      <S.WarningDescription>{warning.description}</S.WarningDescription>
+    </S.WarningItem>
+  );
+});
+
+WarningItem.displayName = "WarningItem";
+
+// 메인 SessionLogSection 컴포넌트
 const SessionLogSection = () => {
+  const [selectedSession, setSelectedSession] = useState<Session | null>(null);
+  const [selectedWarning, setSelectedWarning] = useState<Warning | null>(null);
+
+  const handleSessionClick = useCallback((session: Session) => {
+    setSelectedSession(session);
+  }, []);
+
+  const handleWarningClick = useCallback((warning: Warning) => {
+    setSelectedWarning(warning);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setSelectedSession(null);
+    setSelectedWarning(null);
+  }, []);
+
   return (
     <S.Container>
       <S.Title>세션 로그</S.Title>
       <S.SessionList>
-        {/* Timeline 세로선 */}
-        <S.Timeline />
-
-        {/* 세션 목록 */}
-        {MOCK_SESSION_DATA.map((session) => (
-          <S.SessionItem key={session.id}>
-            {/* Timeline 점 */}
-            <S.TimelineDot />
-
-            <S.SessionContent>
-              {/* 시간과 상태 뱃지 */}
-              <S.SessionHeader>
-                <S.SessionTime>{session.time}</S.SessionTime>
-                <S.StatusBadge status={session.status}>
-                  <StatusIcon status={session.status} />
-                  <span>{session.status}</span>
-                </S.StatusBadge>
-              </S.SessionHeader>
-
-              {/* 경고 횟수 */}
-              <S.WarningCount>경고 {session.warningCount}회</S.WarningCount>
-            </S.SessionContent>
-          </S.SessionItem>
-        ))}
+        <S.TimelineWrapper sessionCount={MOCK_SESSION_DATA.length}>
+          {MOCK_SESSION_DATA.map((session) => (
+            <SessionItem
+              key={session.id}
+              session={session}
+              onClick={handleSessionClick}
+            />
+          ))}
+        </S.TimelineWrapper>
       </S.SessionList>
+
+      {selectedSession && (
+        <S.Modal>
+          <S.ModalOverlay onClick={handleCloseModal} />
+          <S.ModalContent>
+            <S.CloseButton onClick={handleCloseModal}>&times;</S.CloseButton>
+            <S.ModalBody>
+              <S.VideoSection>
+                {selectedWarning ? (
+                  <div>
+                    Warning video at {formatTime(selectedWarning.timestamp)}
+                  </div>
+                ) : (
+                  <div>Select a warning to view the video</div>
+                )}
+              </S.VideoSection>
+              <S.WarningSection>
+                <S.WarningTitle>Warnings</S.WarningTitle>
+                <S.WarningList>
+                  {selectedSession.warnings.map((warning) => (
+                    <WarningItem
+                      key={warning.id}
+                      warning={warning}
+                      onClick={handleWarningClick}
+                    />
+                  ))}
+                </S.WarningList>
+              </S.WarningSection>
+            </S.ModalBody>
+          </S.ModalContent>
+        </S.Modal>
+      )}
     </S.Container>
   );
+};
+
+// 유틸리티 함수
+const formatTimeRange = (start: string, end: string) => {
+  const formatTime = (time: string) =>
+    new Date(time).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+  return `${formatTime(start)} ~ ${formatTime(end)}`;
+};
+
+const formatTime = (isoString: string) => {
+  const date = new Date(isoString);
+  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 };
 
 export default SessionLogSection;
