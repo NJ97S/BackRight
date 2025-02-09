@@ -989,3 +989,131 @@ Styled Components는 기본적으로 모든 props를 DOM 요소로 전달합니�
 - 추가적인 코드 수정 없이 개발 환경을 개선할 수 있습니다.
 
 이러한 방법들을 통해 Styled Components를 사용하면서 발생할 수 있는 문제들을 효과적으로 해결할 수 있습니다.
+
+
+---
+프로젝트의 문제 해결 기록을 markdown 형식으로 작성해드리겠습니다.
+
+## 📅 날짜
+
+### 2025-02-07
+
+### ✏️ 오늘 한 거:
+
+#### React Component와 Styled-Components 관련 이슈 해결
+
+##### 1. Calendar 컴포넌트 스타일링 문제
+
+###### 문제 상황
+Calendar 컴포넌트의 스타일링에서 react-calendar의 기본 스타일과 충돌이 발생했습니다.
+
+###### 해결 방법
+```typescript
+export const StyledCalendar = styled.div`
+  .react-calendar {
+    border: none;
+    
+    // 네비게이션 버튼 숨김 처리
+    .react-calendar__navigation {
+      display: none;
+    }
+
+    // 요일 행 스타일링
+    .react-calendar__month-view__weekdays {
+      text-align: center;
+      text-transform: uppercase;
+      font-weight: 700;
+      font-size: 0.75rem;
+    }
+
+    // 날짜 타일 스타일링
+    .react-calendar__tile {
+      padding: 0.5rem;
+      font-size: 0.75rem;
+      
+      &--now {
+        background: none;
+        color: var(--black);
+        font-weight: 700;
+      }
+    }
+  }
+`;
+```
+
+커스텀 스타일을 적용하여 기본 스타일을 덮어쓰고, 계층 구조를 명확히 하여 스타일 충돌을 방지했습니다.
+
+##### 2. SessionLogSection의 Timeline 구현 문제
+
+###### 문제 상황
+세션 로그의 타임라인을 구현할 때 세로선과 점의 정렬이 어긋나는 문제가 발생했습니다.
+
+###### 해결 방법
+```typescript
+export const TimelineWrapper = styled.div.withConfig({
+  shouldForwardProp: (prop) => !["sessionCount"].includes(prop),
+})<TimelineWrapperProps>`
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 1rem;
+    top: 0.75rem;
+    height: ${({ sessionCount }) =>
+      sessionCount > 1 ? `${(sessionCount - 1) * 6}rem` : "0"};
+    width: 0.25rem;
+    background-color: var(--gray-300);
+    transform: translateX(-50%);
+    z-index: 2;
+  }
+`;
+```
+
+- z-index를 활용하여 레이어 순서 조정
+- sessionCount prop을 통한 동적 높이 계산
+- transform을 사용한 정확한 위치 조정
+
+##### 3. 사이드바 확장/축소 애니메이션 구현
+
+###### 문제 상황
+사이드바가 확장/축소될 때 텍스트가 부자연스럽게 사라지는 문제가 발생했습니다.
+
+###### 해결 방법
+```typescript
+export const LinkName = styled.span.withConfig({
+  shouldForwardProp: (prop) => prop !== "isExpanded",
+})<SideBarProps>`
+  opacity: ${({ isExpanded }) => (isExpanded ? 1 : 0)};
+  visibility: ${({ isExpanded }) => (isExpanded ? "visible" : "hidden")};
+  transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+  ${({ isExpanded }) => !isExpanded && "transition: none;"}
+  white-space: nowrap;
+`;
+```
+
+- opacity와 visibility를 함께 사용하여 부드러운 전환 효과 구현
+- transition 타이밍 조정으로 자연스러운 애니메이션 구현
+- white-space: nowrap으로 텍스트 줄바꿈 방지
+
+##### 4. 반응형 디자인 적용
+
+###### 문제 상황
+픽셀 단위 사용으로 인한 반응형 문제가 발생했습니다.
+
+###### 해결 방법
+```typescript
+export const MainContent = styled.div`
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 1.44rem;
+  padding: 2.88rem 2.88rem;
+`;
+```
+
+- rem 단위를 사용하여 반응형 레이아웃 구현
+- grid 시스템을 활용한 유연한 레이아웃 설계
+- 상대적 단위 사용으로 확장성 확보
+
+이러한 해결 방법들을 통해 컴포넌트의 재사용성과 유지보수성을 향상시켰습니다.
