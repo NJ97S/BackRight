@@ -9,6 +9,7 @@ import {
 } from "@mediapipe/tasks-vision";
 
 import useMeasurementStore from "../../store/useMeasurementStore";
+import PostureAlert from "../PostureAlert/PostureAlert";
 import formatTime from "../../utils/formatTime";
 import {
   ERROR_CONNECTIONS,
@@ -157,6 +158,8 @@ const WebCam = () => {
         <S.RealtimeAlert haveProblem={haveProblem}>
           자세 경고가 감지되었습니다. 바른 자세를 취해주세요.
         </S.RealtimeAlert>
+
+        <PostureAlert />
       </S.VideoContainer>
 
       <S.RecordingStopButton
