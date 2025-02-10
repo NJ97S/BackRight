@@ -1,10 +1,12 @@
 import { PoseLandmarkerResult } from "@mediapipe/tasks-vision";
 import { create } from "zustand";
 
+import { ReceivedDataType } from "../types/type";
+
 interface MeasurementState {
   stream: MediaStream | null;
   elapsedTime: number;
-  receivedData: { problemCode: number } | null;
+  receivedData: ReceivedDataType | null;
   isMeasuring: boolean;
   landmarkResult: PoseLandmarkerResult | null;
 
@@ -13,7 +15,7 @@ interface MeasurementState {
 
   setStream: (stream: MediaStream | null) => void;
   setElapsedTime: () => void;
-  setReceivedData: (data: { problemCode: number } | null) => void;
+  setReceivedData: (data: ReceivedDataType | null) => void;
   setLandmarkResult: (data: PoseLandmarkerResult) => void;
 }
 
@@ -25,10 +27,17 @@ const useMeasurementStore = create<MeasurementState>((set) => ({
   landmarkResult: null,
 
   startMeasurement: () => set({ isMeasuring: true }),
-  stopMeasurement: () => set({ isMeasuring: false, stream: null, elapsedTime: 0, receivedData: null }),
+  stopMeasurement: () =>
+    set({
+      isMeasuring: false,
+      stream: null,
+      elapsedTime: 0,
+      receivedData: null,
+    }),
 
   setStream: (stream) => set({ stream }),
-  setElapsedTime: () => set((state) => ({ elapsedTime: state.elapsedTime + 1 })),
+  setElapsedTime: () =>
+    set((state) => ({ elapsedTime: state.elapsedTime + 1 })),
   setReceivedData: (data) => set({ receivedData: data }),
   setLandmarkResult: (data) => set({ landmarkResult: data }),
 }));
