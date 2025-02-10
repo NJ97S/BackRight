@@ -1,4 +1,3 @@
-// src/components/report/tab/ReportTabStyle.ts
 import styled from "styled-components";
 
 export const TabContainer = styled.div`
@@ -11,7 +10,6 @@ interface TabItemProps {
   isActive: boolean;
 }
 
-// withConfig를 사용하여 isActive prop이 DOM으로 전달되는 것을 방지
 export const TabItem = styled.div.withConfig({
   shouldForwardProp: (prop) => prop !== "isActive",
 })<TabItemProps>`
@@ -32,7 +30,6 @@ export const TabItem = styled.div.withConfig({
   }
 `;
 
-// TabText도 마찬가지로 withConfig 적용
 export const TabText = styled.span.withConfig({
   shouldForwardProp: (prop) => prop !== "isActive",
 })<TabItemProps>`

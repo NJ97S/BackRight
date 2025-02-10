@@ -1,4 +1,3 @@
-// src/components/report/tab/ReportTab.tsx
 import { useState } from "react";
 import * as S from "./ReportTabStyle";
 

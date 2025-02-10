@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import { MODAL_DIMENSIONS } from "../../../../constants/constants";
-import { SessionStatus } from "../../../../types/type";
+import { MODAL_DIMENSIONS } from "../../constants/constants";
+import { SessionStatus } from "../../types/type";
 // ===== Styled Components =====
 export const Container = styled.div.withConfig({
   shouldForwardProp: (prop) => !["isExpanded"].includes(prop),

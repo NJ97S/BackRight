@@ -1,10 +1,8 @@
-// SessionLogSection.tsx
 import { useState, useCallback, memo } from "react";
-import { Session, Warning, SessionStatus } from "../../../../types/type";
-import { MOCK_SESSION_DATA } from "../../../../constants/constants";
+import { Session, Warning, SessionStatus } from "../../types/type";
+import { MOCK_SESSION_DATA } from "../../constants/constants";
 import * as S from "./SessionLogSectionStyle";
 
-// StatusIcon 컴포넌트 - 메모이제이션 적용
 const StatusIcon = memo<{ status: SessionStatus }>(({ status }) => {
   if (status === "정상 종료") {
     return (
@@ -47,7 +45,6 @@ const StatusIcon = memo<{ status: SessionStatus }>(({ status }) => {
 
 StatusIcon.displayName = "StatusIcon";
 
-// 유틸리티 함수
 const formatTimeRange = (start: string, end: string) => {
   const formatTime = (time: string) =>
     new Date(time).toLocaleTimeString([], {
@@ -64,7 +61,6 @@ const formatTime = (isoString: string) => {
   return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 };
 
-// SessionItem 컴포넌트 - 메모이제이션 적용
 const SessionItem = memo<{
   session: Session;
   onClick: (session: Session) => void;
@@ -94,7 +90,6 @@ const SessionItem = memo<{
 
 SessionItem.displayName = "SessionItem";
 
-// WarningItem 컴포넌트 - 메모이제이션 적용
 const WarningItem = memo<{
   warning: Warning;
   onClick: (warning: Warning) => void;
@@ -113,7 +108,6 @@ const WarningItem = memo<{
 
 WarningItem.displayName = "WarningItem";
 
-// 메인 SessionLogSection 컴포넌트
 const SessionLogSection = () => {
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
   const [selectedWarning, setSelectedWarning] = useState<Warning | null>(null);

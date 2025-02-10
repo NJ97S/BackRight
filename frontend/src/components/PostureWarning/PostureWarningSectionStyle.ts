@@ -1,4 +1,3 @@
-// src/sections/PostureWarning/PostureWarningSectionStyle.ts
 import styled from "styled-components";
 
 export const Container = styled.div`

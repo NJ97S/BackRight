@@ -1,7 +1,6 @@
-// src/sections/Calendar/CalendarSection.tsx
 import { useState } from "react";
 import Calendar from "react-calendar";
-import type { CalendarDateChangeHandler } from "../../../../types/calendar";
+import type { CalendarDateChangeHandler } from "../../types/calendar";
 import {
   CalendarContainer,
   CalendarHeader,
@@ -11,7 +10,6 @@ import {
 } from "./CalendarSectionStyle";
 
 const CalendarSection = () => {
-  // 오늘 날짜를 초기값으로 설정
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [currentDate, setCurrentDate] = useState(new Date());
 
@@ -61,8 +59,8 @@ const CalendarSection = () => {
           value={selectedDate}
           onChange={handleDateChange}
           activeStartDate={currentDate}
-          defaultValue={new Date()} // 오늘 날짜를 기본값으로 설정
-          defaultActiveStartDate={new Date()} // 초기 표시되는 월도 오늘이 속한 월로 설정
+          defaultValue={new Date()}
+          defaultActiveStartDate={new Date()}
           showNavigation={false}
           locale="en"
           formatDay={(_, date) => date.getDate().toString()}

@@ -1,10 +1,21 @@
-// src/pages/ReportPage/ReportPage.tsx
 import * as S from "./ReportPageStyle";
-import ReportContent from "../../components/report/ReportContent";
+import ReportTab from "../../components/common/ReportTab/ReportTab";
+import CalendarSection from "../../components/Calendar/CalendarSection";
+import DailyStatsSection from "../../components/DailyStats/DailyStatsSection";
+import PostureWarningSection from "../../components/PostureWarning/PostureWarningSection";
+import SessionLogSection from "../../components/SessionLog/SessionLogSection";
 
 const ReportPage = () => (
   <S.PageContainer>
-    <ReportContent />
+    <S.ContentContainer>
+      <ReportTab />
+      <S.MainContent>
+        <PostureWarningSection />
+        <CalendarSection />
+        <DailyStatsSection />
+        <SessionLogSection />
+      </S.MainContent>
+    </S.ContentContainer>
   </S.PageContainer>
 );
 

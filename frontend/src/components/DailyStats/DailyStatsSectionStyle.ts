@@ -1,7 +1,5 @@
-// src/sections/DailyStats/DailyStatsSectionStyle.ts
 import styled from "styled-components";
 
-// 메인 컨테이너
 export const Container = styled.div`
   padding: 1.5rem;
   background: var(--white);
@@ -10,7 +8,6 @@ export const Container = styled.div`
   height: 100%;
 `;
 
-// 타이틀
 export const Title = styled.h2`
   margin-bottom: 1.5rem;
   font-size: 1rem;
@@ -18,7 +15,6 @@ export const Title = styled.h2`
   text-align: center;
 `;
 
-// 컨텐츠 레이아웃
 export const Content = styled.div`
   display: flex;
   justify-content: space-between;
@@ -27,7 +23,6 @@ export const Content = styled.div`
   height: calc(100% - 3.5rem);
 `;
 
-// 도넛 차트 섹션
 export const DonutSection = styled.div`
   display: flex;
   flex-direction: column;
@@ -51,7 +46,6 @@ export const DonutLabel = styled.div`
   color: var(--mint);
 `;
 
-// 구분선
 export const Divider = styled.div`
   width: 0.0625rem;
   height: 19.8125rem;
@@ -60,7 +54,6 @@ export const Divider = styled.div`
   border-left: 0.0625rem dashed var(--gray-300);
 `;
 
-// 바 차트 섹션
 export const BarSection = styled.div`
   display: flex;
   flex-direction: column;
@@ -73,7 +66,6 @@ export const BarWrapper = styled.div`
   height: 11.5rem;
 `;
 
-// 차트 설명 스타일
 export const DonutDescription = styled.div`
   margin-top: 1.5rem;
   text-align: center;
@@ -103,7 +95,7 @@ export const HighlightText = styled.span`
 
 export const DifferenceIndicator = styled.div`
   position: absolute;
-  top: 0; // 막대그래프 상단에 위치
+  top: 0;
   left: 0;
   width: 100%;
   display: flex;
@@ -112,7 +104,7 @@ export const DifferenceIndicator = styled.div`
 `;
 
 export const DifferenceText = styled.span`
-  font-size: 0.75rem; // 더 작은 글자 크기
+  font-size: 0.75rem;
   font-weight: 700;
   color: var(--mint);
 `;

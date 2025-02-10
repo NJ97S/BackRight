@@ -1,5 +1,3 @@
-// src/sections/DailyStats/DailyStatsSection.tsx
-
 import type React from "react";
 import {
   Chart as ChartJS,
@@ -12,10 +10,8 @@ import {
 import { Doughnut, Bar } from "react-chartjs-2";
 import * as S from "./DailyStatsSectionStyle";
 
-// Chart.js 컴포넌트 등록
 ChartJS.register(ArcElement, CategoryScale, LinearScale, BarElement);
 
-// 시간 포맷팅 유틸리티 함수
 const formatTime = (minutes: number) => {
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
@@ -24,13 +20,11 @@ const formatTime = (minutes: number) => {
 };
 
 const DailyStatsSection: React.FC = () => {
-  // 시간 데이터 (분 단위)
-  const todayMinutes = 292; // 4시간 52분
-  const yesterdayMinutes = 77; // 1시간 17분
-  const totalMinutes = 390; // 6시간 30분
-  const diffMinutes = todayMinutes - yesterdayMinutes; // 3시간 35분
+  const todayMinutes = 292;
+  const yesterdayMinutes = 77;
+  const totalMinutes = 390;
+  const diffMinutes = todayMinutes - yesterdayMinutes;
 
-  // 도넛 차트 데이터
   const donutData = {
     datasets: [
       {
@@ -42,7 +36,6 @@ const DailyStatsSection: React.FC = () => {
     ],
   };
 
-  // 도넛 차트 옵션
   const donutOptions = {
     cutout: "75%",
     plugins: {
@@ -56,7 +49,6 @@ const DailyStatsSection: React.FC = () => {
     maintainAspectRatio: false,
   };
 
-  // 바 차트 데이터
   const barData = {
     labels: ["1일 전", "오늘"],
     datasets: [
@@ -106,7 +98,7 @@ const DailyStatsSection: React.FC = () => {
           font: {
             family: "Pretendard",
             size: 12,
-            weight: 400, // 문자열 "400" 대신 숫자 400 사용
+            weight: 400,
           },
           color: "var(--gray-300)",
         },
@@ -127,7 +119,6 @@ const DailyStatsSection: React.FC = () => {
     <S.Container>
       <S.Title>일일 통계</S.Title>
       <S.Content>
-        {/* 도넛 차트 섹션 */}
         <S.DonutSection>
           <S.DonutWrapper>
             <Doughnut data={donutData} options={donutOptions} />
@@ -146,7 +137,6 @@ const DailyStatsSection: React.FC = () => {
 
         <S.Divider />
 
-        {/* 바 차트 섹션 */}
         <S.BarSection>
           <S.BarWrapper>
             <Bar data={barData} options={barOptions} />
