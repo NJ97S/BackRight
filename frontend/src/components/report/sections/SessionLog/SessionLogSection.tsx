@@ -1,7 +1,7 @@
 // SessionLogSection.tsx
 import { useState, useCallback, memo } from "react";
-import type { Session, Warning } from "./types";
-import { MOCK_SESSION_DATA } from "./constants";
+import { Session, Warning, SessionStatus } from "../../../../types/type";
+import { MOCK_SESSION_DATA } from "../../../../constants/constants";
 import * as S from "./SessionLogSectionStyle";
 
 // StatusIcon 컴포넌트 - 메모이제이션 적용
@@ -46,6 +46,23 @@ const StatusIcon = memo<{ status: SessionStatus }>(({ status }) => {
 });
 
 StatusIcon.displayName = "StatusIcon";
+
+// 유틸리티 함수
+const formatTimeRange = (start: string, end: string) => {
+  const formatTime = (time: string) =>
+    new Date(time).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+  return `${formatTime(start)} ~ ${formatTime(end)}`;
+};
+
+const formatTime = (isoString: string) => {
+  const date = new Date(isoString);
+
+  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+};
 
 // SessionItem 컴포넌트 - 메모이제이션 적용
 const SessionItem = memo<{
@@ -162,22 +179,6 @@ const SessionLogSection = () => {
       )}
     </S.Container>
   );
-};
-
-// 유틸리티 함수
-const formatTimeRange = (start: string, end: string) => {
-  const formatTime = (time: string) =>
-    new Date(time).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-
-  return `${formatTime(start)} ~ ${formatTime(end)}`;
-};
-
-const formatTime = (isoString: string) => {
-  const date = new Date(isoString);
-  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 };
 
 export default SessionLogSection;

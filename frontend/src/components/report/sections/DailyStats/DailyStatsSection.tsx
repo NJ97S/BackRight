@@ -7,6 +7,7 @@ import {
   CategoryScale,
   LinearScale,
   BarElement,
+  ChartOptions,
 } from "chart.js";
 import { Doughnut, Bar } from "react-chartjs-2";
 import * as S from "./DailyStatsSectionStyle";
@@ -68,15 +69,13 @@ const DailyStatsSection: React.FC = () => {
     ],
   };
 
-  const barOptions = {
+  const barOptions: ChartOptions<"bar"> = {
     indexAxis: "y" as const,
     scales: {
       x: {
         display: true,
         grid: {
           display: true,
-          drawBorder: true,
-          borderDash: [5, 5],
           drawOnChartArea: true,
         },
         border: {
@@ -90,11 +89,13 @@ const DailyStatsSection: React.FC = () => {
             size: 12,
           },
           color: "var(--gray-300)",
-          callback: (value: number) => formatTime(value),
-          stepSize: Math.max(yesterdayMinutes, todayMinutes), // 최대값을 기준으로 스텝 설정
+          callback(tickValue: number | string) {
+            return formatTime(Number(tickValue));
+          },
+          stepSize: Math.max(yesterdayMinutes, todayMinutes),
         },
         min: 0,
-        max: todayMinutes, // 오늘 데이터의 최대값으로 설정
+        max: todayMinutes,
       },
       y: {
         display: true,
@@ -105,7 +106,7 @@ const DailyStatsSection: React.FC = () => {
           font: {
             family: "Pretendard",
             size: 12,
-            weight: "400",
+            weight: 400, // 문자열 "400" 대신 숫자 400 사용
           },
           color: "var(--gray-300)",
         },

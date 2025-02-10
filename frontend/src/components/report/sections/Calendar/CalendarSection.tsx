@@ -1,6 +1,7 @@
 // src/sections/Calendar/CalendarSection.tsx
-import React, { useState } from "react";
-import Calendar, { Value } from "react-calendar";
+import { useState } from "react";
+import Calendar from "react-calendar";
+import type { CalendarDateChangeHandler } from "../../../../types/calendar";
 import {
   CalendarContainer,
   CalendarHeader,
@@ -26,7 +27,7 @@ const CalendarSection = () => {
     );
   };
 
-  const handleDateChange = (value: Value) => {
+  const handleDateChange: CalendarDateChangeHandler = (value) => {
     if (value instanceof Date) {
       setSelectedDate(value);
     } else if (

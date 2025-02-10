@@ -4,7 +4,7 @@ import styled from "styled-components";
 export const TabContainer = styled.div`
   height: 2.75rem;
   display: flex;
-  padding-left: 1.25rem;
+  padding-left: 1rem;
 `;
 
 interface TabItemProps {

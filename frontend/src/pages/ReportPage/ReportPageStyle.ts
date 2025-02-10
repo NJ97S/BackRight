@@ -13,6 +13,6 @@ export const PageContainer = styled.div`
 
 // 메인 컨텐츠 영역
 export const MainContainer = styled.div`
-  max-width: 84.5rem; // 최대 너비 제한
+  max-width: 84.5rem;
   display: flex;
 `;
