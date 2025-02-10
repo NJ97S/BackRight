@@ -372,3 +372,16 @@
 
 - nginx 에서 /api/ 로 온 요청을 backend:8080/으로 보내면 /api/는 떨어지고 바로 root로 가는 거였다.
 - 이게 알듯 말듯 해서 오늘 Spring Security merge된 코드에서 요청이 넘어가질 않았다.
+
+## 2025-02-10
+
+### SPA Router, nginx 관련
+
+- 정적 파일을 nginx에서 서빙할 때 SPA router에 대한 고려를 하지 않아 제대로 동작하지 않았다.
+- ```
+  location / {
+    try_files $uri /index.html;
+  }
+  ```
+  해당 내용을 추가하여 사용자가 요청한 uri에 해당하는 파일이 없으면 index.html을 주도록 하고 그 안에서 router가 동작하도록 바꿔줬더니 잘 동작했다.
+- [참고](https://github.com/adriabama06/react-route-nginx-docker-example/blob/main/nginx.conf)
