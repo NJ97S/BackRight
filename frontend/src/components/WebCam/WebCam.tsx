@@ -2,11 +2,18 @@
 
 import { useEffect, useRef } from "react";
 
-import { DrawingUtils, PoseLandmarker, PoseLandmarkerResult } from "@mediapipe/tasks-vision";
+import {
+  DrawingUtils,
+  PoseLandmarker,
+  PoseLandmarkerResult,
+} from "@mediapipe/tasks-vision";
 
 import useMeasurementStore from "../../store/useMeasurementStore";
 import formatTime from "../../utils/formatTime";
-import { ERROR_CONNECTIONS, ERROR_POINTS } from "../../constants/errorConnections";
+import {
+  ERROR_CONNECTIONS,
+  ERROR_POINTS,
+} from "../../constants/errorConnections";
 
 import * as S from "./WebCamStyle";
 
@@ -17,8 +24,14 @@ const WebCam = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  const { startMeasurement, stopMeasurement, stream, elapsedTime, receivedData, landmarkResult } =
-    useMeasurementStore();
+  const {
+    startMeasurement,
+    stopMeasurement,
+    stream,
+    elapsedTime,
+    receivedData,
+    landmarkResult,
+  } = useMeasurementStore();
 
   const displayVideo = () => {
     const video = videoRef.current;
@@ -65,21 +78,24 @@ const WebCam = () => {
         lineWidth: 2,
       });
 
-      // 경고 받은 부위 빨간색으로 표시
-      const problemCode = receivedData?.problemCode;
+      if (!receivedData?.problemPart) return;
 
-      if (!problemCode || problemCode === 0) return;
+      Object.entries(receivedData.problemPart).forEach(([key, hasIssue]) => {
+        if (!hasIssue) return;
 
-      ERROR_POINTS[problemCode].forEach((point) => {
-        drawingUtils.drawLandmarks([landmark[point]], {
-          radius: 4,
-          color: "#FF0000",
+        const part = key as keyof typeof ERROR_POINTS;
+
+        ERROR_POINTS[part]?.forEach((point) => {
+          drawingUtils.drawLandmarks([landmark[point]], {
+            radius: 4,
+            color: "#FF0000",
+          });
         });
-      });
 
-      drawingUtils.drawConnectors(landmark, ERROR_CONNECTIONS[problemCode], {
-        color: "#FF0000",
-        lineWidth: 2,
+        drawingUtils.drawConnectors(landmark, ERROR_CONNECTIONS[part] || [], {
+          color: "#FF0000",
+          lineWidth: 2,
+        });
       });
     }
 
@@ -95,8 +111,17 @@ const WebCam = () => {
     const canvasContext = canvasRef.current.getContext("2d");
 
     if (!canvasContext) return;
-    canvasContext.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    canvasContext.clearRect(
+      0,
+      0,
+      canvasRef.current.width,
+      canvasRef.current.height
+    );
   };
+
+  const haveProblem = receivedData?.problemPart
+    ? Object.values(receivedData.problemPart).some(Boolean)
+    : false;
 
   useEffect(() => {
     if (stream) displayVideo();
@@ -116,8 +141,12 @@ const WebCam = () => {
         <S.Canvas ref={canvasRef} />
 
         <S.RecordingStartContainer isStreaming={stream !== null}>
-          <S.RecordingStartText>아래 버튼을 눌러, 자세 분석을 시작해보세요.</S.RecordingStartText>
-          <S.RecordingStartButton onClick={startMeasurement}>분석 시작</S.RecordingStartButton>
+          <S.RecordingStartText>
+            아래 버튼을 눌러, 자세 분석을 시작해보세요.
+          </S.RecordingStartText>
+          <S.RecordingStartButton onClick={startMeasurement}>
+            분석 시작
+          </S.RecordingStartButton>
         </S.RecordingStartContainer>
 
         <S.ElapsedTimeContainer isStreaming={stream !== null}>
@@ -125,12 +154,15 @@ const WebCam = () => {
           {formatTime(elapsedTime)}
         </S.ElapsedTimeContainer>
 
-        <S.RealtimeAlert haveProblem={receivedData && receivedData.problemCode !== 0}>
+        <S.RealtimeAlert haveProblem={haveProblem}>
           자세 경고가 감지되었습니다. 바른 자세를 취해주세요.
         </S.RealtimeAlert>
       </S.VideoContainer>
 
-      <S.RecordingStopButton onClick={stopMeasurement} isStreaming={stream !== null}>
+      <S.RecordingStopButton
+        onClick={stopMeasurement}
+        isStreaming={stream !== null}
+      >
         <S.RecordingStopIcon src={recordingStopIcon} alt="분석 중지" />
         분석 종료
       </S.RecordingStopButton>

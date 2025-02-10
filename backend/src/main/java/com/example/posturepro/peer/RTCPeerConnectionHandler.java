@@ -12,7 +12,8 @@ import org.slf4j.Logger;
 
 import com.example.posturepro.peer.observer.CreateDescriptionObserver;
 import com.example.posturepro.peer.observer.SetDescriptionObserver;
-import com.example.posturepro.pose.PoseDataProcessor;
+import com.example.posturepro.pose.PoseAnalyzer;
+import com.example.posturepro.pose.PoseAnalyzerFactory;
 import com.example.posturepro.signaling.IceCandidateListener;
 
 import dev.onvoid.webrtc.PeerConnectionFactory;
@@ -25,7 +26,6 @@ import dev.onvoid.webrtc.RTCDataChannelObserver;
 import dev.onvoid.webrtc.RTCIceCandidate;
 import dev.onvoid.webrtc.RTCIceConnectionState;
 import dev.onvoid.webrtc.RTCIceServer;
-import dev.onvoid.webrtc.RTCIceTransportPolicy;
 import dev.onvoid.webrtc.RTCPeerConnection;
 import dev.onvoid.webrtc.RTCSessionDescription;
 
@@ -40,10 +40,10 @@ public class RTCPeerConnectionHandler implements PeerConnectionObserver {
 	private final IceCandidateListener listener;
 
 	private final Logger logger;
-	private final PoseDataProcessor poseDataProcessor;
+	private final PoseAnalyzer poseAnalyzer;
 
 	public RTCPeerConnectionHandler(PeerConnectionFactory factory, String sessionId, IceCandidateListener listener,
-		Logger logger) {
+		Logger logger, PoseAnalyzerFactory poseAnalyzerFactory) {
 		this.sessionId = sessionId;
 		this.listener = listener;
 		this.logger = logger;
@@ -58,7 +58,7 @@ public class RTCPeerConnectionHandler implements PeerConnectionObserver {
 
 		localPeerConnection = factory.createPeerConnection(config, this);
 
-		poseDataProcessor = new PoseDataProcessor();
+		this.poseAnalyzer = poseAnalyzerFactory.create();
 		receivedTexts = new ArrayList<>();
 	}
 
@@ -102,16 +102,17 @@ public class RTCPeerConnectionHandler implements PeerConnectionObserver {
 
 			@Override
 			public void onMessage(RTCDataChannelBuffer buffer) {
+
+				String receivedText = decodeMessage(buffer);
+				// logger.info("Received Text {}",receivedText);
+
+				String sendingText = poseAnalyzer.analyzePoseDataProcess(receivedText);
+				// logger.info("Sending Text {}",sendingText);
+
 				try {
-					String receivedText = decodeMessage(buffer);
-					// String sendingText = "Received Message" + receivedText;
-					// logger.info(sendingText);
-
-					String sendingText = poseDataProcessor.processPoseData(receivedText);
-
 					sendTextMessage(sendingText);
 				} catch (Exception e) {
-					throw new RuntimeException("Decode Failed.");
+					throw new RuntimeException("Send Text Message Failed.");
 				}
 			}
 		});

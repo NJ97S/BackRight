@@ -12,6 +12,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.example.posturepro.peer.RTCPeerConnectionHandler;
+import com.example.posturepro.pose.PoseAnalyzerFactory;
 import com.example.posturepro.signaling.dto.ClientIceCandidate;
 import com.example.posturepro.signaling.dto.SignalingMessage;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -32,6 +33,7 @@ public class SignalingHandler extends TextWebSocketHandler implements IceCandida
 
 	protected PeerConnectionFactory factory;
 	protected AudioDeviceModule audioDevModule;
+	private final PoseAnalyzerFactory poseAnalyzerFactory;
 
 	private final ConcurrentHashMap<String, RTCPeerConnectionHandler> sessionIdToPeerConnectionMap =
 		new ConcurrentHashMap<>();
@@ -39,9 +41,11 @@ public class SignalingHandler extends TextWebSocketHandler implements IceCandida
 	private final ConcurrentHashMap<String, SerializedWebSocketSender> sessionIdToSenderMap =
 		new ConcurrentHashMap<>();
 
-	SignalingHandler() {
+	SignalingHandler(PoseAnalyzerFactory poseAnalyzerFactory) {
 		this.audioDevModule = new AudioDeviceModule(AudioLayer.kDummyAudio);
 		this.factory = new PeerConnectionFactory(audioDevModule);
+		this.poseAnalyzerFactory = poseAnalyzerFactory;
+		logger.info("Signaling Handler started");
 	}
 
 	private RTCPeerConnectionHandler initializeSession(final WebSocketSession session) {
@@ -56,7 +60,7 @@ public class SignalingHandler extends TextWebSocketHandler implements IceCandida
 		var sessionHandler = new SerializedWebSocketSender(session);
 		sessionIdToSenderMap.put(sessionId, sessionHandler);
 
-		var serverConnection = new RTCPeerConnectionHandler(factory, sessionId, this, logger);
+		var serverConnection = new RTCPeerConnectionHandler(factory, sessionId, this, logger, this.poseAnalyzerFactory);
 		sessionIdToPeerConnectionMap.put(sessionId, serverConnection);
 
 		return serverConnection;
