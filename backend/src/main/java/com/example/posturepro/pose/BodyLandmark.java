@@ -9,8 +9,7 @@ public class BodyLandmark {
 	@Setter
 	@Getter
 	String name;
-	double x, y, z;
-	String visibility;
+	double x, y, z, visibility;
 
 	public BodyLandmark() {
 	}
