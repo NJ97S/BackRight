@@ -44,6 +44,7 @@ export const StyledCalendar = styled.div`
       text-transform: uppercase;
       font-weight: 700;
       font-size: 0.75rem;
+      margin-bottom: 0.75rem;
 
       abbr {
         text-decoration: none;
@@ -77,14 +78,16 @@ export const StyledCalendar = styled.div`
         font-weight: 700;
         border-radius: 12px;
 
-        &:hover {
-          opacity: 0.9;
-        }
-
         &.react-calendar__tile--active {
           background: var(--mint) !important;
           color: white !important;
         }
+      }
+
+      &:not(.react-calendar__tile--now):enabled:hover {
+        background-color: rgba(118, 171, 174, 0.1) !important;
+        border-radius: 12px;
+        opacity: 0.9;
       }
 
       &--active:not(.react-calendar__tile--now) {
@@ -96,11 +99,6 @@ export const StyledCalendar = styled.div`
 
       &.react-calendar__month-view__days__day--neighboringMonth {
         color: var(--gray-300);
-      }
-
-      &:enabled:hover {
-        background-color: rgba(118, 171, 174, 0.1) !important;
-        border-radius: 12px;
       }
 
       &--now:not(.react-calendar__tile--active) {

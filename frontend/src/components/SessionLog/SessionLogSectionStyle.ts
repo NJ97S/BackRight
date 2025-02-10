@@ -35,10 +35,10 @@ export const TimelineWrapper = styled.div.withConfig({
   &::before {
     content: "";
     position: absolute;
-    left: 1rem;
-    top: 0.75rem;
+    left: 1.5rem;
+    top: 1.5rem;
     height: ${({ sessionCount }) =>
-      sessionCount > 1 ? `${(sessionCount - 1) * 6}rem` : "0"};
+      sessionCount > 1 ? `${(sessionCount - 1) * 5}rem` : "0"};
     width: 0.25rem;
     background-color: var(--gray-300);
     transform: translateX(-50%);
@@ -49,7 +49,7 @@ export const TimelineWrapper = styled.div.withConfig({
 export const TimelineDot = styled.div`
   width: 1rem;
   height: 1rem;
-  margin: 0.125rem 0.375rem 0 0;
+  margin: 0.125rem 1rem 0 0;
   background-color: var(--gray-300);
   border-radius: 50%;
   position: relative;
@@ -102,8 +102,7 @@ export const WarningCount = styled.div`
 export const SessionItem = styled.div`
   display: flex;
   align-items: flex-start;
-  padding: 0.5rem;
-  margin-bottom: 1.5rem;
+  padding: 1rem;
   cursor: pointer;
   position: relative;
   border-radius: 0.75rem;
@@ -126,10 +125,6 @@ export const SessionItem = styled.div`
 
     ${StatusBadge} {
       background-color: var(--white);
-
-      span {
-        color: var(--mint);
-      }
     }
   }
 `;
