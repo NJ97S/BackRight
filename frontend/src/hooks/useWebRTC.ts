@@ -1,7 +1,10 @@
 /* eslint-disable no-undef */
 
+import { useEffect, useRef } from "react";
+
 import { Landmark } from "@mediapipe/tasks-vision";
-import { useEffect, useRef, useState } from "react";
+
+import useMeasurementStore from "../store/useMeasurementStore";
 import { ReceivedDataType } from "../types/type";
 
 interface useWebRTCProps {
@@ -13,9 +16,7 @@ const useWebRTC = ({ serverUrl }: useWebRTCProps) => {
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
   const dataChannelRef = useRef<RTCDataChannel | null>(null);
 
-  const [receivedData, setReceivedData] = useState<ReceivedDataType | null>(
-    null
-  );
+  const { setReceivedData } = useMeasurementStore();
 
   const sendToServer = (message: Record<string, unknown>) => {
     const ws = signalingServerConnectionRef.current;
@@ -64,7 +65,6 @@ const useWebRTC = ({ serverUrl }: useWebRTCProps) => {
   const createPeerConnection = () => {
     const pc = new RTCPeerConnection({
       iceServers: [
-        // urls: "stun:stun.l.google.com:19302",
         {
           urls: "turn:i12a601.p.ssafy.io:3478",
           username: "username",
@@ -82,15 +82,11 @@ const useWebRTC = ({ serverUrl }: useWebRTCProps) => {
     peerConnectionRef.current = pc;
   };
 
-  const handleAnswerMessage = async (msg: {
-    sdp: RTCSessionDescriptionInit;
-  }) => {
+  const handleAnswerMessage = async (msg: { sdp: RTCSessionDescriptionInit }) => {
     if (!peerConnectionRef.current) return;
 
     try {
-      await peerConnectionRef.current.setRemoteDescription(
-        new RTCSessionDescription(msg.sdp)
-      );
+      await peerConnectionRef.current.setRemoteDescription(new RTCSessionDescription(msg.sdp));
     } catch (error) {
       console.error("Error setting remote description:", error);
     }
@@ -195,7 +191,6 @@ const useWebRTC = ({ serverUrl }: useWebRTCProps) => {
     startConnection,
     sendMessage,
     closeConnection,
-    receivedData,
   };
 };
 
