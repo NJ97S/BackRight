@@ -1,0 +1,10 @@
+{
+	"dependencies": {
+		"@types/react-calendar": "^4.1.0",
+		"@types/react-datepicker": "^7.0.0",
+		"@types/recharts": "^1.8.29",
+		"react-calendar": "^5.1.0",
+		"react-datepicker": "^8.0.0",
+		"recharts": "^2.15.1"
+	}
+}
