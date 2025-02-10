@@ -112,7 +112,7 @@ const MeasurementService = () => {
     await setupCamera();
     await loadPoseLandmarker();
 
-    if (stream) startRecording(stream);
+    if (streamRef.current) startRecording(streamRef.current);
 
     if (timerRef.current) clearInterval(timerRef.current);
 
