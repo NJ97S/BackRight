@@ -1,8 +1,8 @@
 package com.example.posturepro.config;
 
-import com.example.posturepro.api.oauth.filter.JwtAuthenticationFilter;
-import com.example.posturepro.api.oauth.handler.CustomAuthenticationSuccessHandler;
-import com.example.posturepro.api.oauth.service.TokenService;
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,11 +13,13 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.*;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
-import java.util.List;
+import com.example.posturepro.api.oauth.filter.JwtAuthenticationFilter;
+import com.example.posturepro.api.oauth.handler.CustomAuthenticationSuccessHandler;
+import com.example.posturepro.api.oauth.service.TokenService;
 
 @Configuration
 @EnableWebSecurity
@@ -28,7 +30,7 @@ public class SecurityConfig {
 
 	@Autowired
 	public SecurityConfig(CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler,
-		 TokenService tokenService) {
+		TokenService tokenService) {
 		this.customAuthenticationSuccessHandler = customAuthenticationSuccessHandler;
 		this.tokenService = tokenService;
 	}
@@ -43,7 +45,7 @@ public class SecurityConfig {
 				session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			)
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/", "/auth/**", "/oauth2/**", "/api/members/signup").permitAll()
+				.requestMatchers("/", "/auth/**", "/oauth2/**", "/api/members/signup", "/helloworld").permitAll()
 				.anyRequest().authenticated()
 			)
 
@@ -53,12 +55,11 @@ public class SecurityConfig {
 			)
 
 			.addFilterBefore(new JwtAuthenticationFilter(tokenService), OAuth2LoginAuthenticationFilter.class)
-			.addFilterBefore(new JwtAuthenticationFilter(tokenService), UsernamePasswordAuthenticationFilter.class)
 			.headers(headers -> headers
-				.contentSecurityPolicy(csp -> csp
-					.policyDirectives("default-src 'self'; script-src 'self'; style-src 'self'")
-				)
-				.frameOptions(HeadersConfigurer.FrameOptionsConfig::deny)
+					.contentSecurityPolicy(csp -> csp
+						.policyDirectives("default-src 'self'; script-src 'self'; style-src 'self'")
+					)
+					.frameOptions(HeadersConfigurer.FrameOptionsConfig::deny)
 				// .httpStrictTransportSecurity(hsts -> hsts
 				// 	.includeSubDomains(true)
 				// 	.maxAgeInSeconds(31536000)

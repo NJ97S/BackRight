@@ -11,11 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.posturepro.api.oauth.service.TokenService;
 import com.example.posturepro.api.oauth.utils.CookieUtil;
 import com.example.posturepro.domain.member.service.MemberService;
-import com.example.posturepro.domain.member.Member;
 import com.example.posturepro.dto.SignUpRequest;
-import com.example.posturepro.api.oauth.service.TokenService;
 import com.example.posturepro.dto.SignUpResponse;
 import com.example.posturepro.dto.SignUpToken;
 
@@ -74,7 +73,8 @@ public class MemberController {
 			Cookie tempCookie = CookieUtil.deleteCookie("temp-token", false, "/", "Strict");
 			response.addCookie(tempCookie);
 
-			return ResponseEntity.ok(new SignUpResponse("회원 가입이 완료되었습니다.", result.getAccessToken(), result.getRefreshToken()));
+			return ResponseEntity.ok(
+				new SignUpResponse("회원 가입이 완료되었습니다.", result.getAccessToken(), result.getRefreshToken()));
 		} catch (IllegalArgumentException e) {
 			return ResponseEntity.badRequest().body(new SignUpResponse(e.getMessage(), null, null));
 		} catch (Exception e) {
