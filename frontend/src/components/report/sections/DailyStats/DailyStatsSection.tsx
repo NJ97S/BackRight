@@ -1,4 +1,4 @@
-// DailyStatsSection.tsx
+// src/sections/DailyStats/DailyStatsSection.tsx
 
 import type React from "react";
 import {

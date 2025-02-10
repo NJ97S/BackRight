@@ -104,7 +104,7 @@ export const SessionItem = styled.div`
   padding: 0.5rem; // 기본 padding을 여기에 설정
   margin-bottom: 1.5rem;
   cursor: pointer;
-  position: relative;
+  // position: relative; // 주석처리 가능 - 특별히 positioning이 필요한 자식 요소가 없음
   border-radius: 0.75rem; // 기본 border-radius도 여기에 설정
   transition: background-color 0.2s ease; // transition 효과 추가
 
@@ -171,9 +171,9 @@ export const CloseButton = styled.button`
   top: 0.75rem;
   right: 0.75rem;
   font-size: 1.5rem;
-  background: none;
-  border: none;
-  cursor: pointer;
+  // background: none; // 주석처리 가능 - GlobalStyle에서 button에 대해 이미 정의됨
+  // border: none; // 주석처리 가능 - GlobalStyle에서 button에 대해 이미 정의됨
+  // cursor: pointer; // 주석처리 가능 - GlobalStyle에서 button에 대해 이미 정의됨
   color: var(--gray-300);
 
   &:hover {

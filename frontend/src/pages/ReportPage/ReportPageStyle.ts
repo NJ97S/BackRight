@@ -15,5 +15,5 @@ export const PageContainer = styled.div`
 export const MainContainer = styled.div`
   max-width: 84.5rem; // 최대 너비 제한
   display: flex;
-  flex: 1;
+  // flex: 1; // 주석처리 가능 - 부모에서 이미 flex: 1이 있고, justify-content: center가 있어서 불필요
 `;

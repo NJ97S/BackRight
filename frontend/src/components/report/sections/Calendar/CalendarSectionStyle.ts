@@ -9,7 +9,7 @@ export const CalendarContainer = styled.div`
   background: var(--white);
   border-radius: 12px;
   padding: 1.5rem;
-  align-content: center;
+  // align-content: center; // 주석처리 가능 - flex-direction: column에서는 효과 없음
 `;
 
 // 캘린더 헤더 - 기존 마진 대신 gap 사용
@@ -61,7 +61,7 @@ export const StyledCalendar = styled.div`
     .react-calendar__tile {
       padding: 0.5rem;
       font-size: 0.75rem;
-      position: relative;
+      // position: relative; // 주석처리 가능 - 특별히 absolute 포지셔닝이 필요한 자식 요소가 없음
 
       &.react-calendar__month-view__days__day--weekend {
         color: var(--black);
@@ -81,7 +81,7 @@ export const StyledCalendar = styled.div`
         &.react-calendar__tile--active {
           background: var(--mint) !important;
           color: white !important;
-          font-weight: 700;
+          // font-weight: 700; // 주석처리 가능 - 상위에서 이미 정의됨
         }
       }
 

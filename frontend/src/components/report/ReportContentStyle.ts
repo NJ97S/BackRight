@@ -11,7 +11,7 @@ export const ReportContentContainer = styled.div`
 
 export const MainContent = styled.div`
   flex: 1;
-  min-height: 0;
+  /* min-height: 0; // 주석처리 가능 - flex: 1이 있으면 불필요 */
   display: grid;
   grid-template-columns: 2.5fr 1fr;
   grid-template-rows: auto auto;

@@ -1,4 +1,4 @@
-// DailyStatsSectionStyle.ts
+// src/sections/DailyStats/DailyStatsSectionStyle.ts
 import styled from "styled-components";
 
 // 메인 컨테이너
@@ -16,7 +16,7 @@ export const Title = styled.h2`
   font-size: 1rem;
   font-weight: 700;
   text-align: center;
-  font-family: "Pretendard";
+  // font-family: "Pretendard"; // 주석처리 가능 - GlobalStyle에서 이미 정의됨
 `;
 
 // 컨텐츠 레이아웃
@@ -50,7 +50,7 @@ export const DonutLabel = styled.div`
   font-size: 1.125rem;
   font-weight: 700;
   color: var(--mint);
-  font-family: "Pretendard";
+  // font-family: "Pretendard"; // 주석처리 가능 - GlobalStyle에서 이미 정의됨
 `;
 
 // 구분선
@@ -72,7 +72,7 @@ export const BarSection = styled.div`
 
 export const BarWrapper = styled.div`
   position: relative;
-  width: 17.5rem;
+  // width: 17.5rem; // 검토 필요 - 부모가 flex: 1을 가지고 있다면 width가 필요한지 확인
   height: 11.5rem;
 `;
 
@@ -118,5 +118,5 @@ export const DifferenceText = styled.span`
   font-size: 0.75rem; // 더 작은 글자 크기
   font-weight: 700;
   color: var(--mint);
-  font-family: "Pretendard";
+  // font-family: "Pretendard"; // 주석처리 가능 - GlobalStyle에서 이미 정의됨
 `;

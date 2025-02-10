@@ -5,7 +5,7 @@ export const TabContainer = styled.div`
   height: 2.75rem;
   display: flex;
   padding-left: 1.25rem;
-  box-sizing: border-box;
+  // box-sizing: border-box; // 주석처리 가능 - GlobalStyle에서 이미 모든 요소에 대해 정의됨
 `;
 
 interface TabItemProps {
@@ -18,7 +18,7 @@ export const TabItem = styled.div.withConfig({
 })<TabItemProps>`
   flex: 1;
   max-width: 10.49rem;
-  height: 2.75rem;
+  // height: 2.75rem; // 주석처리 가능 - 부모의 height를 상속받을 수 있음
   background: ${({ isActive }) => (isActive ? "var(--cream)" : "var(--mint)")};
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
@@ -40,6 +40,6 @@ export const TabText = styled.span.withConfig({
 })<TabItemProps>`
   color: ${({ isActive }) => (isActive ? "var(--mint)" : "var(--cream)")};
   font-size: 1rem;
-  font-family: "Pretendard";
+  // font-family: "Pretendard"; // 주석처리 가능 - GlobalStyle에서 이미 정의됨
   font-weight: ${({ isActive }) => (isActive ? "800" : "400")};
 `;

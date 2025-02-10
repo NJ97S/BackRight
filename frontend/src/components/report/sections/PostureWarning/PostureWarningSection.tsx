@@ -1,4 +1,4 @@
-// PostureWarningSection.tsx
+// src/sections/PostureWarning/PostureWarningSection.tsx
 import { useMemo } from "react";
 import * as S from "./PostureWarningSectionStyle";
 
