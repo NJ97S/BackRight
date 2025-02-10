@@ -1,5 +1,6 @@
 import styled from "styled-components";
 
+// 전체 컨테이너 스타일링
 export const Container = styled.div`
   padding: 1.5rem;
   background: var(--white);
@@ -8,6 +9,7 @@ export const Container = styled.div`
   height: 100%;
 `;
 
+// 제목 스타일링
 export const Title = styled.h2`
   margin-bottom: 1.5rem;
   font-size: 1rem;
@@ -15,27 +17,25 @@ export const Title = styled.h2`
   text-align: center;
 `;
 
+// Grid 레이아웃을 사용한 콘텐츠 영역
 export const Content = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 2fr 1fr;
+  gap: 1.5rem;
   height: calc(100% - 3.5rem);
 `;
 
-export const DonutSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex: 1;
-`;
-
+// 도넛 차트 wrapper
 export const DonutWrapper = styled.div`
   position: relative;
   width: 13.75rem;
   height: 13.75rem;
+  justify-self: center;
+  align-self: center;
 `;
 
+// 도넛 차트 중앙 레이블
 export const DonutLabel = styled.div`
   position: absolute;
   top: 50%;
@@ -46,34 +46,18 @@ export const DonutLabel = styled.div`
   color: var(--mint);
 `;
 
-export const Divider = styled.div`
-  width: 0.0625rem;
-  height: 19.8125rem;
-  background: var(--gray-300);
-  border: none;
-  border-left: 0.0625rem dashed var(--gray-300);
-`;
-
-export const BarSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex: 1;
-`;
-
+// 막대 그래프 wrapper
 export const BarWrapper = styled.div`
   position: relative;
   height: 11.5rem;
+  justify-self: center;
+  align-self: center;
 `;
 
-export const DonutDescription = styled.div`
-  margin-top: 1.5rem;
+// 설명 텍스트 공통 스타일링
+export const Description = styled.div`
   text-align: center;
-`;
-
-export const BarDescription = styled.div`
-  margin-top: 1.5rem;
-  text-align: center;
+  align-self: center;
 `;
 
 export const DescriptionTitle = styled.div`
@@ -93,6 +77,7 @@ export const HighlightText = styled.span`
   font-weight: 700;
 `;
 
+// 차이 표시 인디케이터
 export const DifferenceIndicator = styled.div`
   position: absolute;
   top: 0;

@@ -12,6 +12,7 @@ import * as S from "./DailyStatsSectionStyle";
 
 ChartJS.register(ArcElement, CategoryScale, LinearScale, BarElement);
 
+// 시간 포맷팅 유틸리티 함수
 const formatTime = (minutes: number) => {
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
@@ -20,11 +21,13 @@ const formatTime = (minutes: number) => {
 };
 
 const DailyStatsSection: React.FC = () => {
+  // 통계 데이터
   const todayMinutes = 292;
   const yesterdayMinutes = 77;
   const totalMinutes = 390;
   const diffMinutes = todayMinutes - yesterdayMinutes;
 
+  // 도넛 차트 설정
   const donutData = {
     datasets: [
       {
@@ -49,6 +52,7 @@ const DailyStatsSection: React.FC = () => {
     maintainAspectRatio: false,
   };
 
+  // 막대 차트 설정
   const barData = {
     labels: ["1일 전", "오늘"],
     datasets: [
@@ -119,39 +123,37 @@ const DailyStatsSection: React.FC = () => {
     <S.Container>
       <S.Title>일일 통계</S.Title>
       <S.Content>
-        <S.DonutSection>
-          <S.DonutWrapper>
-            <Doughnut data={donutData} options={donutOptions} />
-            <S.DonutLabel>{formatTime(todayMinutes)}</S.DonutLabel>
-          </S.DonutWrapper>
-          <S.DonutDescription>
-            <S.DescriptionTitle>
-              {formatTime(totalMinutes)} 중
-            </S.DescriptionTitle>
-            <S.DescriptionText>
-              <S.HighlightText>{formatTime(todayMinutes)}</S.HighlightText> 동안
-              정자세를 유지했어요.
-            </S.DescriptionText>
-          </S.DonutDescription>
-        </S.DonutSection>
+        {/* 도넛 차트 영역 */}
+        <S.DonutWrapper>
+          <Doughnut data={donutData} options={donutOptions} />
+          <S.DonutLabel>{formatTime(todayMinutes)}</S.DonutLabel>
+        </S.DonutWrapper>
 
-        <S.Divider />
+        {/* 막대 차트 영역 */}
+        <S.BarWrapper>
+          <Bar data={barData} options={barOptions} />
+          <S.DifferenceIndicator>
+            <S.DifferenceText>{formatTime(diffMinutes)}</S.DifferenceText>
+          </S.DifferenceIndicator>
+        </S.BarWrapper>
 
-        <S.BarSection>
-          <S.BarWrapper>
-            <Bar data={barData} options={barOptions} />
-            <S.DifferenceIndicator>
-              <S.DifferenceText>{formatTime(diffMinutes)}</S.DifferenceText>
-            </S.DifferenceIndicator>
-          </S.BarWrapper>
-          <S.BarDescription>
-            <S.DescriptionTitle>1일 전과 비교했을 때</S.DescriptionTitle>
-            <S.DescriptionText>
-              <S.HighlightText>{formatTime(diffMinutes)}</S.HighlightText> 더
-              많이 정자세를 유지했어요.
-            </S.DescriptionText>
-          </S.BarDescription>
-        </S.BarSection>
+        {/* 도넛 차트 설명 */}
+        <S.Description>
+          <S.DescriptionTitle>{formatTime(totalMinutes)} 중</S.DescriptionTitle>
+          <S.DescriptionText>
+            <S.HighlightText>{formatTime(todayMinutes)}</S.HighlightText> 동안
+            정자세를 유지했어요.
+          </S.DescriptionText>
+        </S.Description>
+
+        {/* 막대 차트 설명 */}
+        <S.Description>
+          <S.DescriptionTitle>1일 전과 비교했을 때</S.DescriptionTitle>
+          <S.DescriptionText>
+            <S.HighlightText>{formatTime(diffMinutes)}</S.HighlightText> 더 많이
+            정자세를 유지했어요.
+          </S.DescriptionText>
+        </S.Description>
       </S.Content>
     </S.Container>
   );
