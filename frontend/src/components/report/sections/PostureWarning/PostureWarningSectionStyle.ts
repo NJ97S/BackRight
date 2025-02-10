@@ -4,7 +4,6 @@ import styled from "styled-components";
 export const Container = styled.div`
   background: var(--white);
   border-radius: 0.75rem;
-  // padding: 1.93rem 1.57rem 1.93rem 1.57rem; // 간소화 가능 - padding: 1.93rem 1.57rem;
   padding: 1.93rem 1.57rem;
 `;
 
@@ -50,7 +49,6 @@ export const Card = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  // width: 10.47rem; // 주석처리 가능 - flex: 1이 있으면 불필요
   height: 11.44rem;
   padding: 1.12rem 1rem;
   border-radius: 0.75rem;

@@ -4,14 +4,13 @@ import styled from "styled-components";
 export const ReportContentContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%; //애넬 꼭 넣어야하더라
-  height: 100%; //애넬 꼭 넣어야하더라
+  width: 100%;
+  height: 100%;
   overflow: hidden;
 `;
 
 export const MainContent = styled.div`
   flex: 1;
-  /* min-height: 0; // 주석처리 가능 - flex: 1이 있으면 불필요 */
   display: grid;
   grid-template-columns: 2.5fr 1fr;
   grid-template-rows: auto auto;

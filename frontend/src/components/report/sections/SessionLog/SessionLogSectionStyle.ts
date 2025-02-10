@@ -1,7 +1,92 @@
-// SessionLogSectionStyle.ts
 import styled from "styled-components";
-import type { SessionStatus } from "./types";
 
+// ===== Types =====
+export type SessionStatus = "정상 종료" | "강제 종료";
+
+export interface Warning {
+  id: string;
+  timestamp: string;
+  description: string;
+}
+
+export interface Session {
+  id: string;
+  startTime: string;
+  endTime: string;
+  warningCount: number;
+  status: SessionStatus;
+  warnings: Warning[];
+}
+
+// ===== Constants =====
+export const SESSION_STATUS = {
+  NORMAL: "정상 종료",
+  FORCED: "강제 종료",
+} as const;
+
+export const WARNING_TYPES = {
+  POSTURE: "자세 불량",
+  PROXIMITY: "근접 거리",
+  BRIGHTNESS: "조명 부족",
+} as const;
+
+export const TIME_FORMAT_OPTIONS = {
+  hour: "2-digit",
+  minute: "2-digit",
+} as const;
+
+export const MODAL_DIMENSIONS = {
+  MAX_WIDTH: "62.5rem",
+  MAX_HEIGHT: "80vh",
+} as const;
+
+export const MOCK_SESSION_DATA: Session[] = [
+  {
+    id: "1",
+    startTime: "2023-06-01T10:00:00Z",
+    endTime: "2023-06-01T11:30:00Z",
+    warningCount: 3,
+    status: SESSION_STATUS.NORMAL,
+    warnings: [
+      {
+        id: "1a",
+        timestamp: "2023-06-01T10:15:00Z",
+        description: WARNING_TYPES.POSTURE,
+      },
+      {
+        id: "1b",
+        timestamp: "2023-06-01T10:45:00Z",
+        description: WARNING_TYPES.PROXIMITY,
+      },
+      {
+        id: "1c",
+        timestamp: "2023-06-01T11:15:00Z",
+        description: WARNING_TYPES.BRIGHTNESS,
+      },
+    ],
+  },
+  {
+    id: "2",
+    startTime: "2023-06-01T14:00:00Z",
+    endTime: "2023-06-01T15:45:00Z",
+    warningCount: 2,
+    status: SESSION_STATUS.FORCED,
+    warnings: [
+      {
+        id: "2a",
+        timestamp: "2023-06-01T14:30:00Z",
+        description: WARNING_TYPES.POSTURE,
+      },
+      {
+        id: "2b",
+        timestamp: "2023-06-01T15:15:00Z",
+        description: WARNING_TYPES.PROXIMITY,
+      },
+    ],
+  },
+];
+
+// ===== Styled Components =====
 export const Container = styled.div.withConfig({
   shouldForwardProp: (prop) => !["isExpanded"].includes(prop),
 })`
@@ -35,14 +120,14 @@ export const TimelineWrapper = styled.div.withConfig({
   &::before {
     content: "";
     position: absolute;
-    left: 1rem; // Dot의 중앙
+    left: 1rem;
     top: 0.75rem;
     height: ${({ sessionCount }) =>
       sessionCount > 1 ? `${(sessionCount - 1) * 6}rem` : "0"};
     width: 0.25rem;
     background-color: var(--gray-300);
     transform: translateX(-50%);
-    z-index: 2; // 세로선이 아래에 위치하도록
+    z-index: 2;
   }
 `;
 
@@ -53,12 +138,13 @@ export const TimelineDot = styled.div`
   background-color: var(--gray-300);
   border-radius: 50%;
   position: relative;
-  z-index: 1; // 점이 최상단에 위치하도록
+  z-index: 1;
   transition: background-color 0.2s ease;
 `;
+
 export const SessionContent = styled.div`
   flex: 1;
-  z-index: 1; // 세션 내용이 세로선 위에 위치하도록
+  z-index: 1;
 `;
 
 export const SessionHeader = styled.div`
@@ -101,19 +187,19 @@ export const WarningCount = styled.div`
 export const SessionItem = styled.div`
   display: flex;
   align-items: flex-start;
-  padding: 0.5rem; // 기본 padding을 여기에 설정
+  padding: 0.5rem;
   margin-bottom: 1.5rem;
   cursor: pointer;
-  // position: relative; // 주석처리 가능 - 특별히 positioning이 필요한 자식 요소가 없음
-  border-radius: 0.75rem; // 기본 border-radius도 여기에 설정
-  transition: background-color 0.2s ease; // transition 효과 추가
+  position: relative;
+  border-radius: 0.75rem;
+  transition: background-color 0.2s ease;
 
   &:last-child {
     margin-bottom: 0;
   }
 
   &:hover {
-    background-color: var(--mint); // hover 시 배경색만 변경
+    background-color: var(--mint);
 
     ${SessionTime} {
       color: var(--white);
@@ -132,6 +218,7 @@ export const SessionItem = styled.div`
     }
   }
 `;
+
 // Modal Styles
 export const Modal = styled.div`
   position: fixed;
@@ -160,8 +247,8 @@ export const ModalContent = styled.div`
   border-radius: 0.75rem;
   padding: 1.5rem;
   width: 80%;
-  max-width: 62.5rem;
-  max-height: 80vh;
+  max-width: ${MODAL_DIMENSIONS.MAX_WIDTH};
+  max-height: ${MODAL_DIMENSIONS.MAX_HEIGHT};
   z-index: 1;
   overflow-y: auto;
 `;
@@ -171,9 +258,9 @@ export const CloseButton = styled.button`
   top: 0.75rem;
   right: 0.75rem;
   font-size: 1.5rem;
-  // background: none; // 주석처리 가능 - GlobalStyle에서 button에 대해 이미 정의됨
-  // border: none; // 주석처리 가능 - GlobalStyle에서 button에 대해 이미 정의됨
-  // cursor: pointer; // 주석처리 가능 - GlobalStyle에서 button에 대해 이미 정의됨
+  background: none;
+  border: none;
+  cursor: pointer;
   color: var(--gray-300);
 
   &:hover {
