@@ -605,3 +605,17 @@ docker compose up -d
 - Nginx `server_name`에 도메인 입력 후 적용 (`nginx -s reload`)
 
 ---
+
+## 📅 날짜
+
+- 2025-02-10
+
+---
+
+## ✏️ 배운 것
+
+### Mysql, redis 포트 연결 해제
+- 포트 연결 해제 및 내부 네트워크만 사용하도록 변경
+- SSL 인증서 관련 volume 관리 코드 추가
+
+---
