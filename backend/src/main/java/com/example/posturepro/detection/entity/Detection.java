@@ -25,11 +25,11 @@ public class Detection {
 	@Column(name = "id", insertable = false, updatable = false)
 	private Long id;
 
-	@Column(name = "detection_start_at", columnDefinition = "TIMESTAMP")
-	private Instant detectionStartTime;
+	@Column(name = "started_at", columnDefinition = "TIMESTAMP")
+	private Instant startedAt;
 
-	@Column(name = "detection_end_at", columnDefinition = "TIMESTAMP")
-	private Instant detectionEndTime;
+	@Column(name = "ended_at", columnDefinition = "TIMESTAMP")
+	private Instant endedAt;
 
 	@Column(name = "video_url")
 	private String videoUrl;
@@ -53,8 +53,8 @@ public class Detection {
 
 	public static Detection fromDto(DetectionDto detectionDto, AnalyzingSession session) {
 		Detection detection = new Detection();
-		detection.setDetectionStartTime(detectionDto.getDetectionStartTime());
-		detection.setDetectionEndTime(detectionDto.getDetectionEndTime());
+		detection.setStartedAt(detectionDto.getStartedAt());
+		detection.setEndedAt(detectionDto.getEndedAt());
 		detection.setVideoUrl(detectionDto.getVideoUrl());
 		detection.setNeckDetected(detectionDto.isNeckDetected());
 		detection.setLeftShoulderDetected(detectionDto.isLeftShoulderDetected());

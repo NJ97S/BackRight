@@ -6,4 +6,6 @@ public interface AnalyzingSessionService {
 	AnalyzingSession getSessionById(long sessionId);
 
 	AnalyzingSession createSession();
+
+	AnalyzingSession updateSessionEndAt();
 }

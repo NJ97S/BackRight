@@ -21,11 +21,16 @@ public class AnalyzingSession {
 	@Column(name = "id", insertable = false, updatable = false)
 	private Long id;
 
-	@Column(name = "analyzing_session_start_at", columnDefinition = "TIMESTAMP")
-	private Instant sessionStartTime;
+	@Column(name = "started_at", columnDefinition = "TIMESTAMP")
+	private Instant startedAt;
 
-	@Column(name = "analyzing_session_end_at", columnDefinition = "TIMESTAMP")
-	private Instant sessionEndTime;
+	@Column(name = "ended_at", columnDefinition = "TIMESTAMP")
+	private Instant endedAt;
+
+	// 외래키 관계 설정
+	// @ManyToOne(fetch = FetchType.LAZY)
+	// @JoinColumn(name = "member_id", nullable = false)
+	// private Member member;
 
 	@OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Detection> detections;

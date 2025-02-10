@@ -9,8 +9,8 @@ import lombok.Data;
 @Data
 public class DetectionDto {
 	private long detectionId;
-	private Instant detectionStartTime;
-	private Instant detectionEndTime;
+	private Instant startedAt;
+	private Instant endedAt;
 	private String videoUrl;
 	private boolean neckDetected;
 	private boolean leftShoulderDetected;

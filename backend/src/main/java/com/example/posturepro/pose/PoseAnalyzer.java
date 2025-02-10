@@ -42,7 +42,6 @@ public class PoseAnalyzer {
 		jsonMapper = new ObjectMapper();
 		standardPoseHandler = new StandardPoseHandler();
 
-		// todo. DB에 세션 생성 + 현재시간 들고 가야할지도?(서버랑 DB랑 시간이 같을까?)
 		session = analyzingSessionService.createSession();
 	}
 
@@ -132,9 +131,8 @@ public class PoseAnalyzer {
 
 		if (!countUp) {
 			if (detectionDto != null) {
-				detectionDto.setDetectionEndTime(Instant.now());
-				// todo DB에 detection 등록
-				detectionService.createDetection(detectionDto, session);
+				detectionDto.setEndedAt(Instant.now());
+				detectionService.updateDetectionEndTime(detectionDto);
 
 				detectionDto = null;
 			}
@@ -144,6 +142,7 @@ public class PoseAnalyzer {
 
 	private void handleContinuousAlert(PoseResponse response) {
 		response.setDetected(true);
+		System.out.println("detectionDto " + detectionDto);
 		if (detectionDto == null) {
 			detectionDto = new DetectionDto();
 			detectionDto.setDetected(response.getProblemPart());
@@ -151,7 +150,12 @@ public class PoseAnalyzer {
 			String videoUrl = "";
 			detectionDto.setVideoUrl(videoUrl);
 			response.setVideoUrl(videoUrl);
-			detectionDto.setDetectionStartTime(Instant.now().minusSeconds(10));
+			detectionDto.setStartedAt(Instant.now());
+			response.setStartedAt(detectionDto.getStartedAt());
+			detectionService.createDetection(detectionDto, session);
+		} else {
+			System.out.println("detectionDto " + detectionDto);
+			response.setStartedAt(detectionDto.getStartedAt());
 		}
 	}
 }

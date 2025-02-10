@@ -24,4 +24,11 @@ public class AnalyzingSessionServiceImpl implements AnalyzingSessionService {
 		AnalyzingSession session = new AnalyzingSession();
 		return analyzingSessionRepository.save(session);
 	}
+
+	// todo 일단 필요할 것 같아 만들어 놓은거라 고쳐야 합니다
+	@Override
+	public AnalyzingSession updateSessionEndAt() {
+		AnalyzingSession session = new AnalyzingSession();
+		return analyzingSessionRepository.save(session);
+	}
 }

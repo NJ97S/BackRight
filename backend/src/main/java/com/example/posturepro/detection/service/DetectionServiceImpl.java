@@ -23,4 +23,16 @@ public class DetectionServiceImpl implements DetectionService {
 		Detection detection = Detection.fromDto(detectionData, session);
 		detectionRepository.save(detection);
 	}
+
+	// todo 일단 필요할 것 같아 만들어 놓은거라 고쳐야 합니다
+	@Override
+	public void updateDetectionEndTime(DetectionDto detectionDto) {
+
+	}
+
+	// todo 일단 필요할 것 같아 만들어 놓은거라 고쳐야 합니다
+	@Override
+	public void updateVideoUrl(DetectionDto detectionDto) {
+
+	}
 }
