@@ -23,8 +23,6 @@ WORKDIR /app
 
 # 7️⃣ 위 단계에서 빌드된 JAR 파일을 복사
 COPY --from=build /app/build/libs/*.jar app.jar
-COPY .env ./
-
 
 # 8️⃣ 컨테이너가 시작될 때 실행할 명령
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
