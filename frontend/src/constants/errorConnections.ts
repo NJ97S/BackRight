@@ -6,10 +6,13 @@ interface Connection {
 }
 
 export const ERROR_CONNECTIONS: Record<
-  keyof ReceivedDataType["postureStatus"],
+  keyof ReceivedDataType["problemPart"],
   Connection[]
 > = {
-  neck: [],
+  neck: [
+    { start: 9, end: 10 },
+    { start: 11, end: 12 },
+  ],
   leftShoulder: [{ start: 11, end: 12 }],
   rightShoulder: [{ start: 11, end: 12 }],
   back: [
@@ -21,11 +24,11 @@ export const ERROR_CONNECTIONS: Record<
 } as const;
 
 export const ERROR_POINTS: Record<
-  keyof ReceivedDataType["postureStatus"],
+  keyof ReceivedDataType["problemPart"],
   number[]
-> = {
-  neck: [0, 1],
-  leftShoulder: [11, 12],
-  rightShoulder: [11, 12],
-  back: [11, 12, 23, 24],
-} as const;
+> = Object.fromEntries(
+  Object.entries(ERROR_CONNECTIONS).map(([key, connections]) => [
+    key,
+    [...new Set(connections.flatMap(({ start, end }) => [start, end]))],
+  ])
+) as Record<keyof ReceivedDataType["problemPart"], number[]>;

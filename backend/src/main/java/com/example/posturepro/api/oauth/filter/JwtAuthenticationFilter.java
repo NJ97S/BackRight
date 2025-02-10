@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -28,8 +30,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request,
 		HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
+
+		Authentication existingAuth = SecurityContextHolder.getContext().getAuthentication();
+
+		if (existingAuth instanceof OAuth2AuthenticationToken) {
+			filterChain.doFilter(request, response);
+			return;
+		}
 		String token = getJwtFromCookies(request);
-		
+
 		if (token != null && tokenService.validateToken(token)) {
 			String userId = tokenService.getUserIdFromToken(token);
 			UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
@@ -43,15 +52,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	}
 
 	private String getJwtFromCookies(HttpServletRequest request) {
-		if (request.getCookies() == null)
+		if (request.getCookies() == null) {
 			return null;
-
+		}
 		for (Cookie cookie : request.getCookies()) {
 			if ("access-token".equals(cookie.getName())) {
 				return cookie.getValue();
 			}
 		}
-
 		return null;
 	}
 }
