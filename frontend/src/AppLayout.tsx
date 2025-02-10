@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 
 import Header from "./components/common/Header/Header";
 import SideBar from "./components/common/SideBar/SideBar";
+import MeasurementService from "./components/common/MeasurementService/MeasurementService";
 
 import * as S from "./AppLayoutStyle";
 
@@ -16,6 +17,8 @@ const AppLayout = () => {
   return (
     <>
       <Header onToggleSideBar={onToggleSideBar} />
+
+      <MeasurementService />
 
       <S.BodyContainer>
         <SideBar isExpanded={isSideBarExpanded} />
