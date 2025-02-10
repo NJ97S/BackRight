@@ -64,6 +64,7 @@ const CalendarSection = () => {
           showNavigation={false}
           locale="en"
           formatDay={(_, date) => date.getDate().toString()}
+          showFixedNumberOfWeeks={true}
         />
       </StyledCalendar>
     </CalendarContainer>

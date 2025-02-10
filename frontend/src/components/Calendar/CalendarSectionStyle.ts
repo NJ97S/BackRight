@@ -2,7 +2,6 @@ import styled from "styled-components";
 
 export const CalendarContainer = styled.div`
   display: flex;
-  flex: 1;
   flex-direction: column;
   background: var(--white);
   border-radius: 12px;
@@ -20,12 +19,21 @@ export const MonthTitle = styled.span`
   color: var(--black);
   font-size: 1rem;
   font-weight: 600;
-  font-family: "Pretendard";
 `;
 
 export const StyledCalendar = styled.div`
   .react-calendar {
     border: none;
+    width: 100%;
+    height: 100%;
+
+    .react-calendar__viewContainer {
+      height: 100%;
+    }
+
+    .react-calendar__month-view {
+      height: 100%;
+    }
 
     .react-calendar__navigation {
       display: none;
@@ -52,8 +60,12 @@ export const StyledCalendar = styled.div`
     }
 
     .react-calendar__tile {
-      padding: 0.5rem;
+      aspect-ratio: 1;
+      padding: 0;
       font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
       &.react-calendar__month-view__days__day--weekend {
         color: var(--black);

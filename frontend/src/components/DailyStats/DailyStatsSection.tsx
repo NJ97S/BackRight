@@ -31,7 +31,7 @@ const DailyStatsSection: React.FC = () => {
         data: [todayMinutes, totalMinutes - todayMinutes],
         backgroundColor: ["#76abae", "#777777"],
         borderWidth: 0,
-        borderRadius: 2,
+        borderRadius: 0,
       },
     ],
   };
@@ -55,7 +55,7 @@ const DailyStatsSection: React.FC = () => {
       {
         data: [yesterdayMinutes, todayMinutes],
         backgroundColor: ["#777777", "#76abae"],
-        borderRadius: 4,
+        borderRadius: 0,
         barThickness: 32,
       },
     ],
