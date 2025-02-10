@@ -8,6 +8,10 @@ services:
     ports:
       - "443:443"
       - "80:80"
+    volumes:
+      - letsencrypt:/etc/letsencrypt  # ✅ 기존 인증서 유지
+      - nginx_config:/etc/nginx
+    restart: always
     depends_on:
       - backend
       - frontend
@@ -22,8 +26,6 @@ services:
     container_name: mysql-container
     env_file:
       - backend/.env
-    ports:
-      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
@@ -38,8 +40,6 @@ services:
     image: redis:latest
     container_name: redis-container
     restart: always
-    ports:
-      - "6379:6379"
     networks:
       - app-network
     healthcheck:
@@ -74,3 +74,5 @@ networks:
 volumes:
   mysql_data:
   redis_data:
+  letsencrypt:
+  nginx_config:
