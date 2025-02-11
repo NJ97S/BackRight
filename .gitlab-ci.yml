@@ -1,0 +1,44 @@
+variables:
+  IMAGE_TAG: $CI_COMMIT_REF_NAME
+  DOCKER_REGISTRY: lab.ssfay.com
+  PROJECT_PATH: s12-webmobile1-sub1/S12P11A601
+  DOCKER_IMAGE_BACKEND: $DOCKER_REGISTRY/$PROJECT_PATH/backend
+  DOCKER_IMAGE_FRONTEND: $DOCKER_REGISTRY/$PROJECT_PATH/frontend
+  DOCKER_IMAGE_NGINX: $DOCKER_REGISTRY/$PROJECT_PATH/nginx
+
+before_script:
+  - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+  - eval $(ssh-agent -s)
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  - ssh-keyscan i12a601.p.ssafy.io >> ~/.ssh/known_hosts
+
+build:
+  stage: build
+  script:
+    - docker build -t $DOCKER_IMAGE_BACKEND:$IMAGE_TAG ./backend
+    - docker build -t $DOCKER_IMAGE_FRONTEND:$IMAGE_TAG ./frontend
+    - docker build -t $DOCKER_IMAGE_NGINX:$IMAGE_TAG ./nginx
+
+push:
+  stage: push
+  script:
+    - docker push $DOCKER_IMAGE_BACKEND:$IMAGE_TAG
+    - docker push $DOCKER_IMAGE_FRONTEND:$IMAGE_TAG
+    - docker push $DOCKER_IMAGE_NGINX:$IMAGE_TAG
+deploy:
+  stage: deploy
+  only:
+    - main  # main 브랜치에 push될 때만 배포 실행
+    - feature/ci
+  script:
+    - ssh ubuntu@$YOUR_SERVER << 'EOF'
+      cd deploy
+      docker-compose down
+      docker pull $DOCKER_IMAGE_BACKEND:$IMAGE_TAG
+      docker pull $DOCKER_IMAGE_FRONTEND:$IMAGE_TAG
+      docker pull $DOCKER_IMAGE_NGINX:$IMAGE_TAG
+      docker-compose up -d
+      EOF
+    
