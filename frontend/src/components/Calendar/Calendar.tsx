@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Calendar from "react-calendar";
 import type { CalendarDateChangeHandler } from "../../types/calendar";
-import * as S from "./CalendarSectionStyle";
+import * as S from "./CalendarStyle";
 
 import arrowLeftIcon from "../../assets/icons/arrow-left.svg";
 import arrowRightIcon from "../../assets/icons/arrow-right.svg";

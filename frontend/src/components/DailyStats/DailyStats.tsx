@@ -3,7 +3,7 @@ import { convertMinutesToTimeString } from "../../utils/timeFormatUtils";
 import { CHART_COLORS } from "../../constants/reportConstants";
 import DonutChart from "../common/charts/DonutChart";
 import BarChart from "../common/charts/BarChart";
-import * as S from "./DailyStatsSectionStyle";
+import * as S from "./DailyStatsStyle";
 
 const DailyStatsSection: React.FC = () => {
   const todayMinutes = 292;
@@ -15,14 +15,12 @@ const DailyStatsSection: React.FC = () => {
     <S.Container>
       <S.Title>일일 통계</S.Title>
       <S.Content>
-        {/* 도넛 차트 영역 */}
         <DonutChart
           data={[todayMinutes, totalMinutes - todayMinutes]}
           colors={[CHART_COLORS.PRIMARY, CHART_COLORS.SECONDARY]}
           centerLabel={convertMinutesToTimeString(todayMinutes)}
         />
 
-        {/* 막대 차트 영역 */}
         <BarChart
           data={[yesterdayMinutes, todayMinutes]}
           labels={["1일 전", "오늘"]}
@@ -31,7 +29,6 @@ const DailyStatsSection: React.FC = () => {
           maxValue={todayMinutes}
         />
 
-        {/* 도넛 차트 설명 */}
         <S.Description>
           <S.DescriptionTitle>
             {convertMinutesToTimeString(totalMinutes)} 중
@@ -44,7 +41,6 @@ const DailyStatsSection: React.FC = () => {
           </S.DescriptionText>
         </S.Description>
 
-        {/* 막대 차트 설명 */}
         <S.Description>
           <S.DescriptionTitle>1일 전과 비교했을 때</S.DescriptionTitle>
           <S.DescriptionText>

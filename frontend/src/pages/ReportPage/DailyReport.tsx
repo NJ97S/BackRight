@@ -1,8 +1,8 @@
 import * as S from "./ReportPageStyle";
-import PostureWarningSection from "../../components/PostureWarning/PostureWarningSection";
-import CalendarSection from "../../components/Calendar/CalendarSection";
-import DailyStatsSection from "../../components/DailyStats/DailyStatsSection";
-import SessionLogSection from "../../components/SessionLog/SessionLogSection";
+import PostureWarningSection from "../../components/PostureWarning/PostureWarning";
+import CalendarSection from "../../components/Calendar/Calendar";
+import DailyStatsSection from "../../components/DailyStats/DailyStats";
+import SessionLogSection from "../../components/SessionLog/SessionLog";
 
 const DailyReport = () => (
   <S.MainContent>

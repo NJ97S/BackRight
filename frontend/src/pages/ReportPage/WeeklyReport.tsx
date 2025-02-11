@@ -1,6 +1,6 @@
 import * as S from "./ReportPageStyle";
-import CalendarSection from "../../components/Calendar/CalendarSection";
-import PostureWarningSection from "../../components/PostureWarning/PostureWarningSection";
+import CalendarSection from "../../components/Calendar/Calendar";
+import PostureWarningSection from "../../components/PostureWarning/PostureWarning";
 
 const WeeklyReport = () => (
   <S.MainContent>

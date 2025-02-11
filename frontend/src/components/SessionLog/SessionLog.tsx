@@ -5,7 +5,7 @@ import {
   convertISOToTimeString,
   convertISOToTimeRangeString,
 } from "../../utils/timeFormatUtils";
-import * as S from "./SessionLogSectionStyle";
+import * as S from "./SessionLogStyle";
 
 const StatusIcon = ({ status }: { status: SessionStatus }) => (
   <S.Icon

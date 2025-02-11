@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import WARNING_ITEMS from "../../constants/warningConstants";
-import * as S from "./PostureWarningSectionStyle";
+import * as S from "./PostureWarningStyle";
 
 const PostureWarningSection = () => {
   const totalWarnings = useMemo(
