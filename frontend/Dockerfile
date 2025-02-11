@@ -15,6 +15,7 @@ RUN pnpm run build:web
 # Nginx 컨테이너에서 사용하기 위해 빌드된 파일을 export
 FROM nginx:alpine AS frontend
 WORKDIR /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # 빌드된 정적 파일만 복사
 COPY --from=builder /app/dist .
