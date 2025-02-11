@@ -1,34 +1,37 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
+  padding: 1.5rem;
   background: var(--white);
   border-radius: 0.75rem;
-  padding: 1.93rem 1.57rem;
 `;
 
-export const Header = styled.div`
+export const HeaderWrapper = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 2.5rem;
   position: relative;
-  margin-bottom: 3.62rem;
 `;
 
 export const Title = styled.h2`
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+
   color: var(--black);
   font-size: 1rem;
   font-weight: 700;
-  text-align: center;
 `;
 
 export const TotalWarnings = styled.div`
-  position: absolute;
-  right: 0;
-  color: var(--gray-300);
-  font-size: 1rem;
-  font-weight: 600;
   display: flex;
   align-items: center;
   gap: 0.25rem;
+
+  color: var(--gray-300);
+  font-size: 1rem;
+  font-weight: 600;
 `;
 
 export const WarningCount = styled.span`
@@ -37,9 +40,8 @@ export const WarningCount = styled.span`
 
 export const CardContainer = styled.div`
   display: flex;
-  justify-content: center;
   gap: 1.25rem;
-  padding: 0 1.57rem;
+  align-content: center;
 `;
 
 export const Card = styled.div`
@@ -48,8 +50,9 @@ export const Card = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  height: 11.44rem;
-  padding: 1.12rem 1rem;
+
+  height: 14rem;
+  padding: 1.25rem 0;
   border-radius: 0.75rem;
   border: 1.5px solid var(--gray-100);
 `;
@@ -60,9 +63,21 @@ export const CardImage = styled.img`
   object-fit: contain;
 `;
 
-export const CardCount = styled.span`
+interface CardCountProps {
+  count: number;
+}
+
+export const CardCount = styled.span.withConfig({
+  shouldForwardProp: (prop) => prop !== "count",
+})<CardCountProps>`
+  margin-top: 1.93rem;
+
+  color: ${({ count }) => {
+    if (count >= 20) return "var(--red)";
+    if (count >= 10) return "#FF893A";
+    return "var(--gray-300)";
+  }};
   font-size: 1.75rem;
   font-weight: 700;
   text-align: center;
-  margin-top: 1.93rem;
 `;
