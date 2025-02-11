@@ -3,7 +3,7 @@ import instance from "./instance";
 
 export const postUserInfo = async (userInfo: SignUpInfoType) => {
   try {
-    const response = await instance.post("/api/members/signup", userInfo);
+    const response = await instance.post("/members/signup", userInfo);
 
     return response.data;
   } catch (error) {
