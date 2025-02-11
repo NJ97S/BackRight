@@ -9,7 +9,8 @@ import {
 } from "@mediapipe/tasks-vision";
 
 import useMeasurementStore from "../../store/useMeasurementStore";
-import formatTime from "../../utils/formatTime";
+import PostureAlert from "../PostureAlert/PostureAlert";
+import formatRunningTime from "../../utils/formatRunningTime";
 import {
   ERROR_CONNECTIONS,
   ERROR_POINTS,
@@ -151,12 +152,14 @@ const WebCam = () => {
 
         <S.ElapsedTimeContainer isStreaming={stream !== null}>
           <S.RecordingIcon src={recordingIcon} alt="녹화중" />
-          {formatTime(elapsedTime)}
+          {formatRunningTime(elapsedTime)}
         </S.ElapsedTimeContainer>
 
         <S.RealtimeAlert haveProblem={haveProblem}>
           자세 경고가 감지되었습니다. 바른 자세를 취해주세요.
         </S.RealtimeAlert>
+
+        <PostureAlert />
       </S.VideoContainer>
 
       <S.RecordingStopButton

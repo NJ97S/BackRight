@@ -1,8 +1,9 @@
 export interface ReceivedDataType {
   initialSet: boolean;
   detected: boolean;
+  detectionId: number;
   videoUrl: string | null;
-  detectionStartAt: string | null;
+  startedAt: string | null;
   problemPart: {
     neck: boolean;
     leftShoulder: boolean;
@@ -16,4 +17,10 @@ export interface SignUpInfoType {
   nickname: string;
   birthDate: string;
   gender: "FEMALE" | "MALE";
+}
+
+export interface SessionAlertType {
+  startedAt: string;
+  problemPart: ReceivedDataType["problemPart"];
+  detectionId: number;
 }
