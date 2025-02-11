@@ -1,82 +1,97 @@
-import { useState } from "react";
-import { Session, Warning, SessionStatus } from "../../types/type";
-import MOCK_SESSION_DATA from "../../constants/mockData";
+import { useState, useCallback } from "react";
+import type { LocalSession, LocalWarning, SessionStatus } from "../../types";
+import SESSION_DATA from "../../mocks/sessionMocks";
 import {
   convertISOToTimeString,
   convertISOToTimeRangeString,
 } from "../../utils/timeFormatUtils";
 import * as S from "./SessionLogSectionStyle";
 
-import normalEndIcon from "../../assets/icons/normal-end.svg";
-import forceEndIcon from "../../assets/icons/force-end.svg";
+const StatusIcon = ({ status }: { status: SessionStatus }) => (
+  <S.Icon
+    src={
+      status === "정상 종료"
+        ? "/src/assets/icons/normal-end.svg"
+        : "/src/assets/icons/force-end.svg"
+    }
+    alt={status}
+  />
+);
 
-const StatusIcon = ({ status }: { status: SessionStatus }) => {
-  const iconSrc = status === "정상 종료" ? normalEndIcon : forceEndIcon;
+interface SessionItemProps {
+  session: LocalSession;
+  onSelect: (session: LocalSession) => void;
+}
 
-  return <S.Icon src={iconSrc} alt={status} />;
-};
-
-const SessionItem = ({
-  sessionData,
-  onClick,
-}: {
-  sessionData: Session;
-  onClick: (session: Session) => void;
-}) => (
-  <S.SessionItem onClick={() => onClick(sessionData)}>
+const SessionItem = ({ session, onSelect }: SessionItemProps) => (
+  <S.SessionItem onClick={() => onSelect(session)}>
     <S.TimelineDot />
     <S.SessionContent>
       <S.SessionHeader>
         <S.SessionTime>
-          {convertISOToTimeRangeString(
-            sessionData.startTime,
-            sessionData.endTime
-          )}
+          {convertISOToTimeRangeString(session.startTime, session.endTime)}
         </S.SessionTime>
-        <S.StatusBadge status={sessionData.status}>
-          <StatusIcon status={sessionData.status} />
-          <span>{sessionData.status}</span>
+        <S.StatusBadge status={session.status}>
+          <StatusIcon status={session.status} />
+          <span>{session.status}</span>
         </S.StatusBadge>
       </S.SessionHeader>
-      <S.WarningCount>경고 {sessionData.warningCount}회</S.WarningCount>
+      <S.WarningCount>경고 {session.warningCount}회</S.WarningCount>
     </S.SessionContent>
   </S.SessionItem>
 );
 
-const WarningItem = ({
-  warningData,
-  onClick,
-}: {
-  warningData: Warning;
-  onClick: (warning: Warning) => void;
-}) => (
-  <S.WarningItem onClick={() => onClick(warningData)}>
-    <S.WarningTime>
-      {convertISOToTimeString(warningData.timestamp)}
-    </S.WarningTime>
-    <S.WarningDescription>{warningData.description}</S.WarningDescription>
+interface WarningItemProps {
+  warning: LocalWarning;
+  onSelect: (warning: LocalWarning) => void;
+}
+
+const WarningItem = ({ warning, onSelect }: WarningItemProps) => (
+  <S.WarningItem onClick={() => onSelect(warning)}>
+    <S.WarningTime>{convertISOToTimeString(warning.timestamp)}</S.WarningTime>
+    <S.WarningDescription>{warning.description}</S.WarningDescription>
   </S.WarningItem>
 );
 
-const SessionLogSection = () => {
-  const [selectedSession, setSelectedSession] = useState<Session | null>(null);
-  const [selectedWarning, setSelectedWarning] = useState<Warning | null>(null);
+interface VideoSectionProps {
+  selectedWarning: LocalWarning | null;
+}
 
-  const handleCloseModal = () => {
+const VideoSection = ({ selectedWarning }: VideoSectionProps) => (
+  <S.VideoSection>
+    {selectedWarning ? (
+      <div>
+        Warning video at {convertISOToTimeString(selectedWarning.timestamp)}
+      </div>
+    ) : (
+      <div>Select a warning to view the video</div>
+    )}
+  </S.VideoSection>
+);
+
+const SessionLogSection = () => {
+  const [selectedSession, setSelectedSession] = useState<LocalSession | null>(
+    null
+  );
+  const [selectedWarning, setSelectedWarning] = useState<LocalWarning | null>(
+    null
+  );
+
+  const handleCloseModal = useCallback(() => {
     setSelectedSession(null);
     setSelectedWarning(null);
-  };
+  }, []);
 
   return (
     <S.Container>
       <S.Title>세션 로그</S.Title>
       <S.SessionList>
-        <S.TimelineWrapper sessionCount={MOCK_SESSION_DATA.length}>
-          {MOCK_SESSION_DATA.map((currentSession: Session) => (
+        <S.TimelineWrapper sessionCount={SESSION_DATA.length}>
+          {SESSION_DATA.map((session) => (
             <SessionItem
-              key={currentSession.id}
-              sessionData={currentSession}
-              onClick={setSelectedSession}
+              key={session.id}
+              session={session}
+              onSelect={setSelectedSession}
             />
           ))}
         </S.TimelineWrapper>
@@ -88,24 +103,15 @@ const SessionLogSection = () => {
           <S.ModalContent>
             <S.CloseButton onClick={handleCloseModal}>&times;</S.CloseButton>
             <S.ModalBody>
-              <S.VideoSection>
-                {selectedWarning ? (
-                  <div>
-                    Warning video at{" "}
-                    {convertISOToTimeString(selectedWarning.timestamp)}
-                  </div>
-                ) : (
-                  <div>Select a warning to view the video</div>
-                )}
-              </S.VideoSection>
+              <VideoSection selectedWarning={selectedWarning} />
               <S.WarningSection>
                 <S.WarningTitle>Warnings</S.WarningTitle>
                 <S.WarningList>
-                  {selectedSession.warnings.map((currentWarning) => (
+                  {selectedSession.warnings.map((warning) => (
                     <WarningItem
-                      key={currentWarning.id}
-                      warningData={currentWarning}
-                      onClick={setSelectedWarning}
+                      key={warning.id}
+                      warning={warning}
+                      onSelect={setSelectedWarning}
                     />
                   ))}
                 </S.WarningList>

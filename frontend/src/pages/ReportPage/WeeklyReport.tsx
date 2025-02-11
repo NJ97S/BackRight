@@ -1,4 +1,3 @@
-// src/pages/report/WeeklyReport.tsx
 import * as S from "./ReportPageStyle";
 import CalendarSection from "../../components/Calendar/CalendarSection";
 import PostureWarningSection from "../../components/PostureWarning/PostureWarningSection";

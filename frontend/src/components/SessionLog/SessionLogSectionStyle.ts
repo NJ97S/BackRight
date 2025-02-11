@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import { MODAL_DIMENSIONS } from "../../constants/reportConstants";
-import type { SessionStatus } from "../../types/type";
+import type { SessionStatus } from "../../types";
+import { STYLE_CONSTANTS } from "../../constants/styleConstants";
 
 export const Container = styled.div`
   display: flex;
@@ -8,12 +8,11 @@ export const Container = styled.div`
   height: 100%;
   padding: 1.5rem;
   background: var(--white);
-  border-radius: 0.75rem;
+  border-radius: ${STYLE_CONSTANTS.BORDER_RADIUS};
 `;
 
 export const Title = styled.h2`
   margin-bottom: 1.5rem;
-
   color: var(--black);
   font-size: 1rem;
   font-weight: 700;
@@ -25,13 +24,9 @@ export const SessionList = styled.div`
   overflow-y: auto;
 `;
 
-interface TimelineWrapperProps {
-  sessionCount: number;
-}
-
 export const TimelineWrapper = styled.div.withConfig({
   shouldForwardProp: (prop) => prop !== "sessionCount",
-})<TimelineWrapperProps>`
+})<{ sessionCount: number }>`
   position: relative;
 
   &::before {
@@ -40,7 +35,7 @@ export const TimelineWrapper = styled.div.withConfig({
     z-index: 2;
     left: 1.5rem;
     top: 1.5rem;
-    width: 0.25rem;
+    width: ${STYLE_CONSTANTS.TIMELINE_WIDTH};
     height: ${({ sessionCount }) =>
       sessionCount > 1 ? `${(sessionCount - 1) * 5}rem` : "0"};
     background-color: var(--gray-300);
@@ -48,41 +43,11 @@ export const TimelineWrapper = styled.div.withConfig({
   }
 `;
 
-export const SessionItem = styled.div`
-  display: flex;
-  align-items: flex-start;
-  position: relative;
-  padding: 1rem;
-  border-radius: 0.75rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-
-  &:hover {
-    background-color: var(--mint);
-
-    ${/* sc-selector */ "SessionTime"} {
-      color: var(--white);
-    }
-
-    ${/* sc-selector */ "WarningCount"} {
-      color: var(--white);
-    }
-
-    ${/* sc-selector */ "StatusBadge"} {
-      background-color: var(--white);
-    }
-  }
-`;
-
 export const TimelineDot = styled.div`
   position: relative;
   z-index: 1;
-  width: 1rem;
-  height: 1rem;
+  width: ${STYLE_CONSTANTS.TIMELINE_DOT_SIZE};
+  height: ${STYLE_CONSTANTS.TIMELINE_DOT_SIZE};
   margin: 0.125rem 1rem 0 0;
   background-color: var(--gray-300);
   border-radius: 50%;
@@ -107,6 +72,12 @@ export const SessionTime = styled.span`
   transition: color 0.2s ease;
 `;
 
+export const WarningCount = styled.div`
+  color: var(--black);
+  font-size: 0.875rem;
+  transition: color 0.2s ease;
+`;
+
 export const StatusBadge = styled.div.withConfig({
   shouldForwardProp: (prop) => prop !== "status",
 })<{ status: SessionStatus }>`
@@ -114,7 +85,6 @@ export const StatusBadge = styled.div.withConfig({
   align-items: center;
   gap: 0.25rem;
   padding: 0.125rem 0.5rem;
-
   background-color: var(--cream);
   border-radius: 999px;
   transition: background-color 0.2s ease;
@@ -126,16 +96,36 @@ export const StatusBadge = styled.div.withConfig({
   }
 `;
 
+export const SessionItem = styled.div`
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+  padding: 1rem;
+  border-radius: ${STYLE_CONSTANTS.BORDER_RADIUS};
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: var(--mint);
+
+    ${SessionTime} {
+      color: var(--white);
+    }
+
+    ${WarningCount} {
+      color: var(--white);
+    }
+
+    ${StatusBadge} {
+      background-color: var(--white);
+    }
+  }
+`;
+
 export const Icon = styled.img`
   width: 1rem;
   height: 1rem;
   object-fit: contain;
-`;
-
-export const WarningCount = styled.div`
-  color: var(--black);
-  font-size: 0.875rem;
-  transition: color 0.2s ease;
 `;
 
 export const Modal = styled.div`
@@ -145,7 +135,6 @@ export const Modal = styled.div`
   right: 0;
   bottom: 0;
   z-index: 1000;
-
   display: flex;
   justify-content: center;
   align-items: center;
@@ -164,12 +153,11 @@ export const ModalContent = styled.div`
   position: relative;
   z-index: 1;
   width: 80%;
-  max-width: ${MODAL_DIMENSIONS.MAX_WIDTH};
-  max-height: ${MODAL_DIMENSIONS.MAX_HEIGHT};
+  max-width: 60rem;
+  max-height: 40rem;
   padding: 1.5rem;
-
   background-color: var(--white);
-  border-radius: 0.75rem;
+  border-radius: ${STYLE_CONSTANTS.BORDER_RADIUS};
   overflow-y: auto;
 `;
 
@@ -177,7 +165,6 @@ export const CloseButton = styled.button`
   position: absolute;
   top: 0.75rem;
   right: 0.75rem;
-
   color: var(--gray-300);
   font-size: 1.5rem;
   cursor: pointer;
@@ -197,7 +184,6 @@ export const VideoSection = styled.div`
   flex: 1;
   justify-content: center;
   align-items: center;
-
   min-height: 18.75rem;
   padding: 1rem;
   background-color: var(--gray-100);
@@ -212,7 +198,6 @@ export const WarningSection = styled.div`
 
 export const WarningTitle = styled.h3`
   margin-bottom: 1rem;
-
   font-size: 1.125rem;
   font-weight: 600;
 `;
@@ -220,12 +205,11 @@ export const WarningTitle = styled.h3`
 export const WarningList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: ${STYLE_CONSTANTS.WARNING_ITEM_GAP};
 `;
 
 export const WarningItem = styled.div`
   padding: 0.5rem;
-
   background-color: var(--gray-100);
   border-radius: 0.25rem;
   cursor: pointer;

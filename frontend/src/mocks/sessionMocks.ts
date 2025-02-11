@@ -1,6 +1,6 @@
-import type { Session } from "../types/type";
+import type { LocalSession } from "../types";
 
-const MOCK_SESSION_DATA: Session[] = [
+const MOCK_SESSION_DATA: LocalSession[] = [
   {
     id: "1",
     startTime: "2025-02-11T09:00:00Z",
