@@ -3,12 +3,17 @@ import { useState } from "react";
 import * as S from "./PostureAlertButtonStyle";
 
 import listIcon from "../../assets/icons/list.svg";
+import alertIcon from "../../assets/icons/alert.svg";
 
 interface PostureAlertButtonProps {
   onClick: () => void;
+  newAlertCount: number;
 }
 
-const PostureAlertButton = ({ onClick }: PostureAlertButtonProps) => {
+const PostureAlertButton = ({
+  onClick,
+  newAlertCount,
+}: PostureAlertButtonProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleAlertButtonMouseEnter = () => {
@@ -22,7 +27,13 @@ const PostureAlertButton = ({ onClick }: PostureAlertButtonProps) => {
   return (
     <>
       <S.AlertStatusContainer isHovered={isHovered}>
-        <S.StatusMessage>미확인 경고 내역이 없습니다.</S.StatusMessage>
+        {newAlertCount > 0 ? (
+          <S.StatusAlertMessage>
+            미확인 경고 내역이 <span>{newAlertCount}건</span> 있습니다.
+          </S.StatusAlertMessage>
+        ) : (
+          <S.StatusMessage>미확인 경고 내역이 없습니다.</S.StatusMessage>
+        )}
         <S.Triangle />
       </S.AlertStatusContainer>
 
@@ -31,7 +42,10 @@ const PostureAlertButton = ({ onClick }: PostureAlertButtonProps) => {
         onMouseEnter={handleAlertButtonMouseEnter}
         onMouseLeave={handleAlertButtonMouseLeave}
       >
-        <S.ListIcon src={listIcon} alt="경고목록" />
+        <S.ListIcon
+          src={newAlertCount > 0 ? alertIcon : listIcon}
+          alt="경고목록"
+        />
       </S.PostureAlertButton>
     </>
   );

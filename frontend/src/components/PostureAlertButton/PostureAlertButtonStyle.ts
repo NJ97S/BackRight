@@ -7,7 +7,7 @@ export const PostureAlertButton = styled.button`
   height: fit-content;
   padding: 0.75rem;
   border-radius: 12px;
-  background: rgba(238, 238, 238, 0.5);
+  background: rgba(238, 238, 238, 0.8);
   box-shadow: rgba(0, 0, 0, 0.24) 0px 0px 4px;
 `;
 
@@ -35,9 +35,22 @@ export const AlertStatusContainer = styled.div.withConfig({
 export const StatusMessage = styled.div`
   padding: 1rem 1.5rem;
   border-radius: 12px;
-  background: rgba(238, 238, 238, 0.5);
+  background: rgba(238, 238, 238, 0.8);
   font-size: 0.875rem;
   text-align: center;
+`;
+
+export const StatusAlertMessage = styled.div`
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  background: rgba(238, 238, 238, 0.8);
+  font-size: 0.875rem;
+  text-align: center;
+
+  span {
+    color: var(--red);
+    font-weight: 600;
+  }
 `;
 
 export const Triangle = styled.div`
