@@ -32,7 +32,9 @@ const GlobalStyle = createGlobalStyle`
 
     --mint: #76abae;
 
-    --cream: #EEEEEE
+    --cream: #EEEEEE;
+
+    --red: #FF0000;
   }
 
   a {
