@@ -6,6 +6,9 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.example.posturepro.analyzingsession.entity.AnalyzingSession;
 import com.example.posturepro.analyzingsession.service.AnalyzingSessionService;
 import com.example.posturepro.detection.entity.DetectionDto;
@@ -16,8 +19,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class PoseAnalyzer {
 	private final ObjectMapper jsonMapper;  // JSON 파싱을 위한 ObjectMapper
-	private final StandardPoseHandler standardPoseHandler;    // 기준 포즈 설정 및 체크를 위한 객체
-
+	private final ReferencePoseHandler referencePoseHandler;    // 기준 포즈 설정 및 체크를 위한 객체
+	private final Logger logger;
 	// todo 각 도메인, 서비스 만들기
 	private final DetectionService detectionService;
 	private final AnalyzingSessionService analyzingSessionService;
@@ -40,7 +43,8 @@ public class PoseAnalyzer {
 		this.analyzingSessionService = analyzingSessionService;
 		this.detectionService = detectionService;
 		jsonMapper = new ObjectMapper();
-		standardPoseHandler = new StandardPoseHandler();
+		referencePoseHandler = new ReferencePoseHandler();
+		logger = LoggerFactory.getLogger(PoseAnalyzer.class);
 
 		session = analyzingSessionService.createSession();
 	}
@@ -56,8 +60,8 @@ public class PoseAnalyzer {
 
 		for (BodyLandmark[] pose : parsedPoseDataList) {
 			if (handleInitialPoseSetup(pose, response)) {
-				EnumMap<DetectionType, Boolean> poseMatchingData = standardPoseHandler.isPoseMatching(pose);
-				analyzePoseDetectionData(poseMatchingData);
+				EnumMap<DetectionType, Boolean> validationResult = referencePoseHandler.validatePoseMatching(pose);
+				analyzeValidationData(validationResult);
 			}
 		}
 
@@ -84,31 +88,33 @@ public class PoseAnalyzer {
 				parsedPosesData.add(poseArray.toArray(new BodyLandmark[0]));
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Failed to convert pose data from Json: {}", e.getMessage());
 		}
 		return parsedPosesData;
 	}
 
-	public void analyzePoseDetectionData(EnumMap<DetectionType, Boolean> poseMatchingData) {
-		// todo. 얼굴 쪽 유효성 확인
+	public void analyzeValidationData(EnumMap<DetectionType, Boolean> validationResult) {
+		// 얼굴 쪽 유효성 확인
+		if (!validationResult.get(DetectionType.NECK))
+			detectionCounts.compute(DetectionType.NECK, (key, val) -> val + 1);
 
 		// 왼쪽 어깨 유효성 확인
-		if (!poseMatchingData.get(DetectionType.LEFT_SHOULDER))
+		if (!validationResult.get(DetectionType.LEFT_SHOULDER))
 			detectionCounts.compute(DetectionType.LEFT_SHOULDER, (key, val) -> val + 1);
 
 		// 오른쪽 어꺠 유효성 확인
-		if (!poseMatchingData.get(DetectionType.RIGHT_SHOULDER))
+		if (!validationResult.get(DetectionType.RIGHT_SHOULDER))
 			detectionCounts.compute(DetectionType.RIGHT_SHOULDER, (key, val) -> val + 1);
 
 		// 양쪽 어깨 = 허리 유효성 확인
-		if (!poseMatchingData.get(DetectionType.LEFT_SHOULDER) && !poseMatchingData.get(DetectionType.RIGHT_SHOULDER))
+		if (!validationResult.get(DetectionType.LEFT_SHOULDER) && !validationResult.get(DetectionType.RIGHT_SHOULDER))
 			detectionCounts.compute(DetectionType.BACK, (key, val) -> val + 1);
 	}
 
 	private boolean handleInitialPoseSetup(BodyLandmark[] pose, PoseResponse response) {
-		if (!standardPoseHandler.isPoseSet()) {
+		if (!referencePoseHandler.isReferencePoseInitialized()) {
 			response.setInitialSet(false);
-			boolean isPoseSet = standardPoseHandler.setInitialPose(pose);
+			boolean isPoseSet = referencePoseHandler.setReferencePose(pose);
 			if (isPoseSet) {
 				response.setInitialSet(true);
 			}
@@ -120,7 +126,8 @@ public class PoseAnalyzer {
 	private void handleDetectionCounts(PoseResponse response) {
 		boolean countUp = false;
 		for (Map.Entry<DetectionType, Integer> entry : detectionCounts.entrySet()) {
-			if (entry.getValue() == 10) {
+			logger.info("detectionCount " + entry.getKey() + " " + entry.getValue());
+			if (entry.getValue() >= 8) {
 				if (!countUp) {
 					continuousDetectionCount++;
 					countUp = true;
