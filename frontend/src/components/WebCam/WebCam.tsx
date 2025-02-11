@@ -10,7 +10,7 @@ import {
 
 import useMeasurementStore from "../../store/useMeasurementStore";
 import PostureAlert from "../PostureAlert/PostureAlert";
-import formatTime from "../../utils/formatTime";
+import formatRunningTime from "../../utils/formatRunningTime";
 import {
   ERROR_CONNECTIONS,
   ERROR_POINTS,
@@ -152,7 +152,7 @@ const WebCam = () => {
 
         <S.ElapsedTimeContainer isStreaming={stream !== null}>
           <S.RecordingIcon src={recordingIcon} alt="녹화중" />
-          {formatTime(elapsedTime)}
+          {formatRunningTime(elapsedTime)}
         </S.ElapsedTimeContainer>
 
         <S.RealtimeAlert haveProblem={haveProblem}>
