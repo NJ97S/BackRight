@@ -27,7 +27,6 @@ export interface DetectionCountStat {
   back: number;
 }
 
-// Request Types
 export interface BaseReportRequest {
   timezone: string;
 }
@@ -45,7 +44,6 @@ export interface MonthlyReportRequest extends BaseReportRequest {
   month: number;
 }
 
-// Response Types
 export interface DailyReportResponse {
   sessions: Session[];
   detectionCountStat: DetectionCountStat;
@@ -65,7 +63,6 @@ export interface MonthlyReportResponse {
   age_group_posture_time_distribution: number[];
 }
 
-// Local UI Types
 export type SessionStatus = "정상 종료" | "강제 종료";
 
 export interface LocalWarning {

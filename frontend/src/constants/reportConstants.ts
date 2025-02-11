@@ -1,4 +1,3 @@
-// =============== reportConstants.ts ===============
 export const MODAL_DIMENSIONS = {
   MAX_WIDTH: "60rem",
   MAX_HEIGHT: "40rem",

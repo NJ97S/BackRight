@@ -1,5 +1,3 @@
-// src/apis/reportApi.ts
-
 import type {
   DailyReportRequest,
   DailyReportResponse,

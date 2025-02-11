@@ -1,4 +1,3 @@
-// =============== sessionConstants.ts ===============
 export const SESSION_STATUS = {
   NORMAL: "정상 종료",
   FORCED: "강제 종료",

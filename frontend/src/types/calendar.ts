@@ -1,4 +1,3 @@
-// src/types/calendar.ts
 import type { CalendarProps } from "react-calendar";
 
 export interface ArrowButtonProps {

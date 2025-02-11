@@ -1,4 +1,3 @@
-// =============== styleConstants.ts ===============
 export const STYLE_CONSTANTS = {
   BORDER_RADIUS: "0.75rem",
   TIMELINE_WIDTH: "0.25rem",

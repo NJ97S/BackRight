@@ -6,7 +6,6 @@ import BarChart from "../common/charts/BarChart";
 import * as S from "./DailyStatsSectionStyle";
 
 const DailyStatsSection: React.FC = () => {
-  // 통계 데이터
   const todayMinutes = 292;
   const yesterdayMinutes = 77;
   const totalMinutes = 390;

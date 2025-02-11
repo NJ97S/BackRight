@@ -81,7 +81,6 @@ const BarChart = ({
           },
           color: "var(--gray-300)",
           callback(tickValue) {
-            // number 타입으로 변환하고 formatLabel이 있을 때만 적용
             return formatLabel ? formatLabel(Number(tickValue)) : tickValue;
           },
           stepSize: maxValue || Math.max(...data),
