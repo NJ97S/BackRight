@@ -6,16 +6,15 @@ export const PostureAlertListContainer = styled.div`
 
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.5rem;
 
   border-radius: 12px;
   padding: 1.25rem;
-  width: 20rem;
-  background: rgba(238, 238, 238, 0.6);
+  width: 18rem;
+  background: rgba(238, 238, 238, 0.8);
 `;
 
 export const Title = styled.div`
-  font-size: 1.25rem;
   font-weight: 700;
   text-align: center;
 `;
@@ -51,6 +50,7 @@ export const PostureAlertContainer = styled.div`
 
 export const TimeLine = styled.div`
   position: absolute;
+  top: 0.75rem;
   left: 1.25rem;
 
   width: 0.25rem;
@@ -62,7 +62,9 @@ export const TimeLine = styled.div`
 export const PostureAlertList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 2.25rem;
+  gap: 0.75rem;
+
+  width: 100%;
 
   overflow-y: scroll;
 
@@ -70,29 +72,3 @@ export const PostureAlertList = styled.div`
     display: none;
   }
 `;
-
-export const PostureAlert = styled.div`
-  display: flex;
-  gap: 0.75rem;
-  padding-left: 0.75rem;
-`;
-
-export const TimeCircle = styled.div`
-  width: 1.25rem;
-  height: 1.25rem;
-  border-radius: 999px;
-  background-color: var(--gray-300);
-`;
-
-export const PostureAlertDetail = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-`;
-
-export const AlertTime = styled.span`
-  font-size: 0.875rem;
-  color: var(--gray-300);
-`;
-
-export const AlertPart = styled.span``;
