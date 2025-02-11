@@ -16,7 +16,7 @@ interface MeasurementState {
   setStream: (stream: MediaStream | null) => void;
   setElapsedTime: () => void;
   setReceivedData: (data: ReceivedDataType | null) => void;
-  setLandmarkResult: (data: PoseLandmarkerResult) => void;
+  setLandmarkResult: (data: PoseLandmarkerResult | null) => void;
 }
 
 const useMeasurementStore = create<MeasurementState>((set) => ({

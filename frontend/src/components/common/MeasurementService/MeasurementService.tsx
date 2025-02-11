@@ -152,6 +152,7 @@ const MeasurementService = () => {
     }
 
     landmarkerRef.current = null;
+    setLandmarkResult(null);
   };
 
   useEffect(() => {
