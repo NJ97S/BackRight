@@ -43,7 +43,7 @@ public class RTCPeerConnectionHandler implements PeerConnectionObserver {
 	private final PoseAnalyzer poseAnalyzer;
 
 	public RTCPeerConnectionHandler(PeerConnectionFactory factory, String sessionId, IceCandidateListener listener,
-		Logger logger, PoseAnalyzerFactory poseAnalyzerFactory) {
+		Logger logger, PoseAnalyzerFactory poseAnalyzerFactory, String providerId) {
 		this.sessionId = sessionId;
 		this.listener = listener;
 		this.logger = logger;
@@ -58,7 +58,7 @@ public class RTCPeerConnectionHandler implements PeerConnectionObserver {
 
 		localPeerConnection = factory.createPeerConnection(config, this);
 
-		this.poseAnalyzer = poseAnalyzerFactory.create();
+		this.poseAnalyzer = poseAnalyzerFactory.create(providerId);
 		receivedTexts = new ArrayList<>();
 	}
 

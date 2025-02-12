@@ -10,6 +10,6 @@ public interface DetectionService {
 	void createDetection(DetectionDto detectionData, AnalyzingSession session);
 
 	void updateDetectionEndTime(DetectionDto detectionDto);
-	
-	void updateVideoUrl(DetectionDto detectionDto);
+
+	boolean updateVideoUrl(Long detectionId, String videoUrl);
 }

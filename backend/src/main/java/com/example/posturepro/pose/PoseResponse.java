@@ -20,7 +20,7 @@ public class PoseResponse {
 	private long detectionId;
 	private boolean initialSet;
 	private boolean detected;
-	private String videoUrl;
+	private String videoPreSignedUrl;
 	private Instant startedAt;
 	private PartProblemStatus problemPart;
 
