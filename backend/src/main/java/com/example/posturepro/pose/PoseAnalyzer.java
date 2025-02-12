@@ -94,7 +94,7 @@ public class PoseAnalyzer {
 	}
 
 	public void analyzeValidationData(EnumMap<DetectionType, Boolean> validationResult) {
-		// 얼굴 쪽 유효성 확인
+		// 목 쪽 유효성 확인
 		if (!validationResult.get(DetectionType.NECK))
 			detectionCounts.compute(DetectionType.NECK, (key, val) -> val + 1);
 
@@ -106,8 +106,8 @@ public class PoseAnalyzer {
 		if (!validationResult.get(DetectionType.RIGHT_SHOULDER))
 			detectionCounts.compute(DetectionType.RIGHT_SHOULDER, (key, val) -> val + 1);
 
-		// 양쪽 어깨 = 허리 유효성 확인
-		if (!validationResult.get(DetectionType.LEFT_SHOULDER) && !validationResult.get(DetectionType.RIGHT_SHOULDER))
+		// 허리 유효성 확인
+		if (!validationResult.get(DetectionType.BACK))
 			detectionCounts.compute(DetectionType.BACK, (key, val) -> val + 1);
 	}
 

@@ -40,7 +40,6 @@ public class ReferencePoseHandler {
 	public ReferencePoseHandler() {
 		this.poseHistoryQueue = new ArrayDeque<>();
 		this.referencePose = new BodyLandmark[BodyLandmarkName.values().length];
-		this.referencePoseInitialized = false;
 		this.logger = LoggerFactory.getLogger(ReferencePoseHandler.class);
 
 		resetReferencePose();
@@ -64,11 +63,12 @@ public class ReferencePoseHandler {
 		}
 
 		// 각 노드의 중앙값 계산 및 유효성 검사
-		for (int i = 0; i < referencePose.length; i++) {
+		for (int i : USED_LANDMARK_INDEXES) {
 			double medianX = getMedian(i, Axis.X);
 			double medianY = getMedian(i, Axis.Y);
 			double medianZ = getMedian(i, Axis.Z);
-			if (Math.abs(pose[i].x - medianX) > 0.05) {
+
+			if (Math.abs(pose[i].x - medianX) > 0.03) {
 				poseHistoryQueue.pollFirst();  // 가장 오래된 데이터 제거
 				return false;  // 중앙값에서 0.05 이상 벗어나면 유효하지 않음
 			}
@@ -85,12 +85,16 @@ public class ReferencePoseHandler {
 
 		// 유효한 포즈가 기준에 도달하면 기준 포즈 설정됨 반환
 		if (poseHistoryQueue.size() >= MAX_HISTORY_SIZE) {
+			// 양 귀의 중간 z 값과 양 어깨의 중간 z 값의 차이
 			refEarsToShoulderZDifference =
+				// 양 귀의 중간 z 값
 				(referencePose[BodyLandmarkName.LEFT_EAR.ordinal()].getZ()
 					+ referencePose[BodyLandmarkName.RIGHT_EAR.ordinal()].getZ()) / 2 -
+					// 양 어깨의 중간 z 값
 					(referencePose[BodyLandmarkName.LEFT_SHOULDER.ordinal()].getZ()
 						+ referencePose[BodyLandmarkName.RIGHT_SHOULDER.ordinal()].getZ()) / 2;
 
+			// 양 귀 y 값의 차이
 			refEarsYDifference =
 				referencePose[BodyLandmarkName.LEFT_EAR.ordinal()].getY()
 					- referencePose[BodyLandmarkName.RIGHT_EAR.ordinal()].getY();
@@ -142,21 +146,30 @@ public class ReferencePoseHandler {
 		validationResults.put(DetectionType.RIGHT_SHOULDER, validateRightShoulderCondition(pose));
 		validationResults.put(DetectionType.BACK, validateBackCondition(pose));
 
-		if (validationResults.get(DetectionType.LEFT_SHOULDER) && validationResults.get(DetectionType.RIGHT_SHOULDER)) {
-			validationResults.put(DetectionType.BACK, true);
+		// 양쪽 어깨가 내려와 있다면 등도 굽어 있을 것이다.
+		if (!validationResults.get(DetectionType.LEFT_SHOULDER)
+			&& !validationResults.get(DetectionType.RIGHT_SHOULDER)) {
+			validationResults.put(DetectionType.BACK, false);
 		}
 
 		return validationResults;
 	}
 
+	// 고개가 기울어져 있거나 앞으로 뻗어있다면 false, 바르다면 true
 	private boolean validateNeckCondition(BodyLandmark[] pose) {
+		// 현재 포즈의 양 귀의 중간 z 값
 		double poseMiddleZofEar =
 			(pose[BodyLandmarkName.LEFT_EAR.ordinal()].getZ() + pose[BodyLandmarkName.RIGHT_EAR.ordinal()].getZ()) / 2;
+
+		// 현재 포즈의 양 여깨의 중간 z 값
 		double poseMiddleZofShoulder =
 			(pose[BodyLandmarkName.LEFT_SHOULDER.ordinal()].getZ()
 				+ pose[BodyLandmarkName.RIGHT_SHOULDER.ordinal()].getZ()) / 2;
+
+		// 현재 포즈의 양 귀의 중간 z 값과 양 어깨의 중간 z 값의 차이
 		double poseEarsToShoulderZDifference = poseMiddleZofEar - poseMiddleZofShoulder;
 
+		// 양 귀 y(높이) 값의 차이 = 머리 기울기
 		double poseEarsYDifference =
 			pose[BodyLandmarkName.LEFT_EAR.ordinal()].getY() - pose[BodyLandmarkName.RIGHT_EAR.ordinal()].getY();
 
@@ -170,28 +183,44 @@ public class ReferencePoseHandler {
 		// 	poseEarsYDifference, refEarsYDifference
 		// );
 
+		// 데이터 확인용 Z = 거북목 Y = 기울임
+		// logger.info("\n\tZ difference {}\n\tY difference {}",
+		// 	poseEarsToShoulderZDifference - refEarsToShoulderZDifference,
+		// 	Math.abs(poseEarsYDifference - refEarsYDifference));
+
+		// 고개가 꺽여있을 때 false
 		if (Math.abs(poseEarsYDifference - refEarsYDifference) > 0.02) {
-			logger.info("Y difference {}", Math.abs(poseEarsYDifference - refEarsYDifference));
 			return false;
 		}
 
-		logger.info("Z difference {}", Math.abs(poseEarsToShoulderZDifference - refEarsToShoulderZDifference));
-
-		return Math.abs(poseEarsToShoulderZDifference - refEarsToShoulderZDifference) < 0.01;
+		// 고개가 앞으로 나와있을 때 false
+		return poseEarsToShoulderZDifference - refEarsToShoulderZDifference > -0.01;
 	}
 
+	// 원래 자세보다 0.02 이상 y좌표(높이)가 달라지면 false 아니면 true
 	private boolean validateLeftShoulderCondition(BodyLandmark[] pose) {
-		return Math.abs(pose[BodyLandmarkName.LEFT_SHOULDER.ordinal()].y
-			- referencePose[BodyLandmarkName.LEFT_SHOULDER.ordinal()].y) < 0.02;
+		return
+			Math.abs(referencePose[BodyLandmarkName.LEFT_SHOULDER.ordinal()].y
+				- pose[BodyLandmarkName.LEFT_SHOULDER.ordinal()].y) < 0.02;
 	}
 
+	// 원래 자세보다 0.02 이상 y좌표(높이)가 달라지면 false 아니면 true
 	private boolean validateRightShoulderCondition(BodyLandmark[] pose) {
-		return Math.abs(pose[BodyLandmarkName.RIGHT_SHOULDER.ordinal()].y
-			- referencePose[BodyLandmarkName.RIGHT_SHOULDER.ordinal()].y) < 0.02;
+		return
+			Math.abs(referencePose[BodyLandmarkName.RIGHT_SHOULDER.ordinal()].y
+				- pose[BodyLandmarkName.RIGHT_SHOULDER.ordinal()].y) < 0.02;
 	}
 
+	// 원래 자세보다 0.02 이상 x좌표(좌/우)가 달라지면 false 아니면 true
 	private boolean validateBackCondition(BodyLandmark[] pose) {
+		// 왼쪽 엉덩이 추정값으로 측정한다 - 앉는 의자 특성상 엉덩이가 보이지 않아
+		// 								어꺠를 기준으로 아래에 있다고 추정된 값이다.
 
-		return false;
+		// logger.info("\n\tpose Hip {}\n\tref Hip  {}\n\thip gap  {}",
+		// 	pose[BodyLandmarkName.LEFT_HIP.ordinal()].getX(), referencePose[BodyLandmarkName.LEFT_HIP.ordinal()].getX(),
+		// 	Math.abs(pose[BodyLandmarkName.LEFT_HIP.ordinal()].getX()
+		// 		- referencePose[BodyLandmarkName.LEFT_HIP.ordinal()].getX()));
+		return Math.abs(pose[BodyLandmarkName.LEFT_HIP.ordinal()].getX()
+			- referencePose[BodyLandmarkName.LEFT_HIP.ordinal()].getX()) < 0.02;
 	}
 }
