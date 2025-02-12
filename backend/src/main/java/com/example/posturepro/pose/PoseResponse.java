@@ -18,15 +18,15 @@ public class PoseResponse {
 	private static final Logger logger = LoggerFactory.getLogger(PoseResponse.class);
 
 	private long detectionId;
-	private boolean initialSet;
-	private boolean detected;
+	private boolean referenceSetting;
+	private boolean alteration;
 	private String videoPreSignedUrl;
 	private Instant startedAt;
 	private PartProblemStatus problemPart;
 
 	public PoseResponse() {
-		initialSet = true;
-		detected = false;
+		referenceSetting = true;
+		alteration = false;
 		this.problemPart = new PartProblemStatus();
 	}
 
@@ -43,9 +43,5 @@ public class PoseResponse {
 			logger.error("Failed to convert PoseResponse to JSON string: {}", e.getMessage());
 			return "{}";  // 오류 발생 시 빈 JSON 반환
 		}
-	}
-
-	public void markProblem(DetectionType detectionEnum) {
-		problemPart.markProblem(detectionEnum);
 	}
 }
