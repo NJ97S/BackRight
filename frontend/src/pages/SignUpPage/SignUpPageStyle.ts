@@ -1,34 +1,45 @@
 import styled from "styled-components";
 
-export const SignUpPageContianer = styled.div`
+export const SignUpPageContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+
   height: 100vh;
+  padding: 4rem;
+  background-color: var(--navy-100);
 `;
 
-export const SignUpForm = styled.form`
+export const FormContainer = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-`;
-
-export const InputContainer = styled.div`
-  display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 1rem;
-`;
+  gap: 2rem;
 
-export const Label = styled.label``;
+  width: 100%;
+  max-width: 36rem;
+  max-height: 80vh;
 
-export const Input = styled.input`
-  padding: 0.5rem;
-  border: 1px solid var(--gray-200);
+  padding: 4rem 2rem;
+  border-radius: 12px;
+  background-color: var(--cream);
+
+  overflow-y: scroll;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 export const SubmitButton = styled.button`
-  padding: 0.5rem;
-  border-radius: 12px;
+  width: 100%;
+  max-width: 16rem;
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
   background-color: var(--mint);
   color: var(--white);
+  font-size: 1rem;
+  font-weight: 600;
 `;
