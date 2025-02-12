@@ -4,6 +4,8 @@ import { Value } from "react-calendar/src/shared/types.js";
 
 import * as S from "./BirthdaySelectStyle";
 
+import calendarIcon from "../../../assets/icons/calendar.svg";
+
 interface BirthdaySelectProps {
   value: Date | null;
   onChange: (date: string) => void;
@@ -63,6 +65,8 @@ const BirthdaySelect = ({
         hasError={!!errorMessage}
       >
         {value ? value.toISOString().split("T")[0] : "생년월일을 선택해주세요"}
+
+        <S.CalendarIcon src={calendarIcon} alt="달력" />
       </S.InputContainer>
 
       {errorMessage && <S.ErrorMessage>{errorMessage}</S.ErrorMessage>}

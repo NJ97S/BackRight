@@ -30,6 +30,10 @@ export const InputContainer = styled.button.withConfig({
   shouldForwardProp: (prop) =>
     prop !== "isEmpty" && prop !== "isOpened" && prop !== "hasError",
 })<InputContainerProps>`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
   padding: 0.5rem;
   border: ${({ hasError, isOpened }) =>
     getInputBorderStyle(hasError, isOpened)};
@@ -41,6 +45,10 @@ export const InputContainer = styled.button.withConfig({
   text-align: left;
 
   cursor: pointer;
+`;
+
+export const CalendarIcon = styled.img`
+  height: 100%;
 `;
 
 export const ErrorMessage = styled.span`
