@@ -1,22 +1,20 @@
-version: '3.8'
-
 services:
   proxy:
     build:
       context: ./nginx
-    container_name: proxy
+      dockerfile: Dockerfile.dev
+    container_name: proxy_dev
     ports:
       - "443:443"
       - "80:80"
     volumes:
-      - letsencrypt:/etc/letsencrypt  # ✅ 기존 인증서 유지
-      - nginx_config:/etc/nginx
+      - nginx_dev_config:/etc/nginx
     restart: always
     depends_on:
       - backend
       - frontend
     networks:
-      - app-network
+      - dev-network
     env_file:
       - ./nginx/.env
 
@@ -27,9 +25,9 @@ services:
     env_file:
       - backend/.env
     volumes:
-      - mysql_data:/var/lib/mysql
+      - mysql_dev_data:/var/lib/mysql
     networks:
-      - app-network
+      - dev-network
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 15s
@@ -41,14 +39,14 @@ services:
     container_name: redis-container
     restart: always
     networks:
-      - app-network
+      - dev-network
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 3
     volumes:
-      - redis_data:/data
+      - redis_dev_data:/data
 
   backend:
     build:
@@ -57,7 +55,7 @@ services:
     env_file:
       - backend/.env
     networks:
-      - app-network
+      - dev-network
     depends_on:
       - mysql
       - redis
@@ -65,17 +63,17 @@ services:
   frontend:
     build:
       context: ./frontend
+      args:
+        BUILD_MODE: development
     container_name: frontend
     networks:
-      - app-network
-
+      - dev-network
 
 networks:
-  app-network:
+  dev-network:
     driver: bridge
 
 volumes:
-  mysql_data:
-  redis_data:
-  letsencrypt:
-  nginx_config:
+  mysql_dev_data:
+  redis_dev_data:
+  nginx_dev_config:

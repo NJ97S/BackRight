@@ -1,15 +1,12 @@
 package com.example.posturepro.api.oauth.handler;
 
-import com.example.posturepro.api.oauth.utils.CookieUtil;
-import com.example.posturepro.api.oauth.utils.JwtUtil;
-import com.example.posturepro.domain.member.Member;
-import com.example.posturepro.domain.member.service.MemberService;
-import com.example.posturepro.api.oauth.service.TokenService;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -22,10 +19,17 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import java.io.IOException;
-import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.example.posturepro.api.oauth.service.TokenService;
+import com.example.posturepro.api.oauth.utils.CookieUtil;
+import com.example.posturepro.api.oauth.utils.JwtUtil;
+import com.example.posturepro.domain.member.Member;
+import com.example.posturepro.domain.member.service.MemberService;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
@@ -35,6 +39,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 	private final MemberService memberService;
 	private final TokenService tokenService;
 	private static final Logger logger = LoggerFactory.getLogger(CustomAuthenticationSuccessHandler.class);
+
+	@Value("${BASE_URL}")
+	private String baseUrl;
 
 	@Autowired
 	public CustomAuthenticationSuccessHandler(OAuth2AuthorizedClientService authorizedClientService,
@@ -50,7 +57,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 		Authentication authentication) throws IOException, ServletException {
-		OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
+		OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken)authentication;
 		String registrationId = oauthToken.getAuthorizedClientRegistrationId();
 		String userName = oauthToken.getName();
 
@@ -73,12 +80,12 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 	}
 
 	private String extractProviderId(String registrationId, Map<String, Object> providerUserInfo)
-		throws ServletException  {
+		throws ServletException {
 		Object providerId = null;
 
-		if("naver".equalsIgnoreCase(registrationId)) {
+		if ("naver".equalsIgnoreCase(registrationId)) {
 			@SuppressWarnings("unchecked")
-			Map<String, Object> responseMap = (Map<String, Object>) providerUserInfo.get("response");
+			Map<String, Object> responseMap = (Map<String, Object>)providerUserInfo.get("response");
 			if (responseMap != null) {
 				providerId = responseMap.get("id");
 			}
@@ -106,17 +113,20 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 			response.addCookie(refreshCookie);
 		}
 		logger.info("New refresh token: {}", jwtRefreshToken);
-		response.sendRedirect("http://localhost:5173/");
+		response.sendRedirect(baseUrl);
 	}
 
-	private void onNewMember(String providerId, String registrationId, HttpServletResponse response) throws IOException {
-		String tempToken = jwtUtil.generateTempToken(providerId ,registrationId);
+	private void onNewMember(String providerId, String registrationId, HttpServletResponse response) throws
+		IOException {
+		String tempToken = jwtUtil.generateTempToken(providerId, registrationId);
 		Cookie tempCookie = CookieUtil.createTempCookie(tempToken, false);
 		response.addCookie(tempCookie);
-		response.sendRedirect("http://localhost:5173/sign-up");
+		response.sendRedirect(baseUrl + "/sign-up");
 	}
 
-	private Map<String, Object> fetchProviderUserInfo(String registrationId, String accessToken) throws IOException, ServletException {
+	private Map<String, Object> fetchProviderUserInfo(String registrationId, String accessToken) throws
+		IOException,
+		ServletException {
 		if ("kakao".equalsIgnoreCase(registrationId)) {
 			return fetchKakaoUserInfo(accessToken);
 		} else if ("naver".equalsIgnoreCase(registrationId)) {
@@ -136,7 +146,8 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 			"https://kapi.kakao.com/v2/user/me",
 			HttpMethod.GET,
 			entity,
-			new ParameterizedTypeReference<Map<String, Object>>() {}
+			new ParameterizedTypeReference<Map<String, Object>>() {
+			}
 		);
 
 		if (!response.getStatusCode().is2xxSuccessful()) {
@@ -162,7 +173,8 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 			"https://openapi.naver.com/v1/nid/me",
 			HttpMethod.GET,
 			entity,
-			new ParameterizedTypeReference<Map<String, Object>>() {}
+			new ParameterizedTypeReference<Map<String, Object>>() {
+			}
 		);
 
 		if (!response.getStatusCode().is2xxSuccessful()) {
