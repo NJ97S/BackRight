@@ -70,7 +70,7 @@ public class SignalingHandler extends TextWebSocketHandler implements IceCandida
 		String providerId = this.tokenService.getUserIdFromToken(accessToken);
 		var serverConnection = new RTCPeerConnectionHandler(factory, sessionId, this, logger, this.poseAnalyzerFactory,
 			providerId);
-
+		sessionIdToPeerConnectionMap.put(sessionId, serverConnection);
 		return serverConnection;
 	}
 
