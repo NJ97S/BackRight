@@ -117,14 +117,6 @@ public class SignalingHandler extends TextWebSocketHandler implements IceCandida
 		TextMessage message) throws Exception {
 		final String sessionId = session.getId();
 		JsonNode rootNode = objectMapper.readTree(message.getPayload());
-
-		UserDetails principal = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-		String username = principal.getUsername();
-
-		logger.info("[Handler::handleTextMessage] message: {}, sessionId: {}, username: {}",
-			rootNode, sessionId, username);
-
 		try {
 			final String type = rootNode.get("type").asText();
 			switch (type) {
