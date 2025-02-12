@@ -31,12 +31,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 
-		Authentication existingAuth = SecurityContextHolder.getContext().getAuthentication();
-
-		if (existingAuth instanceof OAuth2AuthenticationToken) {
-			filterChain.doFilter(request, response);
-			return;
-		}
 		String token = getJwtFromCookies(request);
 
 		if (token != null && tokenService.validateToken(token)) {
