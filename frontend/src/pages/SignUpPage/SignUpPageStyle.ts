@@ -35,11 +35,15 @@ export const FormContainer = styled.form`
 export const SubmitButton = styled.button`
   width: 100%;
   max-width: 16rem;
-  margin-top: 1rem;
+  margin-top: 2rem;
   padding: 0.75rem 1rem;
   border-radius: 4px;
   background-color: var(--mint);
   color: var(--white);
   font-size: 1rem;
   font-weight: 600;
+
+  &:disabled {
+    background-color: var(--gray-200);
+  }
 `;

@@ -19,13 +19,15 @@ const SignUpPage = () => {
     register,
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<SignUpInfoType>({
     mode: "all",
     defaultValues: { gender: "MALE" },
   });
 
   const onSubmit = async (data: SignUpInfoType) => {
+    if (!isValid) return;
+
     await postUserInfo(data);
 
     navigate("/");
@@ -62,7 +64,9 @@ const SignUpPage = () => {
 
         <GenderSelect {...register("gender")} />
 
-        <S.SubmitButton type="submit">가입하기</S.SubmitButton>
+        <S.SubmitButton type="submit" disabled={!isValid}>
+          가입하기
+        </S.SubmitButton>
       </S.FormContainer>
     </S.SignUpPageContainer>
   );
