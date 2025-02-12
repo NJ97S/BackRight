@@ -40,7 +40,6 @@ public class ReferencePoseHandler {
 	public ReferencePoseHandler() {
 		this.poseHistoryQueue = new ArrayDeque<>();
 		this.referencePose = new BodyLandmark[BodyLandmarkName.values().length];
-		this.referencePoseInitialized = false;
 		this.logger = LoggerFactory.getLogger(ReferencePoseHandler.class);
 
 		resetReferencePose();
