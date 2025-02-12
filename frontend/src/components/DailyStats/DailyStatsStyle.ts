@@ -9,11 +9,11 @@ export const Container = styled.div`
 `;
 
 export const Title = styled.h2`
-  margin-bottom: 1.5rem;
   color: var(--black);
   font-size: 1rem;
   font-weight: 700;
   text-align: center;
+  margin-bottom: 1.5rem;
 `;
 
 export const Content = styled.div`
@@ -21,7 +21,6 @@ export const Content = styled.div`
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 2fr 1fr;
   gap: 1.5rem;
-  height: calc(100% - 3.5rem);
 `;
 
 export const Description = styled.div`
