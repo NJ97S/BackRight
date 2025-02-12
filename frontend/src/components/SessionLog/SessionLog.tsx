@@ -1,22 +1,13 @@
 import { useState, useCallback } from "react";
-import type { LocalSession, LocalWarning, SessionStatus } from "../../types";
+import type { LocalSession, LocalWarning } from "../../types/reportType";
 import SESSION_DATA from "../../mocks/sessionMocks";
 import {
   convertISOToTimeString,
   convertISOToTimeRangeString,
 } from "../../utils/timeFormatUtils";
+import checkIcon from "../../assets/icons/check.svg";
+import alertIcon from "../../assets/icons/alert.svg";
 import * as S from "./SessionLogStyle";
-
-const StatusIcon = ({ status }: { status: SessionStatus }) => (
-  <S.Icon
-    src={
-      status === "정상 종료"
-        ? "/src/assets/icons/normal-end.svg"
-        : "/src/assets/icons/force-end.svg"
-    }
-    alt={status}
-  />
-);
 
 interface SessionItemProps {
   session: LocalSession;
@@ -32,7 +23,10 @@ const SessionItem = ({ session, onSelect }: SessionItemProps) => (
           {convertISOToTimeRangeString(session.startTime, session.endTime)}
         </S.SessionTime>
         <S.StatusBadge status={session.status}>
-          <StatusIcon status={session.status} />
+          <S.Icon
+            src={session.status === "정상 종료" ? checkIcon : alertIcon}
+            alt={"종료 정상 여부"}
+          />
           <span>{session.status}</span>
         </S.StatusBadge>
       </S.SessionHeader>

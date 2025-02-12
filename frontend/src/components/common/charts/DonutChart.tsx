@@ -1,7 +1,7 @@
 import { Chart as ChartJS, ArcElement } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import styled from "styled-components";
-import type { DonutChartProps } from "../../../types/charts";
+import type { DonutChartProps } from "../../../types/chartsType";
 
 ChartJS.register(ArcElement);
 

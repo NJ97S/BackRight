@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
-  padding: 1.5rem;
+  padding: 2rem;
   background: var(--white);
   border-radius: 0.75rem;
 `;
@@ -28,9 +28,8 @@ export const TotalWarnings = styled.div`
   display: flex;
   align-items: center;
   gap: 0.25rem;
-
+  padding-right: 2rem;
   color: var(--gray-300);
-  font-size: 1rem;
   font-weight: 600;
 `;
 
@@ -41,7 +40,8 @@ export const WarningCount = styled.span`
 export const CardContainer = styled.div`
   display: flex;
   gap: 1.25rem;
-  align-content: center;
+  padding-left: 2rem;
+  padding-right: 2rem;
 `;
 
 export const Card = styled.div`

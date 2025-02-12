@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const CalendarContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 1.5rem;
+  padding: 2rem;
   background: var(--white);
   border-radius: 0.75rem;
 `;
@@ -12,7 +12,7 @@ export const CalendarHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
 `;
 
 export const MonthTitle = styled.span`
@@ -98,28 +98,27 @@ export const StyledCalendar = styled.div`
       }
 
       &--now {
-        background: var(--mint) !important;
-        color: white !important;
+        background: var(--mint);
+        color: var(--white);
         font-weight: 700;
         border-radius: 0.75rem;
 
         &.react-calendar__tile--active {
-          background: var(--mint) !important;
-          color: white !important;
+          background: var(--mint);
+          color: var(--white);
         }
       }
 
       &:not(.react-calendar__tile--now):enabled:hover {
         opacity: 0.9;
-        background-color: rgba(118, 171, 174, 0.1) !important;
+        background-color: rgba(118, 171, 174, 0.1);
         border-radius: 0.75rem;
       }
 
       &--active:not(.react-calendar__tile--now) {
-        background: var(--mint) !important;
-        color: white;
+        background: var(--mint);
+        color: var(--white);
         border-radius: 0.75rem;
-        font-weight: normal;
       }
 
       &.react-calendar__month-view__days__day--neighboringMonth {
@@ -127,8 +126,8 @@ export const StyledCalendar = styled.div`
       }
 
       &--now:not(.react-calendar__tile--active) {
-        background: none !important;
-        color: var(--black) !important;
+        background: none;
+        color: var(--black);
         font-weight: 700;
       }
     }

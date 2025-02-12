@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import type { SessionStatus } from "../../types";
+import type { SessionStatus } from "../../types/reportType";
 import { STYLE_CONSTANTS } from "../../constants/styleConstants";
 
 export const Container = styled.div`

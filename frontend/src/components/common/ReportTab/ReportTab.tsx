@@ -2,10 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as S from "./ReportTabStyle";
 
-type TabType = "daily" | "weekly" | "monthly";
-
 interface TabItem {
-  id: TabType;
+  id: "daily" | "weekly" | "monthly";
   label: string;
   path: string;
 }
@@ -18,7 +16,7 @@ const REPORT_PERIOD_TABS: TabItem[] = [
 
 const ReportTab = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<TabType>("daily");
+  const [activeTab, setActiveTab] = useState("daily");
 
   const handleTabClick = (tab: TabItem) => {
     setActiveTab(tab.id);

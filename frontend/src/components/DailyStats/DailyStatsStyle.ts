@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 1.5rem;
+  padding: 2rem;
   background: var(--white);
   border-radius: 0.75rem;
 `;
@@ -32,13 +32,11 @@ export const DescriptionTitle = styled.div`
   margin-bottom: 0.5rem;
   color: var(--black);
   font-size: 0.875rem;
-  font-family: "Pretendard";
 `;
 
 export const DescriptionText = styled.div`
   color: var(--black);
   font-size: 0.875rem;
-  font-family: "Pretendard";
 `;
 
 export const HighlightText = styled.span`
