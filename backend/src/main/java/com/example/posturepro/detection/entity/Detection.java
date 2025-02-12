@@ -31,7 +31,7 @@ public class Detection {
 	@Column(name = "ended_at", columnDefinition = "TIMESTAMP")
 	private Instant endedAt;
 
-	@Column(name = "video_url")
+	@Column(name = "video_url", columnDefinition = "TEXT")
 	private String videoUrl;
 
 	@Column(name = "neck_detected")
@@ -55,7 +55,7 @@ public class Detection {
 		Detection detection = new Detection();
 		detection.setStartedAt(detectionDto.getStartedAt());
 		detection.setEndedAt(detectionDto.getEndedAt());
-		detection.setVideoUrl(detectionDto.getVideoUrl());
+		detection.setVideoUrl(detectionDto.getVideoPreSignedUrl());
 		detection.setNeckDetected(detectionDto.isNeckDetected());
 		detection.setLeftShoulderDetected(detectionDto.isLeftShoulderDetected());
 		detection.setRightShoulderDetected(detectionDto.isRightShoulderDetected());
