@@ -1,6 +1,10 @@
 FROM node:18-alpine AS builder
 WORKDIR /app
 
+# 빌드 모드를 선택할 ARG 추가 (default: production)
+ARG BUILD_MODE=production
+ENV BUILD_MODE=$BUILD_MODE
+
 # 패키지 매니저 설치
 COPY package.json pnpm-lock.yaml ./
 RUN npm install -g pnpm
@@ -10,7 +14,8 @@ RUN pnpm install --frozen-lockfile --production=false
 
 # 소스 복사 후 빌드 실행
 COPY . .
-RUN pnpm run build:web
+
+RUN if [ "$BUILD_MODE" = "development" ]; then pnpm run build:dev-web; else pnpm run build:web; fi
 
 # Nginx 컨테이너에서 사용하기 위해 빌드된 파일을 export
 FROM nginx:alpine AS frontend
