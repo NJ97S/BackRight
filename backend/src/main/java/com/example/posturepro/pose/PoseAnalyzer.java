@@ -12,7 +12,8 @@ import org.slf4j.LoggerFactory;
 import com.example.posturepro.analyzingsession.entity.AnalyzingSession;
 import com.example.posturepro.analyzingsession.service.AnalyzingSessionService;
 import com.example.posturepro.api.s3.component.S3Component;
-import com.example.posturepro.detection.entity.DetectionDto;
+import com.example.posturepro.detection.entity.CreateDetectionDto;
+import com.example.posturepro.detection.entity.Detection;
 import com.example.posturepro.detection.entity.DetectionType;
 import com.example.posturepro.detection.service.DetectionService;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -20,29 +21,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class PoseAnalyzer {
 	private final ObjectMapper jsonMapper;  // JSON 파싱을 위한 ObjectMapper
-	private final StandardPoseHandler standardPoseHandler;
+	private final ReferencePoseHandler referencePoseHandler;    // 기준 포즈 설정 및 체크를 위한 객체
 	private static final Logger logger = LoggerFactory.getLogger(PoseAnalyzer.class);
-	// 기준 포즈 설정 및 체크를 위한 객체
 
-	// todo 각 도메인, 서비스 만들기
 	private final DetectionService detectionService;
 	private final AnalyzingSessionService analyzingSessionService;
 	private final S3Component s3Component;
 	private final String providerId;
 
-	private DetectionDto detectionDto;
+	private Detection detection;
 	private final AnalyzingSession session;
 	private int continuousDetectionCount;
 
 	private final int ALERT_DETECTION_COUNT = 20;
+	private final int DETECTION_THRESHOLD = 8;
 
 	private Map<DetectionType, Integer> detectionCounts;
-
-	private void initializeDetectionCounts() {
-		for (DetectionType type : DetectionType.values()) {
-			detectionCounts.put(type, 0);
-		}
-	}
 
 	public PoseAnalyzer(AnalyzingSessionService analyzingSessionService, DetectionService detectionService,
 		S3Component s3Component, String providerId) {
@@ -50,39 +44,77 @@ public class PoseAnalyzer {
 		this.detectionService = detectionService;
 		this.s3Component = s3Component;
 		this.providerId = providerId;
-		jsonMapper = new ObjectMapper();
-		standardPoseHandler = new StandardPoseHandler();
+		this.jsonMapper = new ObjectMapper();
+		this.referencePoseHandler = new ReferencePoseHandler();
 
-		session = analyzingSessionService.createSession();
+		this.session = analyzingSessionService.createSession();
+		this.detectionCounts = new EnumMap<>(DetectionType.class);
+		initializeDetectionCounts();
+	}
+
+	private void initializeDetectionCounts() {
+		detectionCounts.clear();
+		for (DetectionType type : DetectionType.values()) {
+			detectionCounts.put(type, 0);
+		}
 	}
 
 	// 파싱된 포즈 데이터를 기준 포즈로 설정
 	public String analyzePoseDataProcess(String jsonData) {
+		// 33개 랜드마크로 이루어진 포즈 데이터 10개가 들어온다
 		List<BodyLandmark[]> parsedPoseDataList = parsePoseDataFromJson(jsonData);
 
 		PoseResponse response = new PoseResponse();
 
-		detectionCounts = new EnumMap<>(DetectionType.class);
 		initializeDetectionCounts();
 
 		for (BodyLandmark[] pose : parsedPoseDataList) {
-			if (handleInitialPoseSetup(pose, response)) {
-				EnumMap<DetectionType, Boolean> poseMatchingData = standardPoseHandler.isPoseMatching(pose);
-				analyzePoseDetectionData(poseMatchingData);
+			if (!referencePoseHandler.isReferencePoseInitialized()) {
+				response.setReferenceSet(referencePoseHandler.setReferencePose(pose));
+				continue;
 			}
+
+			EnumMap<DetectionType, Boolean> validationResult = referencePoseHandler.validatePoseMatching(pose);
+			updateDetectionCounts(validationResult);
 		}
 
-		handleDetectionCounts(response);
+		PartProblemStatus problemStatus = updateDetectionStatus();
+		response.setProblemPart(problemStatus);
 
 		if (continuousDetectionCount >= ALERT_DETECTION_COUNT) {
-			handleContinuousAlert(response);
+			response.setPoseCollapsed(true);
+
+			if (detection == null) {
+				this.detection = createDetection(problemStatus);
+				response.setDetectionId(detection.getId());
+				response.setStartedAt(detection.getStartedAt());
+				String videoUrl = fetchPreSignedVideoUrl();
+				response.setVideoPreSignedUrl(videoUrl);
+			}
 		}
 
 		return response.JSONString();
 	}
 
+	private Detection createDetection(PartProblemStatus problemStatus) {
+		CreateDetectionDto detectionDto = new CreateDetectionDto();
+		detectionDto.setStartedAt(Instant.now());
+		detectionDto.setProblemParts(problemStatus);
+		detectionDto.setSession(session);
+		return detectionService.createDetection(detectionDto);
+	}
+
+	private String fetchPreSignedVideoUrl() {
+		String providerId = this.providerId;
+		String videoFileName = "detectionId_" + detection.getId() + "_blob";
+		Map<String, String> preSignedUrls = s3Component.generatePreSignedUrls(providerId, videoFileName, null);
+		String videoPreSignedUrl = preSignedUrls.get("videoPreSignedUrl");
+		logger.info("✅ Video Pre-Signed URL: {}", videoPreSignedUrl);
+		return videoPreSignedUrl;
+	}
+
 	// JSON 형식의 문자열을 파싱하여 PoseNode 객체 배열로 변환
-	public List<BodyLandmark[]> parsePoseDataFromJson(String jsonData) {
+	private List<BodyLandmark[]> parsePoseDataFromJson(String jsonData) {
 		List<BodyLandmark[]> parsedPosesData = new ArrayList<>();
 		try {
 			// JSON 문자열을 객체 배열로 파싱
@@ -95,83 +127,49 @@ public class PoseAnalyzer {
 				parsedPosesData.add(poseArray.toArray(new BodyLandmark[0]));
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Failed to convert pose data from Json: {}", e.getMessage());
 		}
 		return parsedPosesData;
 	}
 
-	public void analyzePoseDetectionData(EnumMap<DetectionType, Boolean> poseMatchingData) {
-		// todo. 얼굴 쪽 유효성 확인
-
-		// 왼쪽 어깨 유효성 확인
-		if (!poseMatchingData.get(DetectionType.LEFT_SHOULDER))
-			detectionCounts.compute(DetectionType.LEFT_SHOULDER, (key, val) -> val + 1);
-
-		// 오른쪽 어꺠 유효성 확인
-		if (!poseMatchingData.get(DetectionType.RIGHT_SHOULDER))
-			detectionCounts.compute(DetectionType.RIGHT_SHOULDER, (key, val) -> val + 1);
-
-		// 양쪽 어깨 = 허리 유효성 확인
-		if (!poseMatchingData.get(DetectionType.LEFT_SHOULDER) && !poseMatchingData.get(DetectionType.RIGHT_SHOULDER))
-			detectionCounts.compute(DetectionType.BACK, (key, val) -> val + 1);
-	}
-
-	private boolean handleInitialPoseSetup(BodyLandmark[] pose, PoseResponse response) {
-		if (!standardPoseHandler.isPoseSet()) {
-			response.setInitialSet(false);
-			boolean isPoseSet = standardPoseHandler.setInitialPose(pose);
-			if (isPoseSet) {
-				response.setInitialSet(true);
+	private void updateDetectionCounts(EnumMap<DetectionType, Boolean> validationResult) {
+		validationResult.forEach((key, isValid) -> {
+			if (!isValid) {
+				detectionCounts.compute(key, (k, v) -> v + 1);
 			}
-			return isPoseSet;  // 초기 포즈 설정 완료
-		}
-		return true;  // 이미 초기 포즈가 설정됨
+		});
 	}
 
-	private void handleDetectionCounts(PoseResponse response) {
-		boolean countUp = false;
+	private PartProblemStatus updateDetectionStatus() {
+		boolean countIncreased = false;
+		PartProblemStatus problemStatus = new PartProblemStatus();
+
 		for (Map.Entry<DetectionType, Integer> entry : detectionCounts.entrySet()) {
-			if (entry.getValue() == 10) {
-				if (!countUp) {
+			// logger.info("detectionCount {} {}", entry.getKey(), entry.getValue());
+			if (entry.getValue() >= DETECTION_THRESHOLD) {
+				if (!countIncreased) {
 					continuousDetectionCount++;
-					countUp = true;
+					countIncreased = true;
 				}
-				response.markProblem(entry.getKey());
+				problemStatus.markProblem(entry.getKey());
 			}
 		}
 
-		if (!countUp) {
-			if (detectionDto != null) {
-				detectionDto.setEndedAt(Instant.now());
-				detectionService.updateDetectionEndTime(detectionDto);
-
-				detectionDto = null;
-			}
-			continuousDetectionCount = 0;
+		// 자세가 바른 상태일 때
+		if (!countIncreased) {
+			endDetection();
 		}
+
+		return problemStatus;
 	}
 
-	private void handleContinuousAlert(PoseResponse response) {
-		response.setDetected(true);
-		System.out.println("detectionDto " + detectionDto);
-		if (detectionDto == null) {
-			detectionDto = new DetectionDto();
-			detectionDto.setDetected(response.getProblemPart());
+	private void endDetection() {
+		if (detection != null) {
+			detection.setEndedAt(Instant.now());
+			detectionService.updateDetectionEndTime(detection);
 
-			// todo 비디오 URL 가져오기 로직 추가
-			String providerId = this.providerId;
-			String videoFileName = "detectionId_" + detectionDto.getDetectionId() + "_blob";
-			Map<String, String> preSignedUrls = s3Component.generatePreSignedUrls(providerId, videoFileName, null);
-			String videoPreSignedUrl = preSignedUrls.get("videoPreSignedUrl");
-			detectionDto.setVideoPreSignedUrl(videoPreSignedUrl);
-			logger.info("✅ Video Pre-Signed URL: {}", videoPreSignedUrl);
-			response.setVideoPreSignedUrl(videoPreSignedUrl);
-			detectionDto.setStartedAt(Instant.now());
-			response.setStartedAt(detectionDto.getStartedAt());
-			detectionService.createDetection(detectionDto, session);
-		} else {
-			System.out.println("detectionDto " + detectionDto);
-			response.setStartedAt(detectionDto.getStartedAt());
+			detection = null;
 		}
+		continuousDetectionCount = 0;
 	}
 }
