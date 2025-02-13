@@ -1,7 +1,10 @@
 package com.example.posturepro.detection.service;
 
+import java.time.Instant;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,11 +14,17 @@ import com.example.posturepro.detection.repository.DetectionRepository;
 
 @Service
 public class DetectionServiceImpl implements DetectionService {
+	Logger logger = LoggerFactory.getLogger(DetectionServiceImpl.class);
 
 	private final DetectionRepository detectionRepository;
 
 	public DetectionServiceImpl(DetectionRepository detectionRepository) {
 		this.detectionRepository = detectionRepository;
+	}
+
+	@Override
+	public Detection getDetectionById(long detectionId) {
+		return detectionRepository.getReferenceById(detectionId);
 	}
 
 	@Override
@@ -26,7 +35,9 @@ public class DetectionServiceImpl implements DetectionService {
 	}
 
 	@Override
-	public void updateDetectionEndTime(Detection detection) {
+	public void endDetection(long detectionId) {
+		Detection detection = getDetectionById(detectionId);
+		detection.setEndedAt(Instant.now());
 		detectionRepository.save(detection);
 	}
 
