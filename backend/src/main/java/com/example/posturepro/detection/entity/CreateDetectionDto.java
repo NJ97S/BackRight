@@ -2,22 +2,21 @@ package com.example.posturepro.detection.entity;
 
 import java.time.Instant;
 
+import com.example.posturepro.analyzingsession.entity.AnalyzingSession;
 import com.example.posturepro.pose.PartProblemStatus;
 
 import lombok.Data;
 
 @Data
-public class DetectionDto {
-	private long detectionId;
+public class CreateDetectionDto {
 	private Instant startedAt;
-	private Instant endedAt;
-	private String videoPreSignedUrl;
 	private boolean neckDetected;
 	private boolean leftShoulderDetected;
 	private boolean rightShoulderDetected;
 	private boolean backDetected;
+	private AnalyzingSession session;
 
-	public void setDetected(PartProblemStatus problemPart) {
+	public void setProblemParts(PartProblemStatus problemPart) {
 		if (problemPart.isNeck())
 			neckDetected = true;
 		if (problemPart.isLeftShoulder())

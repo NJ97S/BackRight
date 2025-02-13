@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import com.example.posturepro.analyzingsession.entity.AnalyzingSession;
 import com.example.posturepro.analyzingsession.service.AnalyzingSessionService;
 import com.example.posturepro.api.s3.component.S3Component;
+import com.example.posturepro.detection.entity.CreateDetectionDto;
 import com.example.posturepro.detection.entity.Detection;
 import com.example.posturepro.detection.entity.DetectionType;
 import com.example.posturepro.detection.service.DetectionService;
@@ -22,7 +23,7 @@ public class PoseAnalyzer {
 	private final ObjectMapper jsonMapper;  // JSON 파싱을 위한 ObjectMapper
 	private final ReferencePoseHandler referencePoseHandler;    // 기준 포즈 설정 및 체크를 위한 객체
 	private static final Logger logger = LoggerFactory.getLogger(PoseAnalyzer.class);
-	// todo 각 도메인, 서비스 만들기
+
 	private final DetectionService detectionService;
 	private final AnalyzingSessionService analyzingSessionService;
 	private final S3Component s3Component;
@@ -80,32 +81,26 @@ public class PoseAnalyzer {
 		response.setProblemPart(problemStatus);
 
 		if (continuousDetectionCount >= ALERT_DETECTION_COUNT) {
-			response.setAlteration(true);
+			response.setAlert(true);
 
-			long detectionId = createDetection(problemStatus);
-			response.setDetectionId(detectionId);
-
-			String videoUrl = fetchPreSignedVideoUrl();
-			response.setVideoPreSignedUrl(videoUrl);
+			if (detection == null) {
+				this.detection = createDetection(problemStatus);
+				response.setDetectionId(detection.getId());
+				response.setStartedAt(detection.getStartedAt());
+				String videoUrl = fetchPreSignedVideoUrl();
+				response.setVideoPreSignedUrl(videoUrl);
+			}
 		}
 
 		return response.JSONString();
 	}
 
-	private long createDetection(PartProblemStatus problemStatus) {
-		if (detection == null) {
-			detection = new Detection();
-			detection.setStartedAt(Instant.now());
-			detection.setProblemParts(problemStatus);
-			detection.setSession(session);
-
-			detectionService.createDetection(detection, session);
-			logger.info("Detection Status: {}", detection);
-
-			return detection.getId();
-		} else {
-			return 0;
-		}
+	private Detection createDetection(PartProblemStatus problemStatus) {
+		CreateDetectionDto detectionDto = new CreateDetectionDto();
+		detectionDto.setStartedAt(Instant.now());
+		detectionDto.setProblemParts(problemStatus);
+		detectionDto.setSession(session);
+		return detectionService.createDetection(detectionDto);
 	}
 
 	private String fetchPreSignedVideoUrl() {
@@ -150,7 +145,7 @@ public class PoseAnalyzer {
 		PartProblemStatus problemStatus = new PartProblemStatus();
 
 		for (Map.Entry<DetectionType, Integer> entry : detectionCounts.entrySet()) {
-			logger.info("detectionCount {} {}", entry.getKey(), entry.getValue());
+			// logger.info("detectionCount {} {}", entry.getKey(), entry.getValue());
 
 			if (entry.getValue() >= 8) {
 				if (!countIncreased) {
