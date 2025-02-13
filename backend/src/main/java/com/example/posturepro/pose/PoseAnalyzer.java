@@ -106,7 +106,7 @@ public class PoseAnalyzer {
 
 	private String fetchPreSignedVideoUrl() {
 		String providerId = this.providerId;
-		String videoFileName = "detectionId_" + detection.getId() + "_blob";
+		String videoFileName = String.valueOf(detection.getId());
 		Map<String, String> preSignedUrls = s3Component.generatePreSignedUrls(providerId, videoFileName, null);
 		String videoPreSignedUrl = preSignedUrls.get("videoPreSignedUrl");
 		logger.info("✅ Video Pre-Signed URL: {}", videoPreSignedUrl);
