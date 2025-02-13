@@ -31,11 +31,11 @@ public class S3Component {
 		Map<String, String> urls = new HashMap<>();
 
 		if (videoFileName != null && !videoFileName.isEmpty()) {
-			String videoKey = "uploads/" + providerId + "/videos/" + videoFileName;
+			String videoKey = "uploads/" + providerId + "/videos/" + videoFileName + ".webm";
 			URL videoPreSignedUrl = presigner.presignPutObject(PutObjectPresignRequest.builder()
-				.signatureDuration(Duration.ofMinutes(10))
-				.putObjectRequest(req -> req.bucket(videoBucket).key(videoKey).contentType("application/octet-stream"))
-				.build()).url();
+					.signatureDuration(Duration.ofMinutes(10))
+					.putObjectRequest(req -> req.bucket(videoBucket).key(videoKey).contentType("video/webm"))
+					.build()).url();
 
 			urls.put("videoPreSignedUrl", videoPreSignedUrl.toString());
 			urls.put("videoKey", videoKey);

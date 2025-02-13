@@ -1,6 +1,11 @@
 /* eslint-disable no-undef */
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
+
+import axios from "axios";
+
+import useMeasurementStore from "../store/useMeasurementStore";
+import { ReceivedDataType } from "../types/type";
 
 const DB_NAME = "VideoDB";
 const STORE_NAME = "videos";
@@ -11,6 +16,8 @@ const useRecording = () => {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const recordedChunks = useRef<Blob[]>([]);
   const recordingTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const { receivedData } = useMeasurementStore();
 
   const saveToIndexedDB = (blob: Blob) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
@@ -34,8 +41,6 @@ const useRecording = () => {
       };
 
       store.add(videoData);
-
-      // console.log("나 블롭 저장해따!! >_<");
     };
 
     request.onerror = (e) => {
@@ -45,8 +50,6 @@ const useRecording = () => {
 
   const startRecording = (stream: MediaStream) => {
     if (!stream) return;
-
-    // console.log("나 레코딩 시작한다!! >ㅁ<");
 
     recordedChunks.current = [];
 
@@ -88,22 +91,32 @@ const useRecording = () => {
     }
   };
 
-  const getAllVideos = (callback: (videos: Blob[]) => void) => {
+  const clearVideosBeforeTime = (targetTimeUTC: number) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
 
     request.onsuccess = () => {
       const db = request.result;
-      const transaction = db.transaction(STORE_NAME, "readonly");
+      const transaction = db.transaction(STORE_NAME, "readwrite");
       const store = transaction.objectStore(STORE_NAME);
-      const getRequest = store.getAll();
+      const requestGetAll = store.getAll();
 
-      getRequest.onsuccess = () => {
-        callback(getRequest.result);
+      requestGetAll.onsuccess = () => {
+        const allVideos = requestGetAll.result;
+
+        allVideos.forEach((video: { blob: Blob; timestamp: number }) => {
+          if (video.timestamp <= targetTimeUTC) {
+            store.delete(video.timestamp);
+          }
+        });
+      };
+
+      requestGetAll.onerror = (e) => {
+        console.error("IndexedDB 데이터 조회 실패:", e);
       };
     };
 
     request.onerror = (e) => {
-      console.error("IndexedDB 불러오기 실패:", e);
+      console.error("IndexedDB 열기 실패:", e);
     };
   };
 
@@ -138,6 +151,28 @@ const useRecording = () => {
     };
   };
 
+  const uploadVideoToS3 = (data: ReceivedDataType) => {
+    if (!data?.videoPreSignedUrl || !data.startedAt) return;
+
+    const targetTime = new Date(data.startedAt).getTime();
+
+    getVideoByExactTime(targetTime, async (videos) => {
+      if (videos.length === 0) return;
+
+      const videoBlob = videos[0];
+
+      try {
+        await axios.put(data.videoPreSignedUrl as string, videoBlob, {
+          headers: { "Content-Type": "video/webm" },
+        });
+
+        clearVideosBeforeTime(targetTime);
+      } catch (error) {
+        console.error("S3 영상 업로드 실패", error);
+      }
+    });
+  };
+
   const clearAllVideos = () => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
 
@@ -146,10 +181,6 @@ const useRecording = () => {
       const transaction = db.transaction(STORE_NAME, "readwrite");
       const store = transaction.objectStore(STORE_NAME);
       const clearRequest = store.clear();
-
-      // clearRequest.onsuccess = () => {
-      //   console.log("나 블롭 다 지워따!! >ㅁ<");
-      // };
 
       clearRequest.onerror = (e) => {
         console.error("IndexedDB 삭제 실패:", e);
@@ -161,11 +192,15 @@ const useRecording = () => {
     };
   };
 
+  useEffect(() => {
+    if (!receivedData?.videoPreSignedUrl) return;
+
+    uploadVideoToS3(receivedData);
+  }, [receivedData]);
+
   return {
     startRecording,
     stopRecording,
-    getAllVideos,
-    getVideoByExactTime,
     clearAllVideos,
   };
 };

@@ -120,10 +120,6 @@ const WebCam = () => {
     );
   };
 
-  const haveProblem = receivedData?.problemPart
-    ? Object.values(receivedData.problemPart).some(Boolean)
-    : false;
-
   useEffect(() => {
     if (stream) displayVideo();
     else removeDiaplay();
@@ -155,7 +151,9 @@ const WebCam = () => {
           {formatRunningTime(elapsedTime)}
         </S.ElapsedTimeContainer>
 
-        <S.RealtimeAlert haveProblem={haveProblem}>
+        <S.RealtimeAlert
+          haveProblem={receivedData ? receivedData.poseCollapsed : null}
+        >
           자세 경고가 감지되었습니다. 바른 자세를 취해주세요.
         </S.RealtimeAlert>
 
