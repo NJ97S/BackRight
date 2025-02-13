@@ -123,6 +123,7 @@ fabric.properties
 
 # 환경 변수 파일
 .env
+.env.*
 
 # BlueJ files
 *.ctxt
