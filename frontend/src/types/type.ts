@@ -17,6 +17,7 @@ export interface SignUpInfoType {
   nickname: string;
   birthDate: string;
   gender: "FEMALE" | "MALE";
+  profileImgUrl: string | null;
 }
 
 export interface SessionAlertType {

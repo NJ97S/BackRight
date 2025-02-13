@@ -22,7 +22,7 @@ const SignUpPage = () => {
     formState: { errors, isValid },
   } = useForm<SignUpInfoType>({
     mode: "all",
-    defaultValues: { gender: "MALE" },
+    defaultValues: { gender: "MALE", profileImgUrl: null },
   });
 
   const onSubmit = async (data: SignUpInfoType) => {
