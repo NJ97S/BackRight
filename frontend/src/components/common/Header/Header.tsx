@@ -2,7 +2,7 @@ import * as S from "./HeaderStyle";
 
 import bellIcon from "../../../assets/icons/bell.svg";
 import hamburgerIcon from "../../../assets/icons/hamburger.svg";
-import logoIcon from "../../../assets/icons/logo.svg";
+import logo from "../../../assets/images/logo.webp";
 
 interface HeaderProps {
   onToggleSideBar: () => void;
@@ -14,7 +14,7 @@ const Header = ({ onToggleSideBar }: HeaderProps) => (
       <S.IconButton onClick={onToggleSideBar}>
         <S.Icon src={hamburgerIcon} alt="메뉴 아이콘" />
       </S.IconButton>
-      <S.Icon src={logoIcon} alt="로고" />
+      <S.Icon src={logo} alt="로고" />
     </S.LogoContainer>
 
     <S.SideContainer>
