@@ -1,8 +1,8 @@
-import type {
+import {
   DailyReportResponse,
-  WeeklyReportResponse,
   MonthlyReportResponse,
-} from "../types";
+  WeeklyReportResponse,
+} from "../types/reportType";
 
 export const mockDailyReport: DailyReportResponse = {
   sessions: [

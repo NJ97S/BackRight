@@ -1,4 +1,4 @@
-import type { LocalSession } from "../types";
+import { LocalSession } from "../types/reportType";
 
 const MOCK_SESSION_DATA: LocalSession[] = [
   {
