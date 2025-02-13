@@ -4,8 +4,9 @@ import useMeasurementStore from "../../store/useMeasurementStore";
 import PostureAlertButton from "../PostureAlertButton/PostureAlertButton";
 import PostureAlertList from "../PostureAlertList/PostureAlertList";
 
-import * as S from "./PostureAlertStyle";
 import { ReceivedDataType, SessionAlertType } from "../../types/type";
+
+import * as S from "./PostureAlertStyle";
 
 const PostureAlert = () => {
   const [isAlertListOpened, setIsAlertListOpened] = useState(false);
@@ -27,7 +28,7 @@ const PostureAlert = () => {
   const addSessionAlert = (data: ReceivedDataType) => {
     const { startedAt, problemPart, detectionId, videoPreSignedUrl } = data;
 
-    if (!startedAt || videoPreSignedUrl === null) return; // TODO: videoPreSignedUrl 조건 falsy로 수정 필요
+    if (!startedAt || !videoPreSignedUrl) return;
 
     const newAlert: SessionAlertType = {
       startedAt,
