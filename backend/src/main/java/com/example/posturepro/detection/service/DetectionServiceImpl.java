@@ -35,6 +35,7 @@ public class DetectionServiceImpl implements DetectionService {
 	}
 
 	@Override
+	@Transactional
 	public void endDetection(long detectionId) {
 		Detection detection = getDetectionById(detectionId);
 		detection.setEndedAt(Instant.now());
