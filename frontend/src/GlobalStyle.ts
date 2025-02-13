@@ -36,6 +36,9 @@ const GlobalStyle = createGlobalStyle`
 
     --red: #FF0000;
     --blue: #0055FF;
+
+    --kakao: #fee500;
+    --naver: #03C75A;
   }
 
   a {
