@@ -5,7 +5,6 @@ import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.posturepro.detection.entity.DetectionType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -19,14 +18,14 @@ public class PoseResponse {
 
 	private long detectionId;
 	private boolean referenceSetting;
-	private boolean alteration;
+	private boolean alert;
 	private String videoPreSignedUrl;
 	private Instant startedAt;
 	private PartProblemStatus problemPart;
 
 	public PoseResponse() {
 		referenceSetting = true;
-		alteration = false;
+		alert = false;
 		this.problemPart = new PartProblemStatus();
 	}
 
