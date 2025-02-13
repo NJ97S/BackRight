@@ -1,6 +1,6 @@
 export interface ReceivedDataType {
-  referenceSetting: boolean;
-  alert: boolean;
+  referenceSet: boolean;
+  poseCollapsed: boolean;
   detectionId: number;
   videoPreSignedUrl: string | null;
   startedAt: string | null;
