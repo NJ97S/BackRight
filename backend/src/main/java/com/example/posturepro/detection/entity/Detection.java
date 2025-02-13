@@ -13,24 +13,28 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@NoArgsConstructor
 @Entity
-@Getter
-@Setter
 public class Detection {
 
+	@Getter
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", insertable = false, updatable = false)
 	private Long id;
 
+	@Getter
 	@Column(name = "started_at", columnDefinition = "TIMESTAMP")
 	private Instant startedAt;
 
+	@Setter
 	@Column(name = "ended_at", columnDefinition = "TIMESTAMP")
 	private Instant endedAt;
 
+	@Setter
 	@Column(name = "video_url", columnDefinition = "TEXT")
 	private String videoUrl;
 
@@ -51,17 +55,13 @@ public class Detection {
 	@JoinColumn(name = "analyzing_session_id", nullable = false)
 	private AnalyzingSession session;
 
-	public static Detection fromDto(DetectionDto detectionDto, AnalyzingSession session) {
-		Detection detection = new Detection();
-		detection.setStartedAt(detectionDto.getStartedAt());
-		detection.setEndedAt(detectionDto.getEndedAt());
-		detection.setVideoUrl(detectionDto.getVideoPreSignedUrl());
-		detection.setNeckDetected(detectionDto.isNeckDetected());
-		detection.setLeftShoulderDetected(detectionDto.isLeftShoulderDetected());
-		detection.setRightShoulderDetected(detectionDto.isRightShoulderDetected());
-		detection.setBackDetected(detectionDto.isBackDetected());
-		detection.setSession(session);  // Session 설정
-		return detection;
+	public Detection(CreateDetectionDto detectionDto) {
+		this.startedAt = detectionDto.getStartedAt();
+		this.session = detectionDto.getSession();
+		this.neckDetected = detectionDto.isNeckDetected();
+		this.leftShoulderDetected = detectionDto.isLeftShoulderDetected();
+		this.rightShoulderDetected = detectionDto.isRightShoulderDetected();
+		this.backDetected = detectionDto.isBackDetected();
 	}
 
 }
