@@ -8,8 +8,10 @@ import {
   PoseLandmarkerResult,
 } from "@mediapipe/tasks-vision";
 
-import useMeasurementStore from "../../store/useMeasurementStore";
+import RealtimeMessage from "../RealtimeMessage/RealtimeMessage";
 import PostureAlert from "../PostureAlert/PostureAlert";
+
+import useMeasurementStore from "../../store/useMeasurementStore";
 import formatRunningTime from "../../utils/formatRunningTime";
 import {
   ERROR_CONNECTIONS,
@@ -103,7 +105,6 @@ const WebCam = () => {
     canvasContext.restore();
   };
 
-  // video 및 canvas 제거
   const removeDiaplay = () => {
     if (!videoRef.current) return;
     videoRef.current.srcObject = null;
@@ -151,11 +152,19 @@ const WebCam = () => {
           {formatRunningTime(elapsedTime)}
         </S.ElapsedTimeContainer>
 
-        <S.RealtimeAlert
-          haveProblem={receivedData ? receivedData.poseCollapsed : null}
+        <RealtimeMessage
+          type="setting"
+          isDisplayed={!!receivedData && !receivedData.referenceSet}
+        >
+          초기 자세를 설정중입니다. 바른 자세를 유지해주세요.
+        </RealtimeMessage>
+
+        <RealtimeMessage
+          type="alert"
+          isDisplayed={!!receivedData?.poseCollapsed}
         >
           자세 경고가 감지되었습니다. 바른 자세를 취해주세요.
-        </S.RealtimeAlert>
+        </RealtimeMessage>
 
         <PostureAlert />
       </S.VideoContainer>

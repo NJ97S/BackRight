@@ -93,30 +93,6 @@ export const RecordingIcon = styled.img`
   height: 1.25rem;
 `;
 
-interface RealtimeAlertProps {
-  haveProblem: boolean | null;
-}
-
-export const RealtimeAlert = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop !== "haveProblem",
-})<RealtimeAlertProps>`
-  position: absolute;
-  top: 2.5rem;
-  left: 50%;
-  transform: translate(-50%, -50%);
-
-  padding: 1rem 2.5rem;
-  border-radius: 12px;
-  background: rgba(255, 68, 68, 0.6);
-  color: var(--white);
-  font-size: 0.875rem;
-  text-align: center;
-
-  opacity: ${({ haveProblem }) => (haveProblem ? 1 : 0)};
-  visibility: ${({ haveProblem }) => (haveProblem ? "visible" : "hidden")};
-  transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
-`;
-
 export const RecordingStopButton = styled.button.withConfig({
   shouldForwardProp: (prop) => prop !== "isStreaming",
 })<RecordingProps>`
