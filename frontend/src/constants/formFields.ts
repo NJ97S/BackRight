@@ -6,7 +6,8 @@ const FORM_FIELDS = [
     placeholder: "실명을 입력해주세요",
     validation: {
       required: "이름을 입력해주세요",
-      validate: (value: string) => {
+      validate: (value: string | null) => {
+        if (!value) return "이름을 입력해주세요";
         if (/\s/.test(value)) {
           return "이름에는 공백을 포함할 수 없습니다";
         }
@@ -27,7 +28,8 @@ const FORM_FIELDS = [
     placeholder: "닉네임을 입력해주세요",
     validation: {
       required: "닉네임을 입력해주세요",
-      validate: (value: string) => {
+      validate: (value: string | null) => {
+        if (!value) return "닉네임을 입력해주세요";
         if (/\s/.test(value)) {
           return "닉네임에는 공백을 포함할 수 없습니다";
         }
