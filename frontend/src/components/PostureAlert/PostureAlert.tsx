@@ -25,9 +25,9 @@ const PostureAlert = () => {
   };
 
   const addSessionAlert = (data: ReceivedDataType) => {
-    const { startedAt, problemPart, detectionId, videoUrl } = data;
+    const { startedAt, problemPart, detectionId, videoPreSignedUrl } = data;
 
-    if (!startedAt || videoUrl === null) return; // TODO: videoUrl 조건 falsy로 수정 필요
+    if (!startedAt || videoPreSignedUrl === null) return; // TODO: videoPreSignedUrl 조건 falsy로 수정 필요
 
     const newAlert: SessionAlertType = {
       startedAt,

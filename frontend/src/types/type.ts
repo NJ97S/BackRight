@@ -1,8 +1,8 @@
 export interface ReceivedDataType {
-  initialSet: boolean;
-  detected: boolean;
+  referenceSetting: boolean;
+  alert: boolean;
   detectionId: number;
-  videoUrl: string | null;
+  videoPreSignedUrl: string | null;
   startedAt: string | null;
   problemPart: {
     neck: boolean;
