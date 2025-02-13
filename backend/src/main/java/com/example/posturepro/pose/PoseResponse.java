@@ -17,15 +17,15 @@ public class PoseResponse {
 	private static final Logger logger = LoggerFactory.getLogger(PoseResponse.class);
 
 	private long detectionId;
-	private boolean referenceSetting;
-	private boolean alert;
+	private boolean referenceSet;
+	private boolean poseCollapsed;
 	private String videoPreSignedUrl;
 	private Instant startedAt;
 	private PartProblemStatus problemPart;
 
 	public PoseResponse() {
-		referenceSetting = true;
-		alert = false;
+		referenceSet = true;
+		poseCollapsed = false;
 		this.problemPart = new PartProblemStatus();
 	}
 

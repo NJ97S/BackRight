@@ -34,6 +34,7 @@ public class PoseAnalyzer {
 	private int continuousDetectionCount;
 
 	private final int ALERT_DETECTION_COUNT = 20;
+	private final int DETECTION_THRESHOLD = 8;
 
 	private Map<DetectionType, Integer> detectionCounts;
 
@@ -69,7 +70,7 @@ public class PoseAnalyzer {
 
 		for (BodyLandmark[] pose : parsedPoseDataList) {
 			if (!referencePoseHandler.isReferencePoseInitialized()) {
-				response.setReferenceSetting(referencePoseHandler.setReferencePose(pose));
+				response.setReferenceSet(referencePoseHandler.setReferencePose(pose));
 				continue;
 			}
 
@@ -81,7 +82,7 @@ public class PoseAnalyzer {
 		response.setProblemPart(problemStatus);
 
 		if (continuousDetectionCount >= ALERT_DETECTION_COUNT) {
-			response.setAlert(true);
+			response.setPoseCollapsed(true);
 
 			if (detection == null) {
 				this.detection = createDetection(problemStatus);
@@ -104,7 +105,6 @@ public class PoseAnalyzer {
 	}
 
 	private String fetchPreSignedVideoUrl() {
-		// TODO: 비디오 URL 가져오는 로직 추가
 		String providerId = this.providerId;
 		String videoFileName = "detectionId_" + detection.getId() + "_blob";
 		Map<String, String> preSignedUrls = s3Component.generatePreSignedUrls(providerId, videoFileName, null);
@@ -146,8 +146,7 @@ public class PoseAnalyzer {
 
 		for (Map.Entry<DetectionType, Integer> entry : detectionCounts.entrySet()) {
 			// logger.info("detectionCount {} {}", entry.getKey(), entry.getValue());
-
-			if (entry.getValue() >= 8) {
+			if (entry.getValue() >= DETECTION_THRESHOLD) {
 				if (!countIncreased) {
 					continuousDetectionCount++;
 					countIncreased = true;
@@ -158,13 +157,13 @@ public class PoseAnalyzer {
 
 		// 자세가 바른 상태일 때
 		if (!countIncreased) {
-			resetDetection();
+			endDetection();
 		}
 
 		return problemStatus;
 	}
 
-	private void resetDetection() {
+	private void endDetection() {
 		if (detection != null) {
 			detection.setEndedAt(Instant.now());
 			detectionService.updateDetectionEndTime(detection);
