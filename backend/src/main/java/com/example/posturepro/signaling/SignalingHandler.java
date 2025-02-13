@@ -5,12 +5,15 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import com.example.posturepro.api.oauth.service.TokenService;
 import com.example.posturepro.peer.RTCPeerConnectionHandler;
 import com.example.posturepro.pose.PoseAnalyzerFactory;
 import com.example.posturepro.signaling.dto.ClientIceCandidate;
@@ -30,6 +33,7 @@ import dev.onvoid.webrtc.media.audio.AudioLayer;
 public class SignalingHandler extends TextWebSocketHandler implements IceCandidateListener {
 	private static final Logger logger = LoggerFactory.getLogger(SignalingHandler.class);
 	private static final ObjectMapper objectMapper = new ObjectMapper();
+	private final TokenService tokenService;
 
 	protected PeerConnectionFactory factory;
 	protected AudioDeviceModule audioDevModule;
@@ -41,10 +45,11 @@ public class SignalingHandler extends TextWebSocketHandler implements IceCandida
 	private final ConcurrentHashMap<String, SerializedWebSocketSender> sessionIdToSenderMap =
 		new ConcurrentHashMap<>();
 
-	SignalingHandler(PoseAnalyzerFactory poseAnalyzerFactory) {
+	SignalingHandler(PoseAnalyzerFactory poseAnalyzerFactory, TokenService tokenService) {
 		this.audioDevModule = new AudioDeviceModule(AudioLayer.kDummyAudio);
 		this.factory = new PeerConnectionFactory(audioDevModule);
 		this.poseAnalyzerFactory = poseAnalyzerFactory;
+		this.tokenService = tokenService;
 		logger.info("Signaling Handler started");
 	}
 
@@ -60,9 +65,12 @@ public class SignalingHandler extends TextWebSocketHandler implements IceCandida
 		var sessionHandler = new SerializedWebSocketSender(session);
 		sessionIdToSenderMap.put(sessionId, sessionHandler);
 
-		var serverConnection = new RTCPeerConnectionHandler(factory, sessionId, this, logger, this.poseAnalyzerFactory);
+		String accessToken = (String)session.getAttributes().get("access-token");
+		logger.info("[Handler::initializeSession] Token {}", accessToken);
+		String providerId = this.tokenService.getUserIdFromToken(accessToken);
+		var serverConnection = new RTCPeerConnectionHandler(factory, sessionId, this, logger, this.poseAnalyzerFactory,
+			providerId);
 		sessionIdToPeerConnectionMap.put(sessionId, serverConnection);
-
 		return serverConnection;
 	}
 
@@ -109,10 +117,6 @@ public class SignalingHandler extends TextWebSocketHandler implements IceCandida
 		TextMessage message) throws Exception {
 		final String sessionId = session.getId();
 		JsonNode rootNode = objectMapper.readTree(message.getPayload());
-
-		logger.info("[Handler::handleTextMessage] message: {}, sessionId: {}",
-			rootNode, sessionId);
-
 		try {
 			final String type = rootNode.get("type").asText();
 			switch (type) {

@@ -15,9 +15,16 @@ export const HeaderContainer = styled.div`
   box-shadow: rgba(0, 0, 0, 0.24) 0px 2px 4px;
 `;
 
-export const IconButton = styled.button`
+export const LogoContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 2rem;
   width: 2rem;
   height: 2rem;
+`;
+
+export const IconButton = styled.button`
+  height: 100%;
 `;
 
 export const IconLink = styled(Link)`
@@ -26,14 +33,13 @@ export const IconLink = styled(Link)`
 `;
 
 export const Icon = styled.img`
-  width: 100%;
   height: 100%;
 `;
 
 export const SideContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 2rem;
 `;
 
 export const ProfileImage = styled.div`

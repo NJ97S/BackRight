@@ -11,7 +11,7 @@ public class DetectionDto {
 	private long detectionId;
 	private Instant startedAt;
 	private Instant endedAt;
-	private String videoUrl;
+	private String videoPreSignedUrl;
 	private boolean neckDetected;
 	private boolean leftShoulderDetected;
 	private boolean rightShoulderDetected;

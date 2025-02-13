@@ -4,7 +4,6 @@ import java.net.URL;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -27,14 +26,15 @@ public class S3Component {
 		this.presigner = presigner;
 	}
 
-	public Map<String, String> generatePreSignedUrls(String videoFileName, String profileImgFileName) {
+	public Map<String, String> generatePreSignedUrls(String providerId, String videoFileName,
+		String profileImgFileName) {
 		Map<String, String> urls = new HashMap<>();
 
 		if (videoFileName != null && !videoFileName.isEmpty()) {
-			String videoKey = "uploads/videos/" + UUID.randomUUID() + "_" + videoFileName;
+			String videoKey = "uploads/" + providerId + "/videos/" + videoFileName;
 			URL videoPreSignedUrl = presigner.presignPutObject(PutObjectPresignRequest.builder()
 				.signatureDuration(Duration.ofMinutes(10))
-				.putObjectRequest(req -> req.bucket(videoBucket).key(videoKey).contentType("video/mp4"))
+				.putObjectRequest(req -> req.bucket(videoBucket).key(videoKey).contentType("application/octet-stream"))
 				.build()).url();
 
 			urls.put("videoPreSignedUrl", videoPreSignedUrl.toString());
@@ -42,7 +42,7 @@ public class S3Component {
 		}
 
 		if (profileImgFileName != null && !profileImgFileName.isEmpty()) {
-			String profileImgKey = "uploads/profile/" + UUID.randomUUID() + "_" + profileImgFileName;
+			String profileImgKey = "uploads/" + providerId + "/profile/" + profileImgFileName;
 			URL profileImgPreSignedUrl = presigner.presignPutObject(PutObjectPresignRequest.builder()
 				.signatureDuration(Duration.ofMinutes(10))
 				.putObjectRequest(req -> req.bucket(profileImgBucket).key(profileImgKey).contentType("image/jpeg"))
@@ -53,5 +53,16 @@ public class S3Component {
 		}
 
 		return urls;
+	}
+
+	public String generatePreSignedUrlForProfileImageUpdate(String profileImgKey) {
+		URL profileImgPreSignedUrl = presigner.presignPutObject(PutObjectPresignRequest.builder()
+			.signatureDuration(Duration.ofMinutes(10))
+			.putObjectRequest(req -> req.bucket(profileImgBucket)
+				.key(profileImgKey)
+				.contentType("image/jpeg"))
+			.build()).url();
+
+		return profileImgPreSignedUrl.toString();
 	}
 }

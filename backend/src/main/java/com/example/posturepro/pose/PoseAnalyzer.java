@@ -6,8 +6,12 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.example.posturepro.analyzingsession.entity.AnalyzingSession;
 import com.example.posturepro.analyzingsession.service.AnalyzingSessionService;
+import com.example.posturepro.api.s3.component.S3Component;
 import com.example.posturepro.detection.entity.DetectionDto;
 import com.example.posturepro.detection.entity.DetectionType;
 import com.example.posturepro.detection.service.DetectionService;
@@ -16,11 +20,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class PoseAnalyzer {
 	private final ObjectMapper jsonMapper;  // JSON 파싱을 위한 ObjectMapper
-	private final StandardPoseHandler standardPoseHandler;    // 기준 포즈 설정 및 체크를 위한 객체
+	private final StandardPoseHandler standardPoseHandler;
+	private static final Logger logger = LoggerFactory.getLogger(PoseAnalyzer.class);
+	// 기준 포즈 설정 및 체크를 위한 객체
 
 	// todo 각 도메인, 서비스 만들기
 	private final DetectionService detectionService;
 	private final AnalyzingSessionService analyzingSessionService;
+	private final S3Component s3Component;
+	private final String providerId;
 
 	private DetectionDto detectionDto;
 	private final AnalyzingSession session;
@@ -36,9 +44,12 @@ public class PoseAnalyzer {
 		}
 	}
 
-	public PoseAnalyzer(AnalyzingSessionService analyzingSessionService, DetectionService detectionService) {
+	public PoseAnalyzer(AnalyzingSessionService analyzingSessionService, DetectionService detectionService,
+		S3Component s3Component, String providerId) {
 		this.analyzingSessionService = analyzingSessionService;
 		this.detectionService = detectionService;
+		this.s3Component = s3Component;
+		this.providerId = providerId;
 		jsonMapper = new ObjectMapper();
 		standardPoseHandler = new StandardPoseHandler();
 
@@ -146,10 +157,15 @@ public class PoseAnalyzer {
 		if (detectionDto == null) {
 			detectionDto = new DetectionDto();
 			detectionDto.setDetected(response.getProblemPart());
+
 			// todo 비디오 URL 가져오기 로직 추가
-			String videoUrl = "";
-			detectionDto.setVideoUrl(videoUrl);
-			response.setVideoUrl(videoUrl);
+			String providerId = this.providerId;
+			String videoFileName = "detectionId_" + detectionDto.getDetectionId() + "_blob";
+			Map<String, String> preSignedUrls = s3Component.generatePreSignedUrls(providerId, videoFileName, null);
+			String videoPreSignedUrl = preSignedUrls.get("videoPreSignedUrl");
+			detectionDto.setVideoPreSignedUrl(videoPreSignedUrl);
+			logger.info("✅ Video Pre-Signed URL: {}", videoPreSignedUrl);
+			response.setVideoPreSignedUrl(videoPreSignedUrl);
 			detectionDto.setStartedAt(Instant.now());
 			response.setStartedAt(detectionDto.getStartedAt());
 			detectionService.createDetection(detectionDto, session);
