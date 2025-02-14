@@ -1,4 +1,13 @@
 FROM node:18-alpine AS builder
+
+# Build arguments
+ARG VITE_API_BASE_URL
+ARG VITE_WEBSOCKET_URL
+
+# 환경 변수 설정
+ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
+ENV VITE_WEBSOCKET_URL=${VITE_WEBSOCKET_URL}
+
 WORKDIR /app
 
 # 빌드 모드를 선택할 ARG 추가 (default: production)
