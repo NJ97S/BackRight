@@ -18,6 +18,8 @@ before_script:
   - mkdir -p ~/.ssh
   - chmod 700 ~/.ssh
   - ssh-keyscan i12a601.p.ssafy.io >> ~/.ssh/known_hosts
+  - unset DOCKER_HOST
+  - docker login $DOCKER_REGISTRY -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
 
 build:
   stage: build
