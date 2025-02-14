@@ -3,12 +3,7 @@ variables:
   DOCKER_IMAGE_BACKEND: "$DOCKERHUB_USERNAME/back-right-backend"
   DOCKER_IMAGE_FRONTEND: "$DOCKERHUB_USERNAME/back-right-frontend"
   DOCKER_IMAGE_PROXY: "$DOCKERHUB_USERNAME/back-right-proxy"
-  DOCKER_HOST: tcp://docker:2375
-  DOCKER_TLS_CERTDIR: ""
-  
-services:
-  - name: docker:dind
-    command: ["--tls=false", "--host=tcp:0.0.0.0:2375"]
+  DOCKER_HOST: "unix:///var/run/docker.sock"
 
 stages:
   - build
@@ -22,6 +17,7 @@ before_script:
   - mkdir -p ~/.ssh
   - chmod 700 ~/.ssh
   - ssh-keyscan i12a601.p.ssafy.io >> ~/.ssh/known_hosts
+  - docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_PASSWORD"
   
 build:
   stage: build
