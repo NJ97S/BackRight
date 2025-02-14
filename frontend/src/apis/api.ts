@@ -11,4 +11,12 @@ export const postUserInfo = async (userInfo: SignUpInfoType) => {
   }
 };
 
-export const empty = () => {};
+export const postLogout = async () => {
+  try {
+    const resposne = await instance.post("/auth/logout");
+
+    return resposne.data;
+  } catch (error) {
+    throw new Error("로그아웃 실패");
+  }
+};
