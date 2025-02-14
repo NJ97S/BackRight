@@ -67,7 +67,7 @@ public class SignalingHandler extends TextWebSocketHandler implements IceCandida
 
 		String accessToken = (String)session.getAttributes().get("access-token");
 		logger.info("[Handler::initializeSession] Token {}", accessToken);
-		String providerId = this.tokenService.getUserIdFromToken(accessToken);
+		String providerId = this.tokenService.getProviderIdFromToken(accessToken);
 		var serverConnection = new RTCPeerConnectionHandler(factory, sessionId, this, logger, this.poseAnalyzerFactory,
 			providerId);
 		sessionIdToPeerConnectionMap.put(sessionId, serverConnection);

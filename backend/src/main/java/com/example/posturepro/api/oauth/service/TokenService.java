@@ -25,8 +25,8 @@ public class TokenService {
 		return jwtUtil.validateToken(token);
 	}
 
-	public String getUserIdFromToken(String token) {
-		return jwtUtil.getUserIdFromToken(token);
+	public String getProviderIdFromToken(String token) {
+		return jwtUtil.getProviderIdFromToken(token);
 	}
 
 	public boolean validateTempToken(String token) {
