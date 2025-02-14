@@ -10,6 +10,7 @@ import com.example.posturepro.analyzingsession.entity.AnalyzingSession;
 import com.example.posturepro.analyzingsession.repository.AnalyzingSessionRepository;
 import com.example.posturepro.domain.member.Member;
 import com.example.posturepro.domain.member.service.MemberService;
+import com.example.posturepro.exception.EntityNotFound;
 
 @Service
 public class AnalyzingSessionServiceImpl implements AnalyzingSessionService {
@@ -33,9 +34,7 @@ public class AnalyzingSessionServiceImpl implements AnalyzingSessionService {
 	public AnalyzingSession createSession(String providerId) {
 		Optional<Member> memberOpt = memberService.findByProviderId(providerId);
 		if (memberOpt.isEmpty()) {
-			// todo Exeption 던지던가 해서 ControllerAdvice로 잡을 것
-			return null;
-			// throw new SQLException(String.format("Provider ID %s does not exist in the database.", providerId));
+			throw new EntityNotFound("Member", "provider_id", providerId);
 		}
 		Member member = memberOpt.get();
 		Instant startAt = Instant.now();
@@ -50,4 +49,6 @@ public class AnalyzingSessionServiceImpl implements AnalyzingSessionService {
 		session.setEndedAt(Instant.now());
 		analyzingSessionRepository.save(session);
 	}
+
+	// todo delete시 참조하고 있는 detection 제거 - cascade 설정이 안되어있기에
 }
