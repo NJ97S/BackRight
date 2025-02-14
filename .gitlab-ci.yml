@@ -3,11 +3,7 @@ variables:
   DOCKER_IMAGE_BACKEND: "$DOCKERHUB_USERNAME/back-right-backend"
   DOCKER_IMAGE_FRONTEND: "$DOCKERHUB_USERNAME/back-right-frontend"
   DOCKER_IMAGE_PROXY: "$DOCKERHUB_USERNAME/back-right-proxy"
-  DOCKER_HOST: "tcp://localhost:2375"
-  
-services:
-  - name: docker:dind
-    alias: docker  # 'docker'라는 호스트를 명확히 지정
+  DOCKER_HOST: "tcp://docker:2375"
 
 stages:
   - build
@@ -22,7 +18,9 @@ before_script:
   - chmod 700 ~/.ssh
   - ssh-keyscan i12a601.p.ssafy.io >> ~/.ssh/known_hosts
   - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN
-  - docker info
+  - docker run --privileged -d --name dind --network=host docker:20.10.24-dind  # 직접 실행
+  - sleep 10  # Docker Daemon이 실행될 시간을 확보
+  - docker info  # Docker Daemon이 정상적으로 실행되는지 확인
 
 build:
   stage: build
