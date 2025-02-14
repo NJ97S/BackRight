@@ -43,12 +43,12 @@ deploy:
     - main  # main 브랜치에 push될 때만 배포 실행
     - feature/ci-cd
   script:
-    - ssh ubuntu@$SERVER_HOST << EOF
-      cd deploy
-      docker-compose down
-      docker pull $DOCKER_IMAGE_BACKEND:$IMAGE_TAG
-      docker pull $DOCKER_IMAGE_FRONTEND:$IMAGE_TAG
-      docker pull $DOCKER_IMAGE_PROXY:$IMAGE_TAG
+    - ssh ubuntu@$SERVER_HOST << 'EOF'
+      cd deploy && \
+      docker-compose down && \
+      docker pull $DOCKER_IMAGE_BACKEND:$IMAGE_TAG && \
+      docker pull $DOCKER_IMAGE_FRONTEND:$IMAGE_TAG && \
+      docker pull $DOCKER_IMAGE_PROXY:$IMAGE_TAG && \
       docker-compose up -d
       EOF
     
