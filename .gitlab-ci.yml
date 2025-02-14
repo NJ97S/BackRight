@@ -32,7 +32,6 @@ push:
   stage: push
   only:
     - main
-    - feature/ci-cd
   script:
     - docker push $DOCKER_IMAGE_BACKEND:$IMAGE_TAG
     - docker push $DOCKER_IMAGE_BACKEND:latest
@@ -44,7 +43,6 @@ deploy:
   stage: deploy
   only:
     - main
-    - feature/ci-cd
   script:
     - echo $DOCKER_IMAGE_BACKEND
     - echo $IMAGE_TAG
