@@ -3,6 +3,8 @@ package com.example.posturepro.analyzingsession.service;
 import java.time.Instant;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +19,7 @@ public class AnalyzingSessionServiceImpl implements AnalyzingSessionService {
 
 	private final AnalyzingSessionRepository analyzingSessionRepository;
 	private final MemberService memberService;
+	private Logger logger = LoggerFactory.getLogger(AnalyzingSessionServiceImpl.class);
 
 	public AnalyzingSessionServiceImpl(AnalyzingSessionRepository analyzingSessionRepository,
 		MemberService memberService) {
@@ -45,10 +48,10 @@ public class AnalyzingSessionServiceImpl implements AnalyzingSessionService {
 	}
 
 	@Override
+	@Transactional
 	public void endSession(AnalyzingSession session) {
+		session = getSessionById(session.getId());
 		session.setEndedAt(Instant.now());
 		analyzingSessionRepository.save(session);
 	}
-
-	// todo delete시 참조하고 있는 detection 제거 - cascade 설정이 안되어있기에
 }
