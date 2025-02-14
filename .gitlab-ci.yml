@@ -28,6 +28,8 @@ build:
     - docker build -t $DOCKER_IMAGE_BACKEND:$IMAGE_TAG ./backend
     - docker build -t $DOCKER_IMAGE_FRONTEND:$IMAGE_TAG ./frontend
     - docker build -t $DOCKER_IMAGE_PROXY:$IMAGE_TAG ./nginx
+    - echo "=== 현재 Runner 내부 Docker 이미지 목록 ==="
+    - docker images  # 빌드된 이미지 목록 확인
 
 push:
   stage: push
