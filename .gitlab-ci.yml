@@ -44,6 +44,7 @@ deploy:
     - feature/ci-cd
   script:
     - ssh ubuntu@$SERVER_HOST << 'EOF'
+      export PATH=$PATH:/usr/bin:/usr/local/bin && \
       cd deploy && \
       docker compose down && \
       docker pull $DOCKER_IMAGE_BACKEND:$IMAGE_TAG && \
