@@ -174,4 +174,9 @@ public class PoseAnalyzer {
 		}
 		continuousDetectionCount = 0;
 	}
+
+	public void endSession() {
+		endDetection();
+		analyzingSessionService.endSession(session);
+	}
 }

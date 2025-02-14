@@ -23,6 +23,7 @@ import dev.onvoid.webrtc.RTCConfiguration;
 import dev.onvoid.webrtc.RTCDataChannel;
 import dev.onvoid.webrtc.RTCDataChannelBuffer;
 import dev.onvoid.webrtc.RTCDataChannelObserver;
+import dev.onvoid.webrtc.RTCDataChannelState;
 import dev.onvoid.webrtc.RTCIceCandidate;
 import dev.onvoid.webrtc.RTCIceConnectionState;
 import dev.onvoid.webrtc.RTCIceServer;
@@ -97,7 +98,11 @@ public class RTCPeerConnectionHandler implements PeerConnectionObserver {
 
 			@Override
 			public void onStateChange() {
-				logger.info("Data Channel State is changed into {}", localDataChannel.getState());
+				var state = localDataChannel.getState();
+				logger.info("Data Channel State is changed into {}", state);
+				if (state == RTCDataChannelState.CLOSED) {
+					poseAnalyzer.endSession();
+				}
 			}
 
 			@Override

@@ -46,8 +46,8 @@ public class AnalyzingSessionServiceImpl implements AnalyzingSessionService {
 	}
 
 	@Override
-	public AnalyzingSession updateSessionEndAt() {
-		AnalyzingSession session = new AnalyzingSession();
-		return analyzingSessionRepository.save(session);
+	public void endSession(AnalyzingSession session) {
+		session.setEndedAt(Instant.now());
+		analyzingSessionRepository.save(session);
 	}
 }

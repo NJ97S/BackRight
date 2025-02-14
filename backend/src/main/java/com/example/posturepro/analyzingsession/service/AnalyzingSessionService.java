@@ -7,5 +7,5 @@ public interface AnalyzingSessionService {
 
 	AnalyzingSession createSession(String providerId);
 
-	AnalyzingSession updateSessionEndAt();
+	void endSession(AnalyzingSession session);
 }
