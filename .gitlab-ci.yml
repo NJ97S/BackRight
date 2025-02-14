@@ -17,6 +17,7 @@ before_script:
   - mkdir -p ~/.ssh
   - chmod 700 ~/.ssh
   - ssh-keyscan i12a601.p.ssafy.io >> ~/.ssh/known_hosts
+  - echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
   
 build:
   stage: build
