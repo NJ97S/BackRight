@@ -7,9 +7,11 @@ import com.example.posturepro.detection.entity.Detection;
 
 @Service
 public interface DetectionService {
+	Detection getDetectionById(long detectionId);
+
 	Detection createDetection(CreateDetectionDto detectionDto);
 
-	void updateDetectionEndTime(Detection detection);
+	void endDetection(long detectionId);
 
 	boolean updateVideoUrl(Long detectionId, String videoUrl);
 }

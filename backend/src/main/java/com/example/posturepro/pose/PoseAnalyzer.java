@@ -29,14 +29,14 @@ public class PoseAnalyzer {
 	private final S3Component s3Component;
 	private final String providerId;
 
-	private Detection detection;
+	private long detectionId;
 	private final AnalyzingSession session;
 	private int continuousDetectionCount;
 
 	private final int ALERT_DETECTION_COUNT = 20;
 	private final int DETECTION_THRESHOLD = 8;
 
-	private Map<DetectionType, Integer> detectionCounts;
+	private final Map<DetectionType, Integer> detectionCounts;
 
 	public PoseAnalyzer(AnalyzingSessionService analyzingSessionService, DetectionService detectionService,
 		S3Component s3Component, String providerId) {
@@ -84,8 +84,11 @@ public class PoseAnalyzer {
 		if (continuousDetectionCount >= ALERT_DETECTION_COUNT) {
 			response.setPoseCollapsed(true);
 
-			if (detection == null) {
-				this.detection = createDetection(problemStatus);
+			if (detectionId == 0) {
+				Detection detection = createDetection(problemStatus);
+
+				detectionId = detection.getId();
+
 				response.setDetectionId(detection.getId());
 				response.setStartedAt(detection.getStartedAt());
 				String videoUrl = fetchPreSignedVideoUrl();
@@ -106,7 +109,7 @@ public class PoseAnalyzer {
 
 	private String fetchPreSignedVideoUrl() {
 		String providerId = this.providerId;
-		String videoFileName = String.valueOf(detection.getId());
+		String videoFileName = "detection";
 		Map<String, String> preSignedUrls = s3Component.generatePreSignedUrls(providerId, videoFileName, null);
 		String videoPreSignedUrl = preSignedUrls.get("videoPreSignedUrl");
 		logger.info("✅ Video Pre-Signed URL: {}", videoPreSignedUrl);
@@ -164,11 +167,10 @@ public class PoseAnalyzer {
 	}
 
 	private void endDetection() {
-		if (detection != null) {
-			detection.setEndedAt(Instant.now());
-			detectionService.updateDetectionEndTime(detection);
+		if (detectionId != 0) {
+			detectionService.endDetection(detectionId);
 
-			detection = null;
+			detectionId = 0;
 		}
 		continuousDetectionCount = 0;
 	}
