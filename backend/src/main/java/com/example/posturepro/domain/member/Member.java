@@ -15,6 +15,7 @@ import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @NoArgsConstructor
@@ -38,6 +39,10 @@ public class Member {
 	@Column(name = "birth_date", nullable = false)
 	private LocalDate birthDate;
 
+	@Setter
+	@Column(name = "profile_img_url")
+	private String profileImgUrl;
+
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private Gender gender;
@@ -51,11 +56,12 @@ public class Member {
 	}
 
 	@Builder
-	public Member(String providerId, String name, String nickname, LocalDate birthDate, Gender gender) {
+	public Member(String providerId, String name, String nickname, LocalDate birthDate, Gender gender, String profileImgUrl) {
 		this.providerId = providerId;
 		this.name = name;
 		this.nickname = nickname;
 		this.birthDate = birthDate;
 		this.gender = gender;
+		this.profileImgUrl = profileImgUrl;
 	}
 }
