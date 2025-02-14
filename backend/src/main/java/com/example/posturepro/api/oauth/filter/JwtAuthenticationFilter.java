@@ -2,10 +2,14 @@ package com.example.posturepro.api.oauth.filter;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -35,13 +39,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		if (token != null && tokenService.validateToken(token)) {
 			String providerId = tokenService.getProviderIdFromToken(token);
-			UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-				providerId, null, new ArrayList<>());
+
+			UserDetails userDetails = new UserDetails() {
+				@Override
+				public Collection<? extends GrantedAuthority> getAuthorities() {
+					return List.of();
+				}
+
+				@Override
+				public String getPassword() {
+					return "";
+				}
+
+				@Override
+				public String getUsername() {
+					return providerId;
+				}
+			};
+			UsernamePasswordAuthenticationToken authentication =
+				new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 		}
-
 		filterChain.doFilter(request, response);
 	}
 
