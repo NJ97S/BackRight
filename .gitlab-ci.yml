@@ -3,11 +3,11 @@ variables:
   DOCKER_IMAGE_BACKEND: "$DOCKERHUB_USERNAME/back-right-backend"
   DOCKER_IMAGE_FRONTEND: "$DOCKERHUB_USERNAME/back-right-frontend"
   DOCKER_IMAGE_PROXY: "$DOCKERHUB_USERNAME/back-right-proxy"
-  # DOCKER_HOST: "tcp://docker:2375"
+  DOCKER_HOST: "tcp://localhost:2375"
   
-# services:
-#   - name: docker:dind
-#     alias: docker  # 'docker'라는 호스트를 명확히 지정
+services:
+  - name: docker:dind
+    alias: docker  # 'docker'라는 호스트를 명확히 지정
 
 stages:
   - build
@@ -22,6 +22,7 @@ before_script:
   - chmod 700 ~/.ssh
   - ssh-keyscan i12a601.p.ssafy.io >> ~/.ssh/known_hosts
   - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN
+  - docker info
 
 build:
   stage: build
