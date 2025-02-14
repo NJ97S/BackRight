@@ -47,19 +47,13 @@ public class MemberController {
 	}
 
 	@GetMapping("/me")
-	public ResponseEntity<MemberResponse> getCurrentUser(HttpServletRequest request) {
-		String accessToken = extractAccessToken(request);
-
-		if (accessToken == null) {
+	public ResponseEntity<MemberResponse> getCurrentUser(Authentication authentication, HttpServletRequest request) {
+		if (authentication == null || !authentication.isAuthenticated()) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
 				.body(MemberResponse.withMessage("로그인이 필요합니다."));
 		}
 
-		if (!tokenService.validateToken(accessToken)) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-				.body(MemberResponse.withMessage("유효하지 않은 토큰입니다. 다시 로그인해주세요."));
-		}
-		String providerId = tokenService.getProviderIdFromToken(accessToken);
+		String providerId = authentication.getName();
 
 		Optional<Member> member = memberService.findByProviderId(providerId);
 
