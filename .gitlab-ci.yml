@@ -45,10 +45,10 @@ deploy:
   script:
     - ssh ubuntu@$SERVER_HOST << 'EOF'
       cd deploy && \
-      docker-compose down && \
+      docker compose down && \
       docker pull $DOCKER_IMAGE_BACKEND:$IMAGE_TAG && \
       docker pull $DOCKER_IMAGE_FRONTEND:$IMAGE_TAG && \
       docker pull $DOCKER_IMAGE_PROXY:$IMAGE_TAG && \
-      docker-compose up -d
+      docker compose up -d
       EOF
     
