@@ -3,6 +3,11 @@ variables:
   DOCKER_IMAGE_BACKEND: "$DOCKERHUB_USERNAME/back-right-backend"
   DOCKER_IMAGE_FRONTEND: "$DOCKERHUB_USERNAME/back-right-frontend"
   DOCKER_IMAGE_PROXY: "$DOCKERHUB_USERNAME/back-right-proxy"
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_TLS_CERTDIR: ""
+  
+services:
+  - docker:dind  # Docker-in-Docker 활성화
 
 stages:
   - build
