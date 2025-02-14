@@ -43,4 +43,4 @@ deploy:
     - main
     - feature/ci-cd
   script:
-    - ssh ubuntu@$SERVER_HOST "cd deploy && docker compose down && docker pull \$DOCKER_IMAGE_BACKEND && docker pull \$DOCKER_IMAGE_FRONTEND && docker pull \$DOCKER_IMAGE_PROXY && docker compose up -d"
+    - ssh ubuntu@$SERVER_HOST "cd deploy && docker compose down && docker pull $DOCKER_IMAGE_BACKEND && docker pull $DOCKER_IMAGE_FRONTEND && docker pull $DOCKER_IMAGE_PROXY && docker compose up -d"
