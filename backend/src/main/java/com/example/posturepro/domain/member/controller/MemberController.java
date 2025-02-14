@@ -34,6 +34,50 @@ public class MemberController {
 	public MemberController(MemberService memberService, TokenService tokenService) {
 		this.memberService = memberService;
 		this.tokenService = tokenService;
+		this.s3Component = s3Component;
+	}
+
+	@GetMapping("/me")
+	public ResponseEntity<MemberResponse> getCurrentUser(HttpServletRequest request) {
+		String accessToken = extractAccessToken(request);
+
+		if (accessToken == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+				.body(MemberResponse.withMessage("로그인이 필요합니다."));
+		}
+
+		if (!tokenService.validateToken(accessToken)) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+				.body(MemberResponse.withMessage("유효하지 않은 토큰입니다. 다시 로그인해주세요."));
+		}
+		String providerId = tokenService.getProviderIdFromToken(accessToken);
+
+		Optional<Member> member = memberService.findByProviderId(providerId);
+
+		return member.map(value -> ResponseEntity.ok(MemberResponse.fromMember(value)))
+			.orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+				.body(MemberResponse.withMessage("로그인된 사용자를 찾을 수 없습니다.")));
+	}
+
+	private String extractAccessToken(HttpServletRequest request) {
+		if (request.getCookies() == null) return null;
+
+		for (Cookie cookie : request.getCookies()) {
+			if ("access-token".equals(cookie.getName())) {
+				return cookie.getValue();
+			}
+		}
+		return null;
+	}
+
+
+	@PostMapping("/signup/imgpresigned-url")
+	public ResponseEntity<?> generateImgPreSignedUrl(@RequestParam String profileImgFileName, Authentication authentication) {
+
+		String providerId = authentication.getName();
+		Map<String, String> preSignedUrls = s3Component.generatePreSignedUrls(providerId, null, profileImgFileName);
+
+		return ResponseEntity.ok(preSignedUrls);
 	}
 
 	@PostMapping("/signup")

@@ -46,7 +46,7 @@ public class OAuth2Controller {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new RefreshTokenResponse("Invalid refresh token", null, null));
 		}
 
-		String providerId = tokenService.getUserIdFromToken(refreshToken);
+		String providerId = tokenService.getProviderIdFromToken(refreshToken);
 		Optional<Member> memberOpt = memberService.findByProviderId(providerId);
 
 		if (!memberOpt.isPresent()) {

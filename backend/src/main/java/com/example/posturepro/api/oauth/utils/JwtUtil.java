@@ -34,10 +34,10 @@ public class JwtUtil {
 		this.TEMP_TOKEN_EXPIRATION = tempTokenExpiration;
 	}
 
-	private String generateToken(String userId, long expirationMillis, String registrationId) {
+	private String generateToken(String providerId, long expirationMillis, String registrationId) {
 		long now =  System.currentTimeMillis();
 		return Jwts.builder()
-			.setSubject(userId)
+			.claim("providerId", providerId)
 			.claim("registrationId", registrationId)
 			.setIssuedAt(new Date(now))
 			.setExpiration(new Date(now+expirationMillis))
@@ -65,8 +65,9 @@ public class JwtUtil {
 			.getBody();
 	}
 
-	public String getUserIdFromToken(String token) {
-		return parseToken(token).getSubject();
+	public String getProviderIdFromToken(String token) {
+		Claims claims = parseToken(token);
+		return claims.get("providerId", String.class);
 	}
 
 	public boolean validateToken(String token) {
