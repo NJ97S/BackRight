@@ -1,15 +1,12 @@
-version: '3.8'
-
 services:
   proxy:
-    build:
-      context: ./nginx
+    image: tonixx/back-right-proxy
     container_name: proxy
     ports:
       - "443:443"
       - "80:80"
     volumes:
-      - letsencrypt:/etc/letsencrypt  # ✅ 기존 인증서 유지
+      - letsencrypt:/etc/letsencrypt # ✅ 기존 인증서 유지
       - nginx_config:/etc/nginx
     restart: always
     depends_on:
@@ -19,7 +16,6 @@ services:
       - app-network
     env_file:
       - ./nginx/.env
-
 
   mysql:
     image: mysql:8.0
@@ -31,7 +27,7 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 15s
       timeout: 10s
       retries: 10
@@ -51,24 +47,23 @@ services:
       - redis_data:/data
 
   backend:
-    build:
-      context: ./backend
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    image: tonixx/back-right-backend
     container_name: backend
     env_file:
       - backend/.env
     networks:
       - app-network
-    depends_on:
-      - mysql
-      - redis
 
   frontend:
-    build:
-      context: ./frontend
+    image: tonixx/back-right-frontend
     container_name: frontend
     networks:
       - app-network
-
 
 networks:
   app-network:
