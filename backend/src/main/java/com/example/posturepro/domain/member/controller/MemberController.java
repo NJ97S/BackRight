@@ -1,19 +1,27 @@
 package com.example.posturepro.domain.member.controller;
 
+import java.util.Map;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.posturepro.api.oauth.service.TokenService;
 import com.example.posturepro.api.oauth.utils.CookieUtil;
+import com.example.posturepro.api.s3.component.S3Component;
+import com.example.posturepro.domain.member.Member;
 import com.example.posturepro.domain.member.service.MemberService;
+import com.example.posturepro.dto.MemberResponse;
 import com.example.posturepro.dto.SignUpRequest;
 import com.example.posturepro.dto.SignUpResponse;
 import com.example.posturepro.dto.SignUpToken;
@@ -29,9 +37,10 @@ public class MemberController {
 
 	private final MemberService memberService;
 	private final TokenService tokenService;
+	private final S3Component s3Component;
 
 	@Autowired
-	public MemberController(MemberService memberService, TokenService tokenService) {
+	public MemberController(MemberService memberService, TokenService tokenService, S3Component s3Component) {
 		this.memberService = memberService;
 		this.tokenService = tokenService;
 		this.s3Component = s3Component;
@@ -133,7 +142,7 @@ public class MemberController {
 				if ("temp-token".equals(cookie.getName())) {
 					String tempToken = cookie.getValue();
 					if (tokenService.validateTempToken(tempToken)) {
-						return tokenService.getUserIdFromToken(tempToken);
+						return tokenService.getProviderIdFromToken(tempToken);
 					}
 				}
 			}
