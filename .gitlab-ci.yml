@@ -34,6 +34,9 @@ build:
 push:
   stage: push
   script:
+    - echo "Docker image === backend $DOCKER_IMAGE_BACKEND"
+    - echo "IMAGE_TAG === $IMAGE_TAG"
+    - docker images
     - docker push $DOCKER_IMAGE_BACKEND:$IMAGE_TAG
     - docker push $DOCKER_IMAGE_FRONTEND:$IMAGE_TAG
     - docker push $DOCKER_IMAGE_PROXY:$IMAGE_TAG
