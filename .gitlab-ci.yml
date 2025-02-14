@@ -46,9 +46,7 @@ deploy:
     - main
     - feature/ci-cd
   script:
-    - ssh -i ~/.ssh/id_rsa ubuntu@$SERVER_HOST <<EOF
-      set -e
-      export PATH=$PATH:/usr/bin:/usr/local/bin
+    - ssh ubuntu@$SERVER_HOST <<EOF
       cd deploy
       docker compose down
       docker pull \$DOCKER_IMAGE_BACKEND:\$IMAGE_TAG
