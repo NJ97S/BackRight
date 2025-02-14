@@ -8,13 +8,15 @@ import com.example.posturepro.pose.PartProblemStatus;
 import lombok.Data;
 
 @Data
-public class CreateDetectionDto {
+public class
+CreateDetectionDto {
 	private Instant startedAt;
 	private boolean neckDetected;
 	private boolean leftShoulderDetected;
 	private boolean rightShoulderDetected;
 	private boolean backDetected;
 	private AnalyzingSession session;
+	private String videoUrl;
 
 	public void setProblemParts(PartProblemStatus problemPart) {
 		if (problemPart.isNeck())
