@@ -11,4 +11,12 @@ export const postUserInfo = async (userInfo: SignUpInfoType) => {
   }
 };
 
-export const empty = () => {};
+export const getUserInfo = async () => {
+  try {
+    const response = await instance.get("/members/me");
+
+    return response.data;
+  } catch (error) {
+    throw new Error("유저정보 로드 실패");
+  }
+};
