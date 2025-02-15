@@ -1,1 +1,25 @@
 import styled from "styled-components";
+
+export const ReportLayoutContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  min-height: calc(100vh - 4rem);
+  padding: 2.5rem;
+  background-color: var(--navy-100);
+`;
+
+export const ContentContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 80rem;
+`;
+
+export const ReportContainer = styled.div`
+  flex: 1;
+  padding: 2.5rem;
+  border-radius: 12px;
+  background-color: var(--cream);
+  overflow-y: auto;
+`;

@@ -20,7 +20,6 @@ const Router = () => (
       <Route path="/" element={<AppLayout />}>
         <Route index element={<HomePage />} />
         <Route path="report/" element={<ReportLayout />}>
-          <Route index element={<Navigate to="daily" replace />} />
           <Route path="daily" element={<DailyReportPage />} />
           <Route path="weekly" element={<WeeklyReportPage />} />
           <Route path="monthly" element={<MonthlyReportPage />} />
