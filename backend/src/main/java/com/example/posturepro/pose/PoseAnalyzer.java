@@ -47,7 +47,7 @@ public class PoseAnalyzer {
 		this.jsonMapper = new ObjectMapper();
 		this.referencePoseHandler = new ReferencePoseHandler();
 
-		this.session = analyzingSessionService.createSession();
+		this.session = analyzingSessionService.createSession(providerId);
 		this.detectionCounts = new EnumMap<>(DetectionType.class);
 		initializeDetectionCounts();
 	}
@@ -173,5 +173,10 @@ public class PoseAnalyzer {
 			detectionId = 0;
 		}
 		continuousDetectionCount = 0;
+	}
+
+	public void endSession() {
+		endDetection();
+		analyzingSessionService.endSession(session);
 	}
 }

@@ -6,6 +6,13 @@ export interface SignUpInfoType {
   profileImgUrl: string | null;
 }
 
+export interface UserInfoType {
+  providerId: string;
+  name: string;
+  nickname: string;
+  profileImgUrl: string | null;
+}
+
 export interface ProfileType {
   nickname: string;
   birthDate: string;
