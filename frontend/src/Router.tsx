@@ -7,10 +7,10 @@ import HelpPage from "./pages/HelpPage/HelpPage";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import SignInPage from "./pages/SignInPage/SignInPage";
 import SignUpPage from "./pages/SignUpPage/SignUpPage";
-import ReportLayout from "./ReportLayout";
-import DailyReport from "./pages/ReportPage/DailyReport";
-import WeeklyReport from "./pages/ReportPage/WeeklyReport";
-import MonthlyReport from "./pages/ReportPage/MonthlyReport";
+import ReportLayout from "./pages/ReportPage/ReportLayout";
+import DailyReportPage from "./pages/ReportPage/DailyReportPage/DailyReportPage";
+import WeeklyReportPage from "./pages/ReportPage/WeeklyReportPage/WeeklyReportPage";
+import MonthlyReportPage from "./pages/ReportPage/MonthlyReportPage/MonthlyReportPage";
 
 const Router = () => (
   <BrowserRouter>
@@ -21,9 +21,9 @@ const Router = () => (
         <Route index element={<HomePage />} />
         <Route path="report/" element={<ReportLayout />}>
           <Route index element={<Navigate to="daily" replace />} />
-          <Route path="daily" element={<DailyReport />} />
-          <Route path="weekly" element={<WeeklyReport />} />
-          <Route path="monthly" element={<MonthlyReport />} />
+          <Route path="daily" element={<DailyReportPage />} />
+          <Route path="weekly" element={<WeeklyReportPage />} />
+          <Route path="monthly" element={<MonthlyReportPage />} />
         </Route>
         <Route path="profile" element={<ProfilePage />} />
         <Route path="setting" element={<SettingPage />} />
