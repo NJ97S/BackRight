@@ -6,6 +6,7 @@ import useAuthStore from "./store/useAuthStore";
 import Header from "./components/common/Header/Header";
 import SideBar from "./components/common/SideBar/SideBar";
 import MeasurementService from "./components/common/MeasurementService/MeasurementService";
+import PATH from "./constants/path";
 
 import * as S from "./AppLayoutStyle";
 
@@ -25,7 +26,7 @@ const AppLayout = () => {
     const updatedAuthState = useAuthStore.getState().isAuthenticated;
 
     if (!updatedAuthState) {
-      navigate("sign-in", { replace: true });
+      navigate(PATH.SIGN_IN, { replace: true });
     }
   };
 
