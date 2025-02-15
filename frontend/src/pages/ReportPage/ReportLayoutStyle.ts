@@ -13,7 +13,7 @@ export const ContentContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 80rem;
+  max-width: 75rem;
 `;
 
 export const ReportContainer = styled.div`
@@ -22,4 +22,8 @@ export const ReportContainer = styled.div`
   border-radius: 12px;
   background-color: var(--cream);
   overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
