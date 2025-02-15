@@ -1,3 +1,18 @@
+export interface SignUpInfoType {
+  name: string;
+  nickname: string;
+  birthDate: string;
+  gender: "FEMALE" | "MALE";
+  profileImgUrl: string | null;
+}
+
+export interface ProfileType {
+  nickname: string;
+  birthDate: string;
+  gender: "FEMALE" | "MALE";
+  profileImgUrl: string | null;
+}
+
 export interface ReceivedDataType {
   referenceSet: boolean;
   poseCollapsed: boolean;
@@ -10,14 +25,6 @@ export interface ReceivedDataType {
     rightShoulder: boolean;
     back: boolean;
   };
-}
-
-export interface SignUpInfoType {
-  name: string;
-  nickname: string;
-  birthDate: string;
-  gender: "FEMALE" | "MALE";
-  profileImgUrl: string | null;
 }
 
 export interface SessionAlertType {
