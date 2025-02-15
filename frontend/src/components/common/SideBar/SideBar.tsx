@@ -11,9 +11,9 @@ import arrowIcon from "../../../assets/icons/arrow-down.svg";
 import docsIcon from "../../../assets/icons/docs.svg";
 
 const SUBMENU_ITEMS = [
-  { name: "일간/세션", path: "#" },
-  { name: "주간", path: "#" },
-  { name: "월간", path: "#" },
+  { name: "일간/세션", path: "/report/daily" },
+  { name: "주간", path: "/report/weekly" },
+  { name: "월간", path: "/report/monthly" },
 ] as const;
 
 interface SideBarProps {
@@ -50,7 +50,7 @@ const SideBar = ({ isExpanded }: SideBarProps) => {
 
         <S.ReportMenuContainer>
           <S.IconLink
-            to="/report"
+            to="/report/daily"
             onClick={handleReportIconClick}
             isExpanded={isExpanded}
           >
