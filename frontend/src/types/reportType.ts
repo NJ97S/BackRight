@@ -11,6 +11,9 @@ export interface DetectionType {
 export interface SessionStatType {
   sessionDuration: number;
   properPostureDuration: number;
+  detectionDuration: number;
+  detectionCount: number;
+  averageProperPoseDuration: number;
 }
 
 export interface SessionType {
@@ -21,13 +24,17 @@ export interface SessionType {
 }
 
 export interface DetectionCountStatType {
-  neck: number;
-  leftShoulder: number;
-  rightShoulder: number;
-  back: number;
+  totalDetection: number;
+  countMap: {
+    neck: number;
+    leftShoulder: number;
+    rightShoulder: number;
+    back: number;
+  };
 }
 
 export interface DailyReportType {
   sessions: SessionType[];
+  sessionsStat: SessionStatType;
   detectionCountStat: DetectionCountStatType;
 }
