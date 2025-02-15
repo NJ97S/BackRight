@@ -20,7 +20,9 @@ const Header = ({ onToggleSideBar }: HeaderProps) => {
         <S.IconButton onClick={onToggleSideBar}>
           <S.Icon src={hamburgerIcon} alt="메뉴 아이콘" />
         </S.IconButton>
-        <S.Icon src={logo} alt="로고" />
+        <S.IconLink to="/">
+          <S.Icon src={logo} alt="로고" />
+        </S.IconLink>
       </S.LogoContainer>
 
       <S.SideContainer>
