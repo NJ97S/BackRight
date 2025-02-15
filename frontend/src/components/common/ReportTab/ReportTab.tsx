@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as S from "./ReportTabStyle";
+import PATH from "../../../constants/path";
 
 interface TabItem {
   id: "daily" | "weekly" | "monthly";
@@ -9,9 +10,9 @@ interface TabItem {
 }
 
 const REPORT_PERIOD_TABS: TabItem[] = [
-  { id: "daily", label: "일일 보고서", path: "/report/daily" },
-  { id: "weekly", label: "주간 보고서", path: "/report/weekly" },
-  { id: "monthly", label: "월간 보고서", path: "/report/monthly" },
+  { id: "daily", label: "일일 보고서", path: PATH.REPORT_DAILY },
+  { id: "weekly", label: "주간 보고서", path: PATH.REPORT_WEEKLY },
+  { id: "monthly", label: "월간 보고서", path: PATH.REPORT_MONTHLY },
 ];
 
 const ReportTab = () => {

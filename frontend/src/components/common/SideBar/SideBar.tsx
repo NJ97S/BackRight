@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 
+import PATH from "../../../constants/path";
+
 import * as S from "./SideBarStyle";
 
 import recordIcon from "../../../assets/icons/record.svg";
@@ -11,9 +13,9 @@ import arrowIcon from "../../../assets/icons/arrow-down.svg";
 import docsIcon from "../../../assets/icons/docs.svg";
 
 const SUBMENU_ITEMS = [
-  { name: "일간/세션", path: "/report/daily" },
-  { name: "주간", path: "/report/weekly" },
-  { name: "월간", path: "/report/monthly" },
+  { name: "일간/세션", path: PATH.REPORT_DAILY },
+  { name: "주간", path: PATH.REPORT_WEEKLY },
+  { name: "월간", path: PATH.REPORT_MONTHLY },
 ] as const;
 
 interface SideBarProps {
@@ -43,14 +45,14 @@ const SideBar = ({ isExpanded }: SideBarProps) => {
   return (
     <S.SideBarContainer isExpanded={isExpanded}>
       <S.ImageContainer isExpanded={isExpanded}>
-        <S.IconLink to="/" isExpanded={isExpanded}>
+        <S.IconLink to={PATH.HOME} isExpanded={isExpanded}>
           <S.Icon src={recordIcon} alt="자세분석" />
           <S.LinkName isExpanded={isExpanded}>자세 분석</S.LinkName>
         </S.IconLink>
 
         <S.ReportMenuContainer>
           <S.IconLink
-            to="/report/daily"
+            to={PATH.REPORT_DAILY}
             onClick={handleReportIconClick}
             isExpanded={isExpanded}
           >
@@ -72,18 +74,18 @@ const SideBar = ({ isExpanded }: SideBarProps) => {
           </S.SubMenuContainer>
         </S.ReportMenuContainer>
 
-        <S.IconLink to="/profile" isExpanded={isExpanded}>
+        <S.IconLink to={PATH.PROFILE} isExpanded={isExpanded}>
           <S.Icon src={myPageIcon} alt="마이페이지" />
           <S.LinkName isExpanded={isExpanded}>마이페이지</S.LinkName>
         </S.IconLink>
       </S.ImageContainer>
 
       <S.ImageContainer isExpanded={isExpanded}>
-        <S.IconLink to="/setting" isExpanded={isExpanded}>
+        <S.IconLink to={PATH.SETTING} isExpanded={isExpanded}>
           <S.Icon src={settingIcon} alt="환경설정" />
           <S.LinkName isExpanded={isExpanded}>환경설정</S.LinkName>
         </S.IconLink>
-        <S.IconLink to="/help" isExpanded={isExpanded}>
+        <S.IconLink to={PATH.HELP} isExpanded={isExpanded}>
           <S.Icon src={helpIcon} alt="도움말" />
           <S.LinkName isExpanded={isExpanded}>도움말</S.LinkName>
         </S.IconLink>
