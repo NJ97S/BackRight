@@ -12,12 +12,16 @@ export const ReportLayoutContainer = styled.div`
 export const ContentContainer = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: center;
   width: 100%;
   max-width: 75rem;
 `;
 
 export const ReportContainer = styled.div`
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  max-height: 50rem;
   padding: 2.5rem;
   border-radius: 12px;
   background-color: var(--cream);
