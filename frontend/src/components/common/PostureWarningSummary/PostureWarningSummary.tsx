@@ -21,8 +21,8 @@ const PostureWarningSummary = ({
       {BODY_PARTS.map(({ key, label, image }) => (
         <S.BodyPart key={key}>
           <S.BodyPartImage src={image} alt={label} />
-          <S.BodyPartAlertCount $count={detectionCountStat.countMap[key]}>
-            {detectionCountStat.countMap[key] ?? 0}
+          <S.BodyPartAlertCount $count={detectionCountStat.counts[key]}>
+            {detectionCountStat.counts[key] ?? 0}
           </S.BodyPartAlertCount>
         </S.BodyPart>
       ))}

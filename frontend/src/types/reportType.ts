@@ -8,12 +8,22 @@ export interface DetectionType {
   backDetected: boolean;
 }
 
+export interface DetectionCountStatType {
+  totalDetection: number;
+  detectionDuration: number;
+  counts: {
+    NECK: number;
+    LEFT_SHOULDER: number;
+    RIGHT_SHOULDER: number;
+    BACK: number;
+  };
+}
+
 export interface SessionStatType {
   sessionDuration: number;
-  properPostureDuration: number;
-  detectionDuration: number;
-  detectionCount: number;
-  averageProperPoseDuration: number;
+  properPoseDuration: number;
+  averagePoseDuration: number;
+  detectionCountStat: DetectionCountStatType;
 }
 
 export interface SessionType {
@@ -23,20 +33,9 @@ export interface SessionType {
   sessionStat: SessionStatType;
 }
 
-export interface DetectionCountStatType {
-  totalDetection: number;
-  countMap: {
-    neck: number;
-    leftShoulder: number;
-    rightShoulder: number;
-    back: number;
-  };
-}
-
 export interface DailyReportType {
   sessions: SessionType[];
-  sessionsStat: SessionStatType;
-  detectionCountStat: DetectionCountStatType;
+  sessionStat: SessionStatType;
 }
 
 export interface WeeklyReportType {

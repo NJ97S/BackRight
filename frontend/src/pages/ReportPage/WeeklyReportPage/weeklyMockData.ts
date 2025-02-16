@@ -1,20 +1,17 @@
 const WEEKLY_MOCK_DATA = {
   detectionCountStat: {
-    totalDetection: 5748,
-    countMap: {
-      neck: 1520,
-      leftShoulder: 1345,
-      rightShoulder: 1402,
-      back: 1480,
+    totalDetection: 50,
+    detectionDuration: 600,
+    counts: {
+      NECK: 20,
+      LEFT_SHOULDER: 15,
+      RIGHT_SHOULDER: 10,
+      BACK: 5,
     },
   },
-  dailyProperPostureMinutesPerHours: [42, 38, 50, 47, 41, 45, 48],
-  ageGroupPercentile: 82.6,
-  ageGroupPostureTimeDistribution: [
-    2, 3, 5, 7, 8, 10, 12, 15, 17, 20, 23, 25, 28, 30, 33, 35, 38, 40, 42, 44,
-    46, 48, 50, 52, 54, 56, 58, 59, 60, 60, 58, 57, 55, 54, 52, 50, 48, 47, 45,
-    43, 40, 38, 35, 33, 30, 28, 25, 23, 20, 18, 15, 12, 10, 8, 7, 5, 3, 2,
-  ],
-} as const;
+  dailyProperPostureMinutesPerHours: [30, 40, 35, 50, 20, 10, 25],
+  ageGroupPercentile: 85,
+  ageGroupPostureTimeDistribution: [20, 30, 25, 35, 40, 50, 30],
+};
 
 export default WEEKLY_MOCK_DATA;

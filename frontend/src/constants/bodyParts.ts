@@ -1,16 +1,16 @@
 const BODY_PARTS = [
-  { key: "neck", label: "목", image: "/images/neck.svg" },
+  { key: "NECK", label: "목", image: "/images/neck.svg" },
   {
-    key: "leftShoulder",
+    key: "LEFT_SHOULDER",
     label: "왼쪽 어깨",
     image: "/images/left-shoulder.svg",
   },
   {
-    key: "rightShoulder",
+    key: "RIGHT_SHOULDER",
     label: "오른쪽 어깨",
     image: "/images/right-shoulder.svg",
   },
-  { key: "back", label: "허리", image: "/images/waist.svg" },
+  { key: "BACK", label: "허리", image: "/images/waist.svg" },
 ] as const;
 
 export default BODY_PARTS;
