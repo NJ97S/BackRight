@@ -71,7 +71,6 @@ export const Calendar = styled(ReactCalendar)`
 
   .react-calendar__tile--now {
     color: var(--mint);
-    font-weight: bold;
   }
 
   .react-calendar__tile:hover {
