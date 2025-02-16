@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { AnimatePresence } from "framer-motion";
 
@@ -15,6 +15,7 @@ interface StandardPoseGuideProps {
 
 const StandardPoseGuide = ({ onClick }: StandardPoseGuideProps) => {
   const [step, setStep] = useState(0);
+  const [isFirstImage, setIsFirstImage] = useState(true);
   const [direction, setDirection] = useState<-1 | 1>(1);
 
   const handlePreviousButtonClick = () => {
@@ -22,6 +23,7 @@ const StandardPoseGuide = ({ onClick }: StandardPoseGuideProps) => {
 
     setDirection(-1);
     setStep((prev) => prev - 1);
+    setIsFirstImage(true);
   };
 
   const handleNextButtonClick = () => {
@@ -29,7 +31,16 @@ const StandardPoseGuide = ({ onClick }: StandardPoseGuideProps) => {
 
     setDirection(1);
     setStep((prev) => prev + 1);
+    setIsFirstImage(true);
   };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsFirstImage((prev) => !prev);
+    }, 1500);
+
+    return () => clearInterval(interval);
+  }, [step]);
 
   return (
     <S.StandardPoseGuideContainer>
@@ -58,10 +69,20 @@ const StandardPoseGuide = ({ onClick }: StandardPoseGuideProps) => {
               transition={{ duration: 0.3 }}
             >
               <S.SlideImageContainer>
-                <S.SlideImage
-                  src={STANDARD_POSE_GUIDE[step].src}
-                  alt="가이드"
-                />
+                <AnimatePresence>
+                  <S.SlideImage
+                    key={isFirstImage ? "image1" : "image2"}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1, transition: { duration: 0.5 } }}
+                    exit={{ opacity: 0, transition: { duration: 0.5 } }}
+                    src={
+                      isFirstImage
+                        ? STANDARD_POSE_GUIDE[step].src1
+                        : STANDARD_POSE_GUIDE[step].src2
+                    }
+                    alt="가이드"
+                  />
+                </AnimatePresence>
               </S.SlideImageContainer>
               <S.SlideDescription>
                 {STANDARD_POSE_GUIDE[step].description}

@@ -70,9 +70,10 @@ export const SlideImageContainer = styled.div`
   border-radius: 12px;
 `;
 
-export const SlideImage = styled.img`
-  width: 60%;
-  height: 60%;
+export const SlideImage = styled(motion.img)`
+  position: absolute;
+  width: 30%;
+  height: 30%;
   object-fit: contain;
 `;
 
