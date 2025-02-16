@@ -3,13 +3,13 @@ import { useState } from "react";
 import Calendar from "../../../components/common/Calendar/Calendar";
 import PostureWarningSummary from "../../../components/common/PostureWarningSummary/PostureWarningSummary";
 import DailyStatistic from "../../../components/DailyStatistic/DailyStatistic";
-import SessionLog from "../../../components/SessionLog/SessionLog";
+import SessionLogList from "../../../components/SessionLogList/SessionLogList";
 
 import DAILY_MOCK_DATA from "./dailyMockData";
 
 import * as S from "./DailyReportPageStyle";
 
-const { detectionCountStat } = DAILY_MOCK_DATA;
+const { sessions, detectionCountStat } = DAILY_MOCK_DATA;
 
 const DailyReportPage = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -23,7 +23,7 @@ const DailyReportPage = () => {
       <PostureWarningSummary detectionCountStat={detectionCountStat} />
       <Calendar selectedDate={selectedDate} onDateChange={handleDateSelect} />
       <DailyStatistic />
-      <SessionLog />
+      <SessionLogList sessions={sessions} />
     </S.DailyReportPageContainer>
   );
 };
