@@ -71,6 +71,10 @@ export const Calendar = styled(ReactCalendar)`
     align-items: center;
   }
 
+  .react-calendar__month-view__days__day--neighboringMonth {
+    color: var(--gray-200);
+  }
+
   .react-calendar__tile {
     padding: 0.55rem;
     border-radius: 6px;
