@@ -1,14 +1,15 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import MonthlyCalendar from "../../../components/common/Calendar/MonthlyCalendar";
 import PostureWarningSummary from "../../../components/common/PostureWarningSummary/PostureWarningSummary";
+import AveragePostureTime from "../../../components/common/AveragePostureTime/AveragePostureTime";
 
 import MONTHLY_MOCK_DATA from "./monthlyMockData";
 
 import * as S from "./MonthlyReportPageStyle";
-import AveragePostureTime from "../../../components/common/AveragePostureTime/AveragePostureTime";
 
-const { detectionCountStat } = MONTHLY_MOCK_DATA;
+const { detectionCountStat, weeklyProperPostureMinutesPerHours } =
+  MONTHLY_MOCK_DATA;
 
 const MonthlyReportPage = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -16,10 +17,6 @@ const MonthlyReportPage = () => {
   const handleDateSelect = (date: Date) => {
     setSelectedDate(date);
   };
-
-  useEffect(() => {
-    console.log(selectedDate);
-  }, [selectedDate]);
 
   return (
     <S.MonthlyReportPageContainer>
@@ -31,7 +28,15 @@ const MonthlyReportPage = () => {
         />
       </S.FirstRowContainer>
 
-      <S.SecondeRowContainer></S.SecondeRowContainer>
+      <S.SecondeRowContainer>
+        <AveragePostureTime
+          data={weeklyProperPostureMinutesPerHours}
+          labels={Array.from(
+            { length: weeklyProperPostureMinutesPerHours.length },
+            (_, i) => `${i + 1}주차`
+          )}
+        />
+      </S.SecondeRowContainer>
     </S.MonthlyReportPageContainer>
   );
 };
