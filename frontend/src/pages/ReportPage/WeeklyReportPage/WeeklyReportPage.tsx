@@ -2,11 +2,11 @@ import { useState } from "react";
 
 import PostureWarningSummary from "../../../components/common/PostureWarningSummary/PostureWarningSummary";
 import WeeklyCalendar from "../../../components/common/Calendar/WeeklyCalendar";
+import AveragePostureTime from "../../../components/common/AveragePostureTime/AveragePostureTime";
 
 import WEEKLY_MOCK_DATA from "./weeklyMockData";
 
 import * as S from "./WeeklyReportPageStyle";
-import AveragePostureTime from "../../../components/common/AveragePostureTime/AveragePostureTime";
 
 const getMondayOfWeek = (date: Date): Date => {
   const day = date.getDay();
@@ -39,7 +39,8 @@ const WeeklyReportPage = () => {
 
       <S.SecondeRowContainer>
         <AveragePostureTime
-          dailyProperPostureMinutesPerHours={dailyProperPostureMinutesPerHours}
+          data={dailyProperPostureMinutesPerHours}
+          labels={["월", "화", "수", "목", "금", "토", "일"]}
         />
       </S.SecondeRowContainer>
     </S.WeeklyReportPageContainer>

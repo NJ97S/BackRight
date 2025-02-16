@@ -14,13 +14,15 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip);
 
 interface AveragePostureTimeGraphProps {
   data: number[];
+  labels: string[];
 }
 
-const AveragePostureTimeGraph = ({ data }: AveragePostureTimeGraphProps) => {
-  const days = ["월", "화", "수", "목", "금", "토", "일"];
-
+const AveragePostureTimeGraph = ({
+  data,
+  labels,
+}: AveragePostureTimeGraphProps) => {
   const chartData = {
-    labels: days,
+    labels,
     datasets: [
       {
         label: "자세 유지 시간 (분)",

@@ -3,17 +3,16 @@ import AveragePostureTimeGraph from "./AveragePostureTimeGraph";
 import * as S from "./AveragePostureTimeStyle";
 
 interface AveragePostureTimeProps {
-  dailyProperPostureMinutesPerHours: number[];
+  data: number[];
+  labels: string[];
 }
 
-const AveragePostureTime = ({
-  dailyProperPostureMinutesPerHours,
-}: AveragePostureTimeProps) => (
+const AveragePostureTime = ({ data, labels }: AveragePostureTimeProps) => (
   <S.AveragePostureTimeContainer>
     <S.Title>시간당 평균 자세 유지 시간</S.Title>
 
     <S.GraphContainer>
-      <AveragePostureTimeGraph data={dailyProperPostureMinutesPerHours} />
+      <AveragePostureTimeGraph data={data} labels={labels} />
     </S.GraphContainer>
   </S.AveragePostureTimeContainer>
 );
