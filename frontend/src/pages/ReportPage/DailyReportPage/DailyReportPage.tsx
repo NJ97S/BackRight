@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-import Calendar from "../../../components/common/Calendar/Calendar";
 import PostureWarningSummary from "../../../components/common/PostureWarningSummary/PostureWarningSummary";
+import DailyCalendar from "../../../components/common/Calendar/DailyCalendar";
 import DailyStatistic from "../../../components/DailyStatistic/DailyStatistic";
 import SessionLogList from "../../../components/SessionLogList/SessionLogList";
 
@@ -21,7 +21,10 @@ const DailyReportPage = () => {
   return (
     <S.DailyReportPageContainer>
       <PostureWarningSummary detectionCountStat={detectionCountStat} />
-      <Calendar selectedDate={selectedDate} onDateChange={handleDateSelect} />
+      <DailyCalendar
+        selectedDate={selectedDate}
+        onDateChange={handleDateSelect}
+      />
       <DailyStatistic />
       <SessionLogList sessions={sessions} />
     </S.DailyReportPageContainer>

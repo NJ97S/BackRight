@@ -74,14 +74,36 @@ export const Calendar = styled(ReactCalendar)`
     font-weight: bold;
   }
 
-  .react-calendar__tile--active {
-    background: var(--mint);
-    color: var(--white);
-    font-weight: bold;
-    border-radius: 8px;
-  }
-
   .react-calendar__tile:hover {
     background: var(--gray-100);
+  }
+
+  .highlighted-day {
+    background-color: var(--mint);
+    color: var(--white);
+  }
+
+  .highlighted-week-left {
+    background-color: var(--mint);
+    color: var(--white);
+    border-top-left-radius: 4px;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 0;
+  }
+
+  .highlighted-week-right {
+    background-color: var(--mint);
+    color: var(--white);
+    border-top-left-radius: 0;
+    border-top-right-radius: 4px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 4px;
+  }
+
+  .highlighted-week-middle {
+    background-color: var(--mint);
+    color: var(--white);
+    border-radius: 0;
   }
 `;

@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-import Calendar from "../../../components/common/Calendar/Calendar";
 import PostureWarningSummary from "../../../components/common/PostureWarningSummary/PostureWarningSummary";
+import WeeklyCalendar from "../../../components/common/Calendar/WeeklyCalendar";
 
 import WEEKLY_MOCK_DATA from "./weeklyMockData";
 
@@ -28,7 +28,10 @@ const WeeklyReportPage = () => {
   return (
     <S.WeeklyReportPageContainer>
       <PostureWarningSummary detectionCountStat={detectionCountStat} />
-      <Calendar selectedDate={selectedDate} onDateChange={handleDateSelect} />
+      <WeeklyCalendar
+        selectedDate={selectedDate}
+        onDateChange={handleDateSelect}
+      />
     </S.WeeklyReportPageContainer>
   );
 };

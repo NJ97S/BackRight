@@ -1,11 +1,16 @@
 import * as S from "./CalendarStyle";
 
-interface CalendarProps {
+interface BaseCalendarProps {
   selectedDate: Date;
   onDateChange: (date: Date) => void;
+  tileClassName?: ({ date }: { date: Date }) => string | undefined;
 }
 
-const Calendar = ({ selectedDate, onDateChange }: CalendarProps) => (
+const BaseCalendar = ({
+  selectedDate,
+  onDateChange,
+  tileClassName,
+}: BaseCalendarProps) => (
   <S.CalendarContainer>
     <S.Calendar
       onChange={(value) => onDateChange(value as Date)}
@@ -18,8 +23,9 @@ const Calendar = ({ selectedDate, onDateChange }: CalendarProps) => (
       formatShortWeekday={(_, date) =>
         date.toLocaleDateString("en-US", { weekday: "short" }).toUpperCase()
       }
+      tileClassName={tileClassName}
     />
   </S.CalendarContainer>
 );
 
-export default Calendar;
+export default BaseCalendar;
