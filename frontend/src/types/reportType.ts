@@ -1,4 +1,4 @@
-export interface Detection {
+export interface DetectionType {
   startedAt: string;
   endedAt: string;
   videoUrl: string;
@@ -8,74 +8,46 @@ export interface Detection {
   backDetected: boolean;
 }
 
-export interface SessionStat {
-  sessionDuration: number;
-  properPostureDuration: number;
+export interface DetectionCountStatType {
+  totalDetection: number;
+  detectionDuration: number;
+  counts: {
+    NECK: number;
+    LEFT_SHOULDER: number;
+    RIGHT_SHOULDER: number;
+    BACK: number;
+  };
 }
 
-export interface Session {
+export interface SessionStatType {
+  sessionDuration: number;
+  properPoseDuration: number;
+  averagePoseDuration: number;
+  detectionCountStat: DetectionCountStatType;
+}
+
+export interface SessionType {
   startedAt: string;
   endedAt: string;
-  detections: Detection[];
-  sessionStat: SessionStat;
+  detections: DetectionType[];
+  sessionStat: SessionStatType;
 }
 
-export interface DetectionCountStat {
-  neck: number;
-  leftShoulder: number;
-  rightShoulder: number;
-  back: number;
+export interface DailyReportType {
+  sessions: SessionType[];
+  sessionStat: SessionStatType;
 }
 
-export interface BaseReportRequest {
-  timezone: string;
-}
-
-export interface DailyReportRequest extends BaseReportRequest {
-  date: string;
-}
-
-export interface WeeklyReportRequest extends BaseReportRequest {
-  "start-date": string;
-}
-
-export interface MonthlyReportRequest extends BaseReportRequest {
-  year: number;
-  month: number;
-}
-
-export interface DailyReportResponse {
-  sessions: Session[];
-  detectionCountStat: DetectionCountStat;
-}
-
-export interface WeeklyReportResponse {
-  detectionCountStat: DetectionCountStat;
+export interface WeeklyReportType {
+  detectionCountStat: DetectionCountStatType;
   dailyProperPostureMinutesPerHours: number[];
-  age_group_percentile: number;
-  age_group_posture_time_distribution: number[];
+  ageGroupPercentile: number;
+  ageGroupPostureTimeDistribution: number[];
 }
 
-export interface MonthlyReportResponse {
-  detectionCountStat: DetectionCountStat;
+export interface MonthlyReportType {
+  detectionCountStat: DetectionCountStatType;
   weeklyProperPostureMinutesPerHours: number[];
-  age_group_percentile: number;
-  age_group_posture_time_distribution: number[];
-}
-
-export type SessionStatus = "정상 종료" | "강제 종료";
-
-export interface LocalWarning {
-  id: string;
-  timestamp: string;
-  description: string;
-}
-
-export interface LocalSession {
-  id: string;
-  startTime: string;
-  endTime: string;
-  warningCount: number;
-  status: SessionStatus;
-  warnings: LocalWarning[];
+  ageGroupPercentile: number;
+  ageGroupPostureTimeDistribution: number[];
 }
