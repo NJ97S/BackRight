@@ -385,3 +385,37 @@
   ```
   해당 내용을 추가하여 사용자가 요청한 uri에 해당하는 파일이 없으면 index.html을 주도록 하고 그 안에서 router가 동작하도록 바꿔줬더니 잘 동작했다.
 - [참고](https://github.com/adriabama06/react-route-nginx-docker-example/blob/main/nginx.conf)
+
+## 2025-02-11, 2025-02-12
+
+### Websocket 연결에서의 인증
+
+- 로컬에서 테스트를 진행하던 중 로그인된 유저에 대한 정보를 알아오는데 문제가 있었다.
+- `Signaling Handler에서 직접 SecurityContextHolder.getContext().getAuthentication()` 을 실행하면 getContext()가 `null`이 나왔다.
+- 지금까지 알아낸 바로는 WebSocket 통신이 http를 사용하지 않기 때문에 security filter chain을 타지 않는 것으로 보인다.
+- 따라서 HandShake 과정에서 인증 정보를 WebSocket session의 attributes에 넣어주는 방식으로 해결했다.
+
+## 2025-02-14
+
+### CORS
+
+- 정확한 이유를 파악하지 못했지만 이전에 발생하지 않던 CORS 에러가 발생했다.
+- 문제가 발생했을 때 사용중인 CorsConfigurationSource 는 setAllowedOrigins로 로컬 테스트 용 origin 및 포트인 http://localhost:5173만 열어두었다.
+- 문제는 이 상태로 배포가 되었을 때 무리없이 돌아가고 있었다는 사실이다.
+- 이 후 로컬 도커 테스트용 https://localhost와 배포 도메인인 https:/i12a601.p.ssafy.io를 모두 명시하니 해결됐다.
+
+## 2025-02-15
+
+### CI CD
+
+- gitlab CI/CD 와 Jenkins 중 어느 것을 선택할 지 고민하다가 gitlab CI/CD가 local에서 runner를 세팅할 수 있다고 하여 server의 자원을 사용하지 않고도 CI/CD를 진행할 수 있을 것 같아 gitlab CI/CD를 골랐다.
+- 그러나 Windows local에서 docker.sock을 사용하는 방법을 제대로 파악하지 못해 결국 배포 서버에 runner를 세팅했다.
+- 구성은 크게 build push pull로 나뉘었다.
+- test를 하고 싶은 마음은 있었지만 제대로 테스트를 구축하지 않아서 아쉬웠다.
+- 막상 그렇게 하고보니 사용하는 docker가 배포 서버의 그것이라서 docker hub에 push pull을 할 이유가 딱히 없었다.
+- 다만 다음번에는 어떻게 사용할지 모르기도 하고 외부 저장소에서 버전 관리를 하는 셈치고 일단은 구조를 유지했다.
+- 이번에 가장 크게 고민했던 부분은 frontend는 정적 파일을 빌드하는 순간에 env가 필요하다는 점이다.
+  - [https://ko.vite.dev/guide/env-and-mode](vite 공식 문서)를 보면 .env.환경.local 로 git에 의해 무시될 환경 변수를 설정해뒀다.
+  - 이는 .env.환경 파일들은 git으로 관리해야한다는 뜻이라고 파악했다.
+  - 그렇다고 하면 .env.환경.local에 들어가야할 api key라든가 외부에 노출되면 안되는 값들은 결과적으로 어느 시점에 어떻게 주입할 지를 잘 모르겠다.
+  - docker compose.yml 을 override 하는 방식이 있던데 그렇게 하는 것일까?
