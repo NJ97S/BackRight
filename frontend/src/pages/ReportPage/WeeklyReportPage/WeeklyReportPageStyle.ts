@@ -3,9 +3,18 @@ import styled from "styled-components";
 export const WeeklyReportPageContainer = styled.div`
   flex: 1;
   display: grid;
-  grid-template-columns: 2.2fr 1fr;
   grid-template-rows: auto minmax(auto, 25rem);
   gap: 1.25rem;
 `;
 
-export const empty = styled.div``;
+export const FirstRowContainer = styled.div`
+  display: grid;
+  grid-template-columns: 2.2fr 1fr;
+  gap: 1.25rem;
+`;
+
+export const SecondeRowContainer = styled.div`
+  display: grid;
+  grid-template-columns: 1.7fr 1fr;
+  gap: 1.25rem;
+`;

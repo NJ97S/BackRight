@@ -6,6 +6,7 @@ import WeeklyCalendar from "../../../components/common/Calendar/WeeklyCalendar";
 import WEEKLY_MOCK_DATA from "./weeklyMockData";
 
 import * as S from "./WeeklyReportPageStyle";
+import AveragePostureTime from "../../../components/common/AveragePostureTime/AveragePostureTime";
 
 const getMondayOfWeek = (date: Date): Date => {
   const day = date.getDay();
@@ -16,7 +17,8 @@ const getMondayOfWeek = (date: Date): Date => {
   return monday;
 };
 
-const { detectionCountStat } = WEEKLY_MOCK_DATA;
+const { detectionCountStat, dailyProperPostureMinutesPerHours } =
+  WEEKLY_MOCK_DATA;
 
 const WeeklyReportPage = () => {
   const [selectedDate, setSelectedDate] = useState(getMondayOfWeek(new Date()));
@@ -27,11 +29,19 @@ const WeeklyReportPage = () => {
 
   return (
     <S.WeeklyReportPageContainer>
-      <PostureWarningSummary detectionCountStat={detectionCountStat} />
-      <WeeklyCalendar
-        selectedDate={selectedDate}
-        onDateChange={handleDateSelect}
-      />
+      <S.FirstRowContainer>
+        <PostureWarningSummary detectionCountStat={detectionCountStat} />
+        <WeeklyCalendar
+          selectedDate={selectedDate}
+          onDateChange={handleDateSelect}
+        />
+      </S.FirstRowContainer>
+
+      <S.SecondeRowContainer>
+        <AveragePostureTime
+          dailyProperPostureMinutesPerHours={dailyProperPostureMinutesPerHours}
+        />
+      </S.SecondeRowContainer>
     </S.WeeklyReportPageContainer>
   );
 };
