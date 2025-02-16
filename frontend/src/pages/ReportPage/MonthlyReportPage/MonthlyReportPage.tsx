@@ -7,6 +7,7 @@ import AveragePostureTime from "../../../components/common/AveragePostureTime/Av
 import MONTHLY_MOCK_DATA from "./monthlyMockData";
 
 import * as S from "./MonthlyReportPageStyle";
+import RankingSummary from "../../../components/common/RankingSummary/RankingSummary";
 
 const { detectionCountStat, weeklyProperPostureMinutesPerHours } =
   MONTHLY_MOCK_DATA;
@@ -36,6 +37,7 @@ const MonthlyReportPage = () => {
             (_, i) => `${i + 1}주차`
           )}
         />
+        <RankingSummary />
       </S.SecondeRowContainer>
     </S.MonthlyReportPageContainer>
   );

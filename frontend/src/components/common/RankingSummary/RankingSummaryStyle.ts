@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const DailyStatisticContainer = styled.div`
+export const RankingSummaryContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;

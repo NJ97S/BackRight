@@ -7,6 +7,7 @@ import AveragePostureTime from "../../../components/common/AveragePostureTime/Av
 import WEEKLY_MOCK_DATA from "./weeklyMockData";
 
 import * as S from "./WeeklyReportPageStyle";
+import RankingSummary from "../../../components/common/RankingSummary/RankingSummary";
 
 const getMondayOfWeek = (date: Date): Date => {
   const day = date.getDay();
@@ -42,6 +43,7 @@ const WeeklyReportPage = () => {
           data={dailyProperPostureMinutesPerHours}
           labels={["월", "화", "수", "목", "금", "토", "일"]}
         />
+        <RankingSummary />
       </S.SecondeRowContainer>
     </S.WeeklyReportPageContainer>
   );
