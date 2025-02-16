@@ -10,7 +10,7 @@ const BODY_PARTS = [
     label: "오른쪽 어깨",
     image: "/images/right-shoulder.svg",
   },
-  { key: "BACK", label: "허리", image: "/images/waist.svg" },
+  { key: "BACK", label: "허리", image: "/images/back.svg" },
 ] as const;
 
 export default BODY_PARTS;
