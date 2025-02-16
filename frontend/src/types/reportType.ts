@@ -38,3 +38,10 @@ export interface DailyReportType {
   sessionsStat: SessionStatType;
   detectionCountStat: DetectionCountStatType;
 }
+
+export interface WeeklyReportType {
+  detectionCountStat: DetectionCountStatType;
+  dailyProperPostureMinutesPerHours: number[];
+  ageGroupPercentile: number;
+  ageGroupPostureTimeDistribution: number[];
+}
