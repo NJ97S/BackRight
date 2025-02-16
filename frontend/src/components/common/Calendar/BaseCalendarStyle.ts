@@ -23,6 +23,10 @@ export const Calendar = styled(ReactCalendar)`
     align-items: center;
   }
 
+  .react-calendar__viewContainer {
+    flex: 1;
+  }
+
   .react-calendar__navigation button {
     padding: 0 0.75rem;
     border: none;
@@ -31,6 +35,13 @@ export const Calendar = styled(ReactCalendar)`
     font-weight: 700;
     color: var(--black);
     cursor: pointer;
+  }
+
+  .react-calendar__year-view,
+  .react-calendar__year-view__months,
+  .react-calendar__month-view,
+  .react-calendar__month-view > div {
+    height: 100%;
   }
 
   .react-calendar__month-view__weekdays {
@@ -104,5 +115,12 @@ export const Calendar = styled(ReactCalendar)`
     background-color: var(--mint);
     color: var(--white);
     border-radius: 0;
+  }
+
+  .highlighted-month {
+    background-color: var(--mint);
+    color: var(--white);
+    font-weight: bold;
+    border-radius: 8px;
   }
 `;

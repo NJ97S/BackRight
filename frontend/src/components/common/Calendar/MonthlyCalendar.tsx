@@ -9,7 +9,17 @@ const MonthlyCalendar = ({
   selectedDate,
   onMonthChange,
 }: MonthlyCalendarProps) => (
-  <BaseCalendar selectedDate={selectedDate} onDateChange={onMonthChange} />
+  <BaseCalendar
+    selectedDate={selectedDate}
+    onDateChange={onMonthChange}
+    tileClassName={({ date }) =>
+      date.getFullYear() === selectedDate.getFullYear() &&
+      date.getMonth() === selectedDate.getMonth()
+        ? "highlighted-month"
+        : ""
+    }
+    isMonthly={true}
+  />
 );
 
 export default MonthlyCalendar;

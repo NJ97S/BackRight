@@ -44,3 +44,10 @@ export interface WeeklyReportType {
   ageGroupPercentile: number;
   ageGroupPostureTimeDistribution: number[];
 }
+
+export interface MonthlyReportType {
+  detectionCountStat: DetectionCountStatType;
+  weeklyProperPostureMinutesPerHours: number[];
+  ageGroupPercentile: number;
+  ageGroupPostureTimeDistribution: number[];
+}
