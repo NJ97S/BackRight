@@ -1,5 +1,6 @@
 package com.example.posturepro.analyzingsession.entity;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 
@@ -50,5 +51,9 @@ public class AnalyzingSession {
 	public AnalyzingSession(Instant startedAt, Member member) {
 		this.startedAt = startedAt;
 		this.member = member;
+	}
+
+	public long getSessionDuration() {
+		return Duration.between(this.getStartedAt(), this.getEndedAt()).toMinutes();
 	}
 }

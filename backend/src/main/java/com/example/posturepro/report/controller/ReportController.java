@@ -1,7 +1,5 @@
 package com.example.posturepro.report.controller;
 
-import java.time.Instant;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,7 +22,7 @@ public class ReportController {
 	@GetMapping("/daily")
 	public ResponseEntity<DailyReportDto> getDailyReport(@PathVariable Long memberId, @RequestParam String date) {
 		String dateString = date + "T00:00:00+09:00";
-		DailyReportDto dailyReport = service.getDailyReport(memberId, Instant.parse(dateString));
+		DailyReportDto dailyReport = service.getDailyReport(memberId, dateString);
 
 		return ResponseEntity.ok(dailyReport);
 	}

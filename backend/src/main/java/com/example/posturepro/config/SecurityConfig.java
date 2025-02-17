@@ -3,16 +3,15 @@ package com.example.posturepro.config;
 import java.util.Arrays;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -20,23 +19,19 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.example.posturepro.api.oauth.filter.JwtAuthenticationFilter;
 import com.example.posturepro.api.oauth.handler.CustomAuthenticationSuccessHandler;
-import com.example.posturepro.api.oauth.service.TokenService;
 import com.example.posturepro.api.oauth.service.TokenBlacklistService;
+import com.example.posturepro.api.oauth.service.TokenService;
+
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 	private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
 	private final TokenService tokenService;
 	private final TokenBlacklistService blacklistService;
-
-	@Autowired
-	public SecurityConfig(CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler,
-		TokenService tokenService, TokenBlacklistService blacklistService) {
-		this.customAuthenticationSuccessHandler = customAuthenticationSuccessHandler;
-		this.tokenService = tokenService;
-		this.blacklistService = blacklistService;
-	}
+	private final AuthenticationEntryPoint entryPoint;    // 추가
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -48,19 +43,18 @@ public class SecurityConfig {
 				session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			)
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/", "/auth/**", "/oauth2/**", "/members/signup").permitAll()
-				.anyRequest().authenticated()
+				.requestMatchers("/", "/auth/**", "/oauth2/**", "/members/signup", "/swagger-ui/**", "/v3/api-docs/**")
+				.permitAll()
+				.anyRequest()
+				.authenticated()
 			)
 
 			.oauth2Login(oauth2 -> oauth2
 				.successHandler(customAuthenticationSuccessHandler)
 			)
-			.exceptionHandling(exception
-				-> exception.authenticationEntryPoint((request, response, authException) -> {
-				response.sendError(HttpStatus.UNAUTHORIZED.value(), "인증에 실패하였습니다.");
-			}))
-
-			.addFilterBefore(new JwtAuthenticationFilter(tokenService, blacklistService), OAuth2LoginAuthenticationFilter.class)
+			.addFilterBefore(new JwtAuthenticationFilter(tokenService, blacklistService),
+				OAuth2LoginAuthenticationFilter.class)
+			.exceptionHandling(handler -> handler.authenticationEntryPoint(entryPoint))
 			.headers(headers -> headers
 					.contentSecurityPolicy(csp -> csp
 						.policyDirectives("default-src 'self'; script-src 'self'; style-src 'self'")

@@ -5,6 +5,8 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import com.example.posturepro.report.entity.DailyStat;
+
 import lombok.Data;
 
 @Data
@@ -38,6 +40,16 @@ public class DetectionCountStatDto {
 				counts.compute(DetectionType.BACK, (k, v) -> v + 1);
 			detectionDuration += Duration.between(detection.getStartedAt(), detection.getEndedAt()).toMinutes();
 		}
+	}
+
+	public DetectionCountStatDto(DailyStat dailyStat) {
+		this();
+		totalDetection = dailyStat.getTotalDetection();
+		counts.put(DetectionType.NECK, dailyStat.getNeckDetectionCount());
+		counts.put(DetectionType.LEFT_SHOULDER, dailyStat.getLeftShoulderDetectionCount());
+		counts.put(DetectionType.RIGHT_SHOULDER, dailyStat.getRightShoulderDetectionCount());
+		counts.put(DetectionType.BACK, dailyStat.getBackDetectionCount());
+		detectionDuration = dailyStat.getTotalDuration() - dailyStat.getProperPoseDuration();
 	}
 
 	public void addDetectionStat(DetectionCountStatDto detectionStat) {

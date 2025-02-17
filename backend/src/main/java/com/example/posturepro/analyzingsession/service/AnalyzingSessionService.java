@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.List;
 
 import com.example.posturepro.analyzingsession.dto.AnalyzingSessionDto;
+import com.example.posturepro.analyzingsession.dto.AnalyzingSessionStatDto;
 import com.example.posturepro.analyzingsession.entity.AnalyzingSession;
 
 public interface AnalyzingSessionService {
@@ -11,7 +12,7 @@ public interface AnalyzingSessionService {
 
 	AnalyzingSession createSession(String providerId);
 
-	AnalyzingSessionDto calculateSessionData(AnalyzingSession session);
+	AnalyzingSessionStatDto calculateSessionData(AnalyzingSession session);
 
 	void endSession(AnalyzingSession session);
 

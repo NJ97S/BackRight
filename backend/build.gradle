@@ -45,7 +45,9 @@ dependencies {
     implementation group: "dev.onvoid.webrtc", name: "webrtc-java", version: "0.9.0", classifier: "windows-x86_64"
     implementation group: "dev.onvoid.webrtc", name: "webrtc-java", version: "0.9.0", classifier: "linux-x86_64"
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    // 날짜 데이터 파싱을 위해 필요
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5'
 }
 
 

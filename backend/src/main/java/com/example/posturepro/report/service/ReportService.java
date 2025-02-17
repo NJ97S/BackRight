@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.example.posturepro.analyzingsession.dto.AnalyzingSessionDto;
-import com.example.posturepro.analyzingsession.dto.AnalyzingSessionStatDto;
 import com.example.posturepro.analyzingsession.service.AnalyzingSessionService;
+import com.example.posturepro.exception.EntityNotFoundException;
 import com.example.posturepro.report.dto.DailyReportDto;
 import com.example.posturepro.report.dto.DailyStatDto;
 import com.example.posturepro.report.entity.DailyStat;
@@ -23,15 +23,17 @@ public class ReportService {
 		this.dailyStatRepository = dailyStatRepository;
 	}
 
-	public DailyReportDto getDailyReport(Long memberID, Instant dateAsInstant) {
-		List<AnalyzingSessionDto> sessionList = analyzingSessionService.getSessionByDate(memberID, dateAsInstant);
-		AnalyzingSessionStatDto analyzingSessionStatDto = new AnalyzingSessionStatDto(sessionList);
+	public DailyReportDto getDailyReport(Long memberId, String date) {
+		Instant dateAsInstant = Instant.parse(date);
+		List<AnalyzingSessionDto> sessionList = analyzingSessionService.getSessionByDate(memberId, dateAsInstant);
 
 		DailyStat previousDailyStat = dailyStatRepository.findFirstByMemberIdAndTargetDayBeforeOrderByTargetDayDesc(
-			memberID, dateAsInstant);
+			memberId, dateAsInstant);
 		DailyStatDto previousStatDto = previousDailyStat != null ? DailyStatDto.from(previousDailyStat) : null;
+		DailyStat todayStat = dailyStatRepository.findByMemberIdAndTargetDay(memberId, dateAsInstant)
+			.orElseThrow(() -> new EntityNotFoundException(DailyStat.class.getName(), "date", date));
 
-		return new DailyReportDto(sessionList, analyzingSessionStatDto, previousStatDto);
+		return new DailyReportDto(sessionList, DailyStatDto.from(todayStat), previousStatDto);
 	}
 
 	// public WeeklyReportDto getWeeklyReport(Long memberID, Instant weekStart) {
