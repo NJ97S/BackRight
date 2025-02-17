@@ -64,7 +64,6 @@ public class Detection {
 		this.leftShoulderDetected = detectionDto.isLeftShoulderDetected();
 		this.rightShoulderDetected = detectionDto.isRightShoulderDetected();
 		this.backDetected = detectionDto.isBackDetected();
-		this.videoUrl = detectionDto.getVideoUrl();
 	}
 
 }

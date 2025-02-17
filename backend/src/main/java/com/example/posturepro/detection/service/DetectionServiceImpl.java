@@ -57,4 +57,12 @@ public class DetectionServiceImpl implements DetectionService {
 
 		return s3Component.generatePreSignedGetUrl(videoUrl);
 	}
+
+	@Override
+	@Transactional
+	public void updateVideoUrl(long detectionId, String videoUrl) {
+		Detection detection = getDetectionById(detectionId);
+		detection.setVideoUrl(videoUrl);
+		detectionRepository.save(detection);
+	}
 }

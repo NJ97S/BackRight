@@ -85,11 +85,11 @@ public class PoseAnalyzer {
 			response.setPoseCollapsed(true);
 
 			if (detectionId == 0) {
-				Map<String, String> s3VideoData = fetchPreSignedVideoUrl();
-				Detection detection = createDetection(problemStatus, s3VideoData.get("videoUrl"));
+				Detection detection = createDetection(problemStatus);
 
 				detectionId = detection.getId();
-
+				Map<String, String> s3VideoData = fetchPreSignedVideoUrl(detectionId);
+				detectionService.updateVideoUrl(detectionId, s3VideoData.get("videoUrl"));
 				response.setDetectionId(detection.getId());
 				response.setStartedAt(detection.getStartedAt());
 				response.setVideoPreSignedUrl(s3VideoData.get("videoPreSignedUrl"));
@@ -99,18 +99,17 @@ public class PoseAnalyzer {
 		return response.JSONString();
 	}
 
-	private Detection createDetection(PartProblemStatus problemStatus, String videoUrl) {
+	private Detection createDetection(PartProblemStatus problemStatus) {
 		CreateDetectionDto detectionDto = new CreateDetectionDto();
-		detectionDto.setVideoUrl(videoUrl);
 		detectionDto.setStartedAt(Instant.now());
 		detectionDto.setProblemParts(problemStatus);
 		detectionDto.setSession(session);
 		return detectionService.createDetection(detectionDto);
 	}
 
-	private Map<String,String> fetchPreSignedVideoUrl() {
+	private Map<String, String> fetchPreSignedVideoUrl(Long detectionId) {
 		String providerId = this.providerId;
-		String videoFileName = "detection";
+		String videoFileName = "detection:" + detectionId;
 		return s3Component.generatePreSignedUrls(providerId, videoFileName, null);
 	}
 
