@@ -16,11 +16,10 @@ export const Title = styled.div`
   text-align: center;
 `;
 
-export const ComingSoonMessage = styled.div`
+export const GraphContainer = styled.div`
   flex: 1;
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: center;
-  color: var(--gray-300);
-  font-weight: 600;
+  gap: 2rem;
 `;
