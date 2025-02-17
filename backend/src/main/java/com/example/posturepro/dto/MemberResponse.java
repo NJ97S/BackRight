@@ -14,17 +14,23 @@ public class MemberResponse {
 	private String profileImgUrl;
 	private String message;
 
-	public static MemberResponse fromMember(Member member) {
+	public static MemberResponse fromMember(Member member, String cloudFrontBaseUrl) {
+		String profileImgKey = member.getProfileImgUrl();
+
+		String profileImgUrl = (profileImgKey != null && !profileImgKey.isEmpty())
+			? cloudFrontBaseUrl + "/" + profileImgKey + "?v=" + System.currentTimeMillis()
+			: null;
+
 		return new MemberResponse(
 			member.getProviderId(),
 			member.getName(),
 			member.getNickname(),
-			member.getProfileImgUrl(),
+			profileImgUrl,
 			null
 		);
 	}
 
 	public static MemberResponse withMessage(String message) {
-		return new MemberResponse(null,null,null,null,message);
+		return new MemberResponse(null, null, null, null, message);
 	}
 }

@@ -16,7 +16,6 @@ CreateDetectionDto {
 	private boolean rightShoulderDetected;
 	private boolean backDetected;
 	private AnalyzingSession session;
-	private String videoUrl;
 
 	public void setProblemParts(PartProblemStatus problemPart) {
 		if (problemPart.isNeck())
