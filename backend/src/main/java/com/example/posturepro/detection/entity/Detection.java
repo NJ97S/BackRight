@@ -16,17 +16,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Getter
 @NoArgsConstructor
 @Entity
 public class Detection {
 
-	@Getter
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", insertable = false, updatable = false)
 	private Long id;
 
-	@Getter
 	@Column(name = "started_at", columnDefinition = "TIMESTAMP")
 	private Instant startedAt;
 

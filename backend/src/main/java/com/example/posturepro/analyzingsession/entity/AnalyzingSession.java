@@ -1,5 +1,6 @@
 package com.example.posturepro.analyzingsession.entity;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 
@@ -21,11 +22,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Getter
 @NoArgsConstructor
 @Entity
 public class AnalyzingSession {
 
-	@Getter
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", insertable = false, updatable = false)
@@ -43,7 +44,6 @@ public class AnalyzingSession {
 	@JoinColumn(name = "member_id", nullable = false)
 	private Member member;
 
-	@Getter
 	@OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Detection> detections;
 
@@ -51,5 +51,9 @@ public class AnalyzingSession {
 	public AnalyzingSession(Instant startedAt, Member member) {
 		this.startedAt = startedAt;
 		this.member = member;
+	}
+
+	public long getSessionDuration() {
+		return Duration.between(this.getStartedAt(), this.getEndedAt()).toMinutes();
 	}
 }
