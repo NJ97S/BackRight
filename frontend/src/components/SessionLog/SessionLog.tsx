@@ -15,9 +15,7 @@ const SessionLog = ({ session }: SessionLogProps) => (
       <S.SessionTime>
         {convertISOToTimeRangeString(session.startedAt, session.endedAt)}
       </S.SessionTime>
-      <S.AlertCount>
-        경고 {session.sessionStat.detectionCountStat.totalDetection}회
-      </S.AlertCount>
+      <S.AlertCount>경고 {session.detectionStat.totalDetection}회</S.AlertCount>
     </S.SessionDetail>
   </S.SessionLogContainer>
 );

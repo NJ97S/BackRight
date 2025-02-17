@@ -9,7 +9,7 @@ import DAILY_MOCK_DATA from "./dailyMockData";
 
 import * as S from "./DailyReportPageStyle";
 
-const { sessions, sessionStat } = DAILY_MOCK_DATA;
+const { sessions, dailyStat } = DAILY_MOCK_DATA;
 
 const DailyReportPage = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -21,7 +21,7 @@ const DailyReportPage = () => {
   return (
     <S.DailyReportPageContainer>
       <PostureWarningSummary
-        detectionCountStat={sessionStat.detectionCountStat}
+        detectionCountStat={dailyStat.detectionCountStat}
       />
       <DailyCalendar
         selectedDate={selectedDate}

@@ -1,6 +1,7 @@
 export interface DetectionType {
+  id: number;
   startedAt: string;
-  endedAt: string;
+  endedAt: string | null;
   videoUrl: string;
   neckDetected: boolean;
   leftShoulderDetected: boolean;
@@ -10,7 +11,6 @@ export interface DetectionType {
 
 export interface DetectionCountStatType {
   totalDetection: number;
-  detectionDuration: number;
   counts: {
     NECK: number;
     LEFT_SHOULDER: number;
@@ -23,19 +23,27 @@ export interface SessionStatType {
   sessionDuration: number;
   properPoseDuration: number;
   averagePoseDuration: number;
-  detectionCountStat: DetectionCountStatType;
 }
 
 export interface SessionType {
   startedAt: string;
   endedAt: string;
   detections: DetectionType[];
+  detectionStat: DetectionCountStatType;
   sessionStat: SessionStatType;
+}
+
+export interface DailyStatType {
+  totalDuration: number;
+  averagePoseDuration: number;
+  properPoseDuration: number;
+  detectionCountStat: DetectionCountStatType;
 }
 
 export interface DailyReportType {
   sessions: SessionType[];
-  sessionStat: SessionStatType;
+  dailyStat: DailyStatType;
+  previousDailyStat: DailyStatType | null;
 }
 
 export interface WeeklyReportType {
