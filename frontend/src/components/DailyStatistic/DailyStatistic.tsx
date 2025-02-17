@@ -20,6 +20,7 @@ const DailyStatistic = ({
         totalDuration={dailyStat.totalDuration}
         properPoseDuration={dailyStat.properPoseDuration}
       />
+      <S.Divider />
       {previousDailyStat && (
         <ComparisonBarChart
           current={dailyStat.properPoseDuration}
