@@ -76,7 +76,7 @@ public class OAuth2Controller {
 	public ResponseEntity<String> logout(@CookieValue(name = "refresh-token", required = false) String refreshToken,
 		HttpServletResponse response) {
 		if (refreshToken != null) {
-			long remainingTime = tokenService.getExpirationTime(refreshToken); // 현재 시점에서 남은 만료 시간 가져오기
+			long remainingTime = tokenService.getRemainingTime(refreshToken); // 현재 시점에서 남은 만료 시간 가져오기
 
 			blacklistService.addToBlacklist(refreshToken, remainingTime);
 

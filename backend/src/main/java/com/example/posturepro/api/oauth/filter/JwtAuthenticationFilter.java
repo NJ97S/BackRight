@@ -1,7 +1,6 @@
 package com.example.posturepro.api.oauth.filter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -24,7 +23,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final TokenService tokenService;
-	private final TokenBlacklistService blacklistService; // ✅ 블랙리스트 서비스 추가
+	private final TokenBlacklistService blacklistService; // 블랙리스트 서비스 추가
 
 	public JwtAuthenticationFilter(TokenService tokenService, TokenBlacklistService blacklistService) {
 		this.tokenService = tokenService;

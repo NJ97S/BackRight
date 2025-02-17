@@ -13,8 +13,8 @@ public class TokenBlacklistService {
 	}
 
 	// refreshToken을 블랙리스트에 추가 (로그아웃 시)
-	public void addToBlacklist(String refreshToken, long expirationTimeMs) {
-		redisTemplate.opsForValue().set(refreshToken, "BLACKLISTED", expirationTimeMs, TimeUnit.MILLISECONDS);
+	public void addToBlacklist(String refreshToken, long remainingTimeMs) {
+		redisTemplate.opsForValue().set(refreshToken, "BLACKLISTED", remainingTimeMs, TimeUnit.MILLISECONDS);
 	}
 
 	// refreshToken이 블랙리스트에 있는지 확인

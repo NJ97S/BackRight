@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/PosturePro.main.iml" filepath="$PROJECT_DIR$/.idea/modules/PosturePro.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/webRTC.iml" filepath="$PROJECT_DIR$/.idea/webRTC.iml" />
     </modules>
   </component>

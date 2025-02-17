@@ -33,5 +33,5 @@ public class TokenService {
 		return jwtUtil.validateToken(token);
 	}
 
-	public long getExpirationTime(String token) {return jwtUtil.getRemainingExpirationTime(token);}
+	public long getRemainingTime(String token) {return jwtUtil.getRemainingExpirationTime(token);}
 }
