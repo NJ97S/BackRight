@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -33,6 +33,7 @@ public class Member {
 	@Column(nullable = false)
 	private String name;
 
+	@Setter
 	@Column(name = "nickname", nullable = false)
 	private String nickname;
 
@@ -56,7 +57,8 @@ public class Member {
 	}
 
 	@Builder
-	public Member(String providerId, String name, String nickname, LocalDate birthDate, Gender gender, String profileImgUrl) {
+	public Member(String providerId, String name, String nickname, LocalDate birthDate, Gender gender,
+		String profileImgUrl) {
 		this.providerId = providerId;
 		this.name = name;
 		this.nickname = nickname;

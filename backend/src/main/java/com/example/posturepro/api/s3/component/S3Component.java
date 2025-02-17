@@ -58,6 +58,10 @@ public class S3Component {
 	}
 
 	public String generatePreSignedUrlForProfileImageUpdate(String profileImgKey) {
+		if (profileImgKey == null || profileImgKey.isEmpty()) {
+			throw new IllegalArgumentException("프로필 이미지 키가 필요합니다.");
+		}
+
 		URL profileImgPreSignedUrl = presigner.presignPutObject(PutObjectPresignRequest.builder()
 			.signatureDuration(Duration.ofMinutes(10))
 			.putObjectRequest(req -> req.bucket(profileImgBucket)

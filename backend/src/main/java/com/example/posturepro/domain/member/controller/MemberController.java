@@ -4,12 +4,14 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +27,8 @@ import com.example.posturepro.dto.MemberResponse;
 import com.example.posturepro.dto.SignUpRequest;
 import com.example.posturepro.dto.SignUpResponse;
 import com.example.posturepro.dto.SignUpToken;
+import com.example.posturepro.dto.UpdateProfileRequest;
+import com.example.posturepro.dto.UpdateProfileResponse;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,6 +38,9 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/members")
 public class MemberController {
+
+	@Value("${CLOUDFRONT_BASE_URL}")
+	private String cloudFrontBaseUrl;
 
 	private final MemberService memberService;
 	private final TokenService tokenService;
@@ -47,37 +54,26 @@ public class MemberController {
 	}
 
 	@GetMapping("/me")
-	public ResponseEntity<MemberResponse> getCurrentUser(Authentication authentication, HttpServletRequest request) {
+	public ResponseEntity<MemberResponse> getCurrentUser(Authentication authentication) {
 		if (authentication == null || !authentication.isAuthenticated()) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
 				.body(MemberResponse.withMessage("로그인이 필요합니다."));
 		}
 
 		String providerId = authentication.getName();
-
 		Optional<Member> member = memberService.findByProviderId(providerId);
 
-		return member.map(value -> ResponseEntity.ok(MemberResponse.fromMember(value)))
+		return member.map(value -> ResponseEntity.ok(MemberResponse.fromMember(value, cloudFrontBaseUrl)))
 			.orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED)
 				.body(MemberResponse.withMessage("로그인된 사용자를 찾을 수 없습니다.")));
 	}
 
-	private String extractAccessToken(HttpServletRequest request) {
-		if (request.getCookies() == null) return null;
-
-		for (Cookie cookie : request.getCookies()) {
-			if ("access-token".equals(cookie.getName())) {
-				return cookie.getValue();
-			}
-		}
-		return null;
-	}
-
-
+	// 회원가입에서 이미지를 등록 시 preSignedUrl 생성
 	@PostMapping("/signup/imgpresigned-url")
-	public ResponseEntity<?> generateImgPreSignedUrl(@RequestParam String profileImgFileName, Authentication authentication) {
-
+	public ResponseEntity<Map<String, String>> generateImgPreSignedUrl(@RequestParam String profileImgFileName,
+		Authentication authentication) {
 		String providerId = authentication.getName();
+
 		Map<String, String> preSignedUrls = s3Component.generatePreSignedUrls(providerId, null, profileImgFileName);
 
 		return ResponseEntity.ok(preSignedUrls);
@@ -143,4 +139,14 @@ public class MemberController {
 		}
 		return null;
 	}
+
+	@PatchMapping("/update")
+	public ResponseEntity<UpdateProfileResponse> updateProfile(@RequestBody UpdateProfileRequest request,
+		Authentication authentication) {
+		String providerId = authentication.getName();
+		UpdateProfileResponse response = memberService.updateProfile(providerId, request);
+
+		return ResponseEntity.ok(response);
+	}
+
 }
