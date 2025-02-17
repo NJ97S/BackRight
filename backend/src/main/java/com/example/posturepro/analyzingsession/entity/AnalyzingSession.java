@@ -21,11 +21,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Getter
 @NoArgsConstructor
 @Entity
 public class AnalyzingSession {
 
-	@Getter
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", insertable = false, updatable = false)
@@ -43,7 +43,6 @@ public class AnalyzingSession {
 	@JoinColumn(name = "member_id", nullable = false)
 	private Member member;
 
-	@Getter
 	@OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Detection> detections;
 

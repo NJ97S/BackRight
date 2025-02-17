@@ -29,8 +29,8 @@ public class DetectionServiceImpl implements DetectionService {
 
 	@Override
 	@Transactional
-	public Detection createDetection(CreateDetectionDto detectionDto) {
-		Detection detection = new Detection(detectionDto);
+	public Detection createDetection(CreateDetectionDto createDetectionDto) {
+		Detection detection = new Detection(createDetectionDto);
 		return detectionRepository.save(detection);
 	}
 

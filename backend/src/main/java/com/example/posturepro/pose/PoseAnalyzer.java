@@ -100,11 +100,11 @@ public class PoseAnalyzer {
 	}
 
 	private Detection createDetection(PartProblemStatus problemStatus) {
-		CreateDetectionDto detectionDto = new CreateDetectionDto();
-		detectionDto.setStartedAt(Instant.now());
-		detectionDto.setProblemParts(problemStatus);
-		detectionDto.setSession(session);
-		return detectionService.createDetection(detectionDto);
+		CreateDetectionDto createDetectionDto = new CreateDetectionDto();
+		createDetectionDto.setStartedAt(Instant.now());
+		createDetectionDto.setProblemParts(problemStatus);
+		createDetectionDto.setSession(session);
+		return detectionService.createDetection(createDetectionDto);
 	}
 
 	private String fetchPreSignedVideoUrl() {

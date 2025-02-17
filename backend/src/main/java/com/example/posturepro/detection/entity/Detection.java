@@ -16,17 +16,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Getter
 @NoArgsConstructor
 @Entity
 public class Detection {
 
-	@Getter
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", insertable = false, updatable = false)
 	private Long id;
 
-	@Getter
 	@Column(name = "started_at", columnDefinition = "TIMESTAMP")
 	private Instant startedAt;
 
@@ -55,13 +54,13 @@ public class Detection {
 	@JoinColumn(name = "analyzing_session_id", nullable = false)
 	private AnalyzingSession session;
 
-	public Detection(CreateDetectionDto detectionDto) {
-		this.startedAt = detectionDto.getStartedAt();
-		this.session = detectionDto.getSession();
-		this.neckDetected = detectionDto.isNeckDetected();
-		this.leftShoulderDetected = detectionDto.isLeftShoulderDetected();
-		this.rightShoulderDetected = detectionDto.isRightShoulderDetected();
-		this.backDetected = detectionDto.isBackDetected();
+	public Detection(CreateDetectionDto createDetectionDto) {
+		this.startedAt = createDetectionDto.getStartedAt();
+		this.session = createDetectionDto.getSession();
+		this.neckDetected = createDetectionDto.isNeckDetected();
+		this.leftShoulderDetected = createDetectionDto.isLeftShoulderDetected();
+		this.rightShoulderDetected = createDetectionDto.isRightShoulderDetected();
+		this.backDetected = createDetectionDto.isBackDetected();
 	}
 
 }
