@@ -1,5 +1,10 @@
 package com.example.posturepro.analyzingsession.service;
 
+import java.time.Instant;
+import java.util.List;
+
+import com.example.posturepro.analyzingsession.dto.AnalyzingSessionDto;
+import com.example.posturepro.analyzingsession.dto.AnalyzingSessionStatDto;
 import com.example.posturepro.analyzingsession.entity.AnalyzingSession;
 
 public interface AnalyzingSessionService {
@@ -7,5 +12,11 @@ public interface AnalyzingSessionService {
 
 	AnalyzingSession createSession(String providerId);
 
+	AnalyzingSessionStatDto calculateSessionData(AnalyzingSession session);
+
 	void endSession(AnalyzingSession session);
+
+	List<AnalyzingSessionDto> getSessionByDate(Long memberId, Instant date);
+
+	// AnalyzingSessionStatDto[] getSessionByWeekStart(Long memberId, Instant weekStart);
 }
