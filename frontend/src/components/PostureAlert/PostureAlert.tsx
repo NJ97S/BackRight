@@ -11,8 +11,7 @@ const PostureAlert = () => {
 
   const isFirstRendering = useRef(true);
 
-  const { stream, sessionAlertList, newAlertCount, setNewAlertCount } =
-    useMeasurementStore();
+  const { stream, newAlertCount, setNewAlertCount } = useMeasurementStore();
 
   const openAlertList = () => {
     setIsAlertListOpened(true);
@@ -35,10 +34,7 @@ const PostureAlert = () => {
   return (
     <S.PostureAlert isStreaming={stream !== null}>
       {isAlertListOpened ? (
-        <PostureAlertList
-          onClick={closeAlertList}
-          sessionAlertList={sessionAlertList}
-        />
+        <PostureAlertList onClick={closeAlertList} />
       ) : (
         <PostureAlertButton
           onClick={openAlertList}

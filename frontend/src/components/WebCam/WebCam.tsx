@@ -11,6 +11,7 @@ import {
 import RealtimeMessage from "../RealtimeMessage/RealtimeMessage";
 import PostureAlert from "../PostureAlert/PostureAlert";
 import StandardPoseGuide from "../StandardPoseGuide/StandardPoseGuide";
+import VideoModal from "../VideoModal/VideoModal";
 
 import useMeasurementStore from "../../store/useMeasurementStore";
 import formatRunningTime from "../../utils/formatRunningTime";
@@ -180,6 +181,8 @@ const WebCam = () => {
             >
               자세 경고가 감지되었습니다. 바른 자세를 취해주세요.
             </RealtimeMessage>
+
+            <VideoModal />
 
             <PostureAlert />
           </>
