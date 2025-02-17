@@ -27,6 +27,8 @@ services:
       - mysql_dev_data:/var/lib/mysql
     networks:
       - dev-network
+    ports:
+      - 3307:3306
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 15s
