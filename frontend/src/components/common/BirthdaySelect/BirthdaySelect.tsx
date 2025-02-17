@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { Value } from "react-calendar/src/shared/types.js";
+import convertToLocalDate from "../../../utils/convertToLocalDate";
 
 import * as S from "./BirthdaySelectStyle";
 
@@ -27,7 +28,7 @@ const BirthdaySelect = ({
 
   const handleDateClick = (date: Value) => {
     if (date instanceof Date) {
-      onChange(date.toISOString().split("T")[0]);
+      onChange(convertToLocalDate(date).toISOString().split("T")[0]);
     }
 
     setIsOpen(false);
@@ -64,7 +65,9 @@ const BirthdaySelect = ({
         isOpened={isOpen}
         hasError={!!errorMessage}
       >
-        {value ? value.toISOString().split("T")[0] : "생년월일을 선택해주세요"}
+        {value
+          ? convertToLocalDate(value).toISOString().split("T")[0]
+          : "생년월일을 선택해주세요"}
 
         <S.CalendarIcon src={calendarIcon} alt="달력" />
       </S.InputContainer>

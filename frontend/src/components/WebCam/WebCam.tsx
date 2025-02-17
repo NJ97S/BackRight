@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import {
   DrawingUtils,
@@ -10,6 +10,7 @@ import {
 
 import RealtimeMessage from "../RealtimeMessage/RealtimeMessage";
 import PostureAlert from "../PostureAlert/PostureAlert";
+import StandardPoseGuide from "../StandardPoseGuide/StandardPoseGuide";
 
 import useMeasurementStore from "../../store/useMeasurementStore";
 import formatRunningTime from "../../utils/formatRunningTime";
@@ -24,6 +25,8 @@ import recordingIcon from "../../assets/icons/recording.svg";
 import recordingStopIcon from "../../assets/icons/recording-stop.svg";
 
 const WebCam = () => {
+  const [isGuideOpened, setIsGuideOpened] = useState(false);
+
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -35,6 +38,14 @@ const WebCam = () => {
     receivedData,
     landmarkResult,
   } = useMeasurementStore();
+
+  const handleGuideOpenButtonClick = () => {
+    setIsGuideOpened(true);
+  };
+
+  const handleGuideCloseButtonClick = () => {
+    setIsGuideOpened(false);
+  };
 
   const displayVideo = () => {
     const video = videoRef.current;
@@ -135,38 +146,44 @@ const WebCam = () => {
   return (
     <S.WebCamContainer>
       <S.VideoContainer>
-        <S.Video ref={videoRef} />
-        <S.Canvas ref={canvasRef} />
+        {isGuideOpened ? (
+          <StandardPoseGuide onClick={handleGuideCloseButtonClick} />
+        ) : (
+          <>
+            <S.Video ref={videoRef} />
+            <S.Canvas ref={canvasRef} />
 
-        <S.RecordingStartContainer isStreaming={stream !== null}>
-          <S.RecordingStartText>
-            아래 버튼을 눌러, 자세 분석을 시작해보세요.
-          </S.RecordingStartText>
-          <S.RecordingStartButton onClick={startMeasurement}>
-            분석 시작
-          </S.RecordingStartButton>
-        </S.RecordingStartContainer>
+            <S.RecordingStartContainer isStreaming={stream !== null}>
+              <S.GuideButton type="button" onClick={handleGuideOpenButtonClick}>
+                바른 자세 가이드
+              </S.GuideButton>
+              <S.RecordingStartButton type="button" onClick={startMeasurement}>
+                분석 시작
+              </S.RecordingStartButton>
+            </S.RecordingStartContainer>
 
-        <S.ElapsedTimeContainer isStreaming={stream !== null}>
-          <S.RecordingIcon src={recordingIcon} alt="녹화중" />
-          {formatRunningTime(elapsedTime)}
-        </S.ElapsedTimeContainer>
+            <S.ElapsedTimeContainer isStreaming={stream !== null}>
+              <S.RecordingIcon src={recordingIcon} alt="녹화중" />
+              {formatRunningTime(elapsedTime)}
+            </S.ElapsedTimeContainer>
 
-        <RealtimeMessage
-          type="setting"
-          isDisplayed={!!receivedData && !receivedData.referenceSet}
-        >
-          초기 자세를 설정중입니다. 바른 자세를 유지해주세요.
-        </RealtimeMessage>
+            <RealtimeMessage
+              type="setting"
+              isDisplayed={!!receivedData && !receivedData.referenceSet}
+            >
+              초기 자세를 설정중입니다. 바른 자세를 유지해주세요.
+            </RealtimeMessage>
 
-        <RealtimeMessage
-          type="alert"
-          isDisplayed={!!receivedData?.poseCollapsed}
-        >
-          자세 경고가 감지되었습니다. 바른 자세를 취해주세요.
-        </RealtimeMessage>
+            <RealtimeMessage
+              type="alert"
+              isDisplayed={!!receivedData?.poseCollapsed}
+            >
+              자세 경고가 감지되었습니다. 바른 자세를 취해주세요.
+            </RealtimeMessage>
 
-        <PostureAlert />
+            <PostureAlert />
+          </>
+        )}
       </S.VideoContainer>
 
       <S.RecordingStopButton

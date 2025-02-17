@@ -8,6 +8,7 @@ import GenderSelect from "../../components/common/GenderSelect/GenderSelect";
 import BirthdaySelect from "../../components/common/BirthdaySelect/BirthdaySelect";
 
 import FORM_FIELDS from "../../constants/formFields";
+import PATH from "../../constants/path";
 import { SignUpInfoType } from "../../types/type";
 
 import * as S from "./SignUpPageStyle";
@@ -30,7 +31,7 @@ const SignUpPage = () => {
 
     await postUserInfo(data);
 
-    navigate("/");
+    navigate(PATH.HOME);
   };
 
   return (

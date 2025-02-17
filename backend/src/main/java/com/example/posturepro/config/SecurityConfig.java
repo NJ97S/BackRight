@@ -4,9 +4,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -26,10 +26,6 @@ import com.example.posturepro.api.oauth.service.TokenBlacklistService;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
-	@Value("${BASE_URL}")
-	private String baseUrl;
-
 	private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
 	private final TokenService tokenService;
 	private final TokenBlacklistService blacklistService;
@@ -58,12 +54,11 @@ public class SecurityConfig {
 
 			.oauth2Login(oauth2 -> oauth2
 				.successHandler(customAuthenticationSuccessHandler)
-				.failureUrl(baseUrl + "/sign-in")
 			)
 			.exceptionHandling(exception
 				-> exception.authenticationEntryPoint((request, response, authException) -> {
-					response.sendRedirect(baseUrl + "/sign-in");
-			} ))
+				response.sendError(HttpStatus.UNAUTHORIZED.value(), "인증에 실패하였습니다.");
+			}))
 
 			.addFilterBefore(new JwtAuthenticationFilter(tokenService, blacklistService), OAuth2LoginAuthenticationFilter.class)
 			.headers(headers -> headers

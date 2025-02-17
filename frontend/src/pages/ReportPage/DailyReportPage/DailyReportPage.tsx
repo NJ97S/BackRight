@@ -1,0 +1,36 @@
+import { useState } from "react";
+
+import PostureWarningSummary from "../../../components/common/PostureWarningSummary/PostureWarningSummary";
+import DailyCalendar from "../../../components/common/Calendar/DailyCalendar";
+import DailyStatistic from "../../../components/DailyStatistic/DailyStatistic";
+import SessionLogList from "../../../components/SessionLogList/SessionLogList";
+
+import DAILY_MOCK_DATA from "./dailyMockData";
+
+import * as S from "./DailyReportPageStyle";
+
+const { sessions, sessionStat } = DAILY_MOCK_DATA;
+
+const DailyReportPage = () => {
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
+  const handleDateSelect = (date: Date) => {
+    setSelectedDate(date);
+  };
+
+  return (
+    <S.DailyReportPageContainer>
+      <PostureWarningSummary
+        detectionCountStat={sessionStat.detectionCountStat}
+      />
+      <DailyCalendar
+        selectedDate={selectedDate}
+        onDateChange={handleDateSelect}
+      />
+      <DailyStatistic />
+      <SessionLogList sessions={sessions} />
+    </S.DailyReportPageContainer>
+  );
+};
+
+export default DailyReportPage;

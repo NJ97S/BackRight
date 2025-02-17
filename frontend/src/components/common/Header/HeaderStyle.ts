@@ -1,8 +1,6 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-import mockProfileImg from "../../../assets/images/mock-profile.jpg";
-
 export const HeaderContainer = styled.div`
   z-index: 50;
   position: relative;
@@ -42,12 +40,8 @@ export const SideContainer = styled.div`
   gap: 2rem;
 `;
 
-export const ProfileImage = styled.div`
+export const ProfileImage = styled.img`
   width: 2rem;
   height: 2rem;
   border-radius: 999px;
-  background-image: url(${mockProfileImg});
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
 `;

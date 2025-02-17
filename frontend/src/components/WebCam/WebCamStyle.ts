@@ -50,12 +50,17 @@ export const RecordingStartContainer = styled.div.withConfig({
   visibility: ${({ isStreaming }) => (isStreaming ? "hidden" : "visible")};
 `;
 
-export const RecordingStartText = styled.span`
-  font-size: 0.875rem;
-  font-weight: 600;
+export const GuideButton = styled.button`
+  width: 16rem;
+  border-radius: 12px;
+  padding: 1rem 2rem;
+  background-color: var(--white);
+  color: var(--mint);
+  font-weight: 700;
 `;
 
 export const RecordingStartButton = styled.button`
+  width: 16rem;
   border-radius: 12px;
   padding: 1rem 2rem;
   background-color: var(--mint);

@@ -26,3 +26,13 @@ export const convertISOToTimeRangeString = (
 
   return `${startTime} ~ ${endTime}`;
 };
+
+export const convertDateToString = (date: Date): string =>
+  date
+    .toLocaleDateString("ko-KR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    })
+    .replace(/\. /g, "-")
+    .replace(/\./g, "");

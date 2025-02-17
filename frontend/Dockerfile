@@ -1,9 +1,14 @@
 FROM node:18-alpine AS builder
-WORKDIR /app
 
-# 빌드 모드를 선택할 ARG 추가 (default: production)
-ARG BUILD_MODE=production
-ENV BUILD_MODE=$BUILD_MODE
+# Build arguments
+ARG VITE_API_BASE_URL
+ARG VITE_WEBSOCKET_URL
+
+# 환경 변수 설정
+ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
+ENV VITE_WEBSOCKET_URL=${VITE_WEBSOCKET_URL}
+
+WORKDIR /app
 
 # 패키지 매니저 설치
 COPY package.json pnpm-lock.yaml ./
@@ -15,7 +20,7 @@ RUN pnpm install --frozen-lockfile --production=false
 # 소스 복사 후 빌드 실행
 COPY . .
 
-RUN if [ "$BUILD_MODE" = "development" ]; then pnpm run build:dev-web; else pnpm run build:web; fi
+RUN pnpm run build:web
 
 # Nginx 컨테이너에서 사용하기 위해 빌드된 파일을 export
 FROM nginx:alpine AS frontend

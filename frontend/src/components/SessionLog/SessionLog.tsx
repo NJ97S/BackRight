@@ -1,121 +1,25 @@
-import { useState, useCallback } from "react";
-import type { LocalSession, LocalWarning } from "../../types/reportType";
-import SESSION_DATA from "../../mocks/sessionMocks";
-import {
-  convertISOToTimeString,
-  convertISOToTimeRangeString,
-} from "../../utils/timeFormatUtils";
-import checkIcon from "../../assets/icons/check.svg";
-import alertIcon from "../../assets/icons/alert.svg";
+import { convertISOToTimeRangeString } from "../../utils/timeFormatUtils";
+
+import { SessionType } from "../../types/reportType";
+
 import * as S from "./SessionLogStyle";
 
-interface SessionItemProps {
-  session: LocalSession;
-  onSelect: (session: LocalSession) => void;
+interface SessionLogProps {
+  session: SessionType;
 }
 
-const SessionItem = ({ session, onSelect }: SessionItemProps) => (
-  <S.SessionItem onClick={() => onSelect(session)}>
-    <S.TimelineDot />
-    <S.SessionContent>
-      <S.SessionHeader>
-        <S.SessionTime>
-          {convertISOToTimeRangeString(session.startTime, session.endTime)}
-        </S.SessionTime>
-        <S.StatusBadge status={session.status}>
-          <S.Icon
-            src={session.status === "정상 종료" ? checkIcon : alertIcon}
-            alt={"종료 정상 여부"}
-          />
-          <span>{session.status}</span>
-        </S.StatusBadge>
-      </S.SessionHeader>
-      <S.WarningCount>경고 {session.warningCount}회</S.WarningCount>
-    </S.SessionContent>
-  </S.SessionItem>
+const SessionLog = ({ session }: SessionLogProps) => (
+  <S.SessionLogContainer>
+    <S.TimeCircle />
+    <S.SessionDetail>
+      <S.SessionTime>
+        {convertISOToTimeRangeString(session.startedAt, session.endedAt)}
+      </S.SessionTime>
+      <S.AlertCount>
+        경고 {session.sessionStat.detectionCountStat.totalDetection}회
+      </S.AlertCount>
+    </S.SessionDetail>
+  </S.SessionLogContainer>
 );
 
-interface WarningItemProps {
-  warning: LocalWarning;
-  onSelect: (warning: LocalWarning) => void;
-}
-
-const WarningItem = ({ warning, onSelect }: WarningItemProps) => (
-  <S.WarningItem onClick={() => onSelect(warning)}>
-    <S.WarningTime>{convertISOToTimeString(warning.timestamp)}</S.WarningTime>
-    <S.WarningDescription>{warning.description}</S.WarningDescription>
-  </S.WarningItem>
-);
-
-interface VideoSectionProps {
-  selectedWarning: LocalWarning | null;
-}
-
-const VideoSection = ({ selectedWarning }: VideoSectionProps) => (
-  <S.VideoSection>
-    {selectedWarning ? (
-      <div>
-        Warning video at {convertISOToTimeString(selectedWarning.timestamp)}
-      </div>
-    ) : (
-      <div>Select a warning to view the video</div>
-    )}
-  </S.VideoSection>
-);
-
-const SessionLogSection = () => {
-  const [selectedSession, setSelectedSession] = useState<LocalSession | null>(
-    null
-  );
-  const [selectedWarning, setSelectedWarning] = useState<LocalWarning | null>(
-    null
-  );
-
-  const handleCloseModal = useCallback(() => {
-    setSelectedSession(null);
-    setSelectedWarning(null);
-  }, []);
-
-  return (
-    <S.Container>
-      <S.Title>세션 로그</S.Title>
-      <S.SessionList>
-        <S.TimelineWrapper sessionCount={SESSION_DATA.length}>
-          {SESSION_DATA.map((session) => (
-            <SessionItem
-              key={session.id}
-              session={session}
-              onSelect={setSelectedSession}
-            />
-          ))}
-        </S.TimelineWrapper>
-      </S.SessionList>
-
-      {selectedSession && (
-        <S.Modal>
-          <S.ModalOverlay onClick={handleCloseModal} />
-          <S.ModalContent>
-            <S.CloseButton onClick={handleCloseModal}>&times;</S.CloseButton>
-            <S.ModalBody>
-              <VideoSection selectedWarning={selectedWarning} />
-              <S.WarningSection>
-                <S.WarningTitle>Warnings</S.WarningTitle>
-                <S.WarningList>
-                  {selectedSession.warnings.map((warning) => (
-                    <WarningItem
-                      key={warning.id}
-                      warning={warning}
-                      onSelect={setSelectedWarning}
-                    />
-                  ))}
-                </S.WarningList>
-              </S.WarningSection>
-            </S.ModalBody>
-          </S.ModalContent>
-        </S.Modal>
-      )}
-    </S.Container>
-  );
-};
-
-export default SessionLogSection;
+export default SessionLog;

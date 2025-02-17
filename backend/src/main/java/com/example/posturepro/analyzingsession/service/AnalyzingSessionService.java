@@ -5,7 +5,7 @@ import com.example.posturepro.analyzingsession.entity.AnalyzingSession;
 public interface AnalyzingSessionService {
 	AnalyzingSession getSessionById(long sessionId);
 
-	AnalyzingSession createSession();
+	AnalyzingSession createSession(String providerId);
 
-	AnalyzingSession updateSessionEndAt();
+	void endSession(AnalyzingSession session);
 }

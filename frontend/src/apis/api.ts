@@ -11,12 +11,12 @@ export const postUserInfo = async (userInfo: SignUpInfoType) => {
   }
 };
 
-export const postLogout = async () => {
+export const getUserInfo = async () => {
   try {
-    const resposne = await instance.post("/auth/logout");
+    const response = await instance.get("/members/me");
 
-    return resposne.data;
+    return response.data;
   } catch (error) {
-    throw new Error("로그아웃 실패");
+    throw new Error("유저정보 로드 실패");
   }
 };
