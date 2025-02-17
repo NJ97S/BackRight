@@ -1,21 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import useMeasurementStore from "../../store/useMeasurementStore";
 import PostureAlertButton from "../PostureAlertButton/PostureAlertButton";
 import PostureAlertList from "../PostureAlertList/PostureAlertList";
 
-import { ReceivedDataType, SessionAlertType } from "../../types/type";
-
 import * as S from "./PostureAlertStyle";
 
 const PostureAlert = () => {
   const [isAlertListOpened, setIsAlertListOpened] = useState(false);
-  const [newAlertCount, setNewAlertCount] = useState(0);
-  const [sessionAlertList, setSessionAlertList] = useState<SessionAlertType[]>(
-    []
-  );
 
-  const { stream, receivedData } = useMeasurementStore();
+  const isFirstRendering = useRef(true);
+
+  const { stream, newAlertCount, setNewAlertCount } = useMeasurementStore();
 
   const openAlertList = () => {
     setIsAlertListOpened(true);
@@ -25,43 +21,20 @@ const PostureAlert = () => {
     setIsAlertListOpened(false);
   };
 
-  const addSessionAlert = (data: ReceivedDataType) => {
-    const { startedAt, problemPart, detectionId, videoPreSignedUrl } = data;
-
-    if (!startedAt || !videoPreSignedUrl) return;
-
-    const newAlert: SessionAlertType = {
-      startedAt,
-      problemPart,
-      detectionId,
-    };
-
-    setSessionAlertList((prev) => [newAlert, ...prev]);
-
-    setNewAlertCount((prev) => prev + 1);
-  };
-
   useEffect(() => {
-    if (!stream) setSessionAlertList([]);
-  }, [stream]);
+    if (isFirstRendering.current) {
+      isFirstRendering.current = false;
 
-  useEffect(() => {
-    if (!receivedData) return;
+      return;
+    }
 
-    addSessionAlert(receivedData);
-  }, [receivedData]);
-
-  useEffect(() => {
     if (!isAlertListOpened) setNewAlertCount(0);
   }, [isAlertListOpened]);
 
   return (
     <S.PostureAlert isStreaming={stream !== null}>
       {isAlertListOpened ? (
-        <PostureAlertList
-          onClick={closeAlertList}
-          sessionAlertList={sessionAlertList}
-        />
+        <PostureAlertList onClick={closeAlertList} />
       ) : (
         <PostureAlertButton
           onClick={openAlertList}

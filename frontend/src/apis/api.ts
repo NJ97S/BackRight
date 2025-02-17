@@ -30,3 +30,13 @@ export const postRefreshToken = async () => {
     throw new Error("Access token 재발급 실패");
   }
 };
+
+export const getDetectionVideo = async (detectionId: number) => {
+  try {
+    const response = await instance.get(`/detections/${detectionId}/video`);
+
+    return response.data;
+  } catch (error) {
+    throw new Error("비디오 불러오기 실패");
+  }
+};
