@@ -8,7 +8,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
 @Component
@@ -33,12 +35,12 @@ public class S3Component {
 		if (videoFileName != null && !videoFileName.isEmpty()) {
 			String videoKey = "uploads/" + providerId + "/videos/" + videoFileName + ".webm";
 			URL videoPreSignedUrl = presigner.presignPutObject(PutObjectPresignRequest.builder()
-					.signatureDuration(Duration.ofMinutes(10))
-					.putObjectRequest(req -> req.bucket(videoBucket).key(videoKey).contentType("video/webm"))
-					.build()).url();
+				.signatureDuration(Duration.ofMinutes(10))
+				.putObjectRequest(req -> req.bucket(videoBucket).key(videoKey).contentType("video/webm"))
+				.build()).url();
 
 			urls.put("videoPreSignedUrl", videoPreSignedUrl.toString());
-			urls.put("videoKey", videoKey);
+			urls.put("videoUrl", videoKey);
 		}
 
 		if (profileImgFileName != null && !profileImgFileName.isEmpty()) {
@@ -64,5 +66,17 @@ public class S3Component {
 			.build()).url();
 
 		return profileImgPreSignedUrl.toString();
+	}
+
+	public String generatePreSignedGetUrl(String videoUrl) {
+		URL preSignedUrl = presigner.presignGetObject(GetObjectPresignRequest.builder()
+			.signatureDuration(Duration.ofMinutes(10))
+			.getObjectRequest(GetObjectRequest.builder()
+				.bucket(videoBucket)
+				.key(videoUrl)
+				.build())
+			.build()).url();
+
+		return preSignedUrl.toString();
 	}
 }
