@@ -16,6 +16,10 @@ import com.example.posturepro.analyzingsession.dto.AnalyzingSessionDto;
 import com.example.posturepro.analyzingsession.dto.AnalyzingSessionStatDto;
 import com.example.posturepro.analyzingsession.entity.AnalyzingSession;
 import com.example.posturepro.analyzingsession.repository.AnalyzingSessionRepository;
+import com.example.posturepro.detection.entity.Detection;
+import com.example.posturepro.detection.entity.DetectionDto;
+import com.example.posturepro.detection.entity.DetectionStatAggregator;
+import com.example.posturepro.detection.entity.DetectionStatDto;
 import com.example.posturepro.domain.member.Member;
 import com.example.posturepro.domain.member.service.MemberService;
 import com.example.posturepro.exception.EntityNotFoundException;
@@ -54,11 +58,6 @@ public class AnalyzingSessionServiceImpl implements AnalyzingSessionService {
 	}
 
 	@Override
-	public AnalyzingSessionStatDto calculateSessionData(AnalyzingSession session) {
-		return new AnalyzingSessionStatDto(session);
-	}
-
-	@Override
 	@Transactional
 	public void endSession(AnalyzingSession session) {
 		session = getSessionById(session.getId());
@@ -85,24 +84,32 @@ public class AnalyzingSessionServiceImpl implements AnalyzingSessionService {
 		List<AnalyzingSession> sessionList = analyzingSessionRepository.findAllByMemberAndDate(memberId, date);
 		List<AnalyzingSessionDto> sessionDtoList = new ArrayList<>();
 		for (AnalyzingSession session : sessionList) {
-			sessionDtoList.add(new AnalyzingSessionDto(session));
+			sessionDtoList.add(analyzingSessionToAnalyzingSessionDto(session));
 		}
 		return sessionDtoList;
 	}
 
-	// @Override
-	// public AnalyzingSessionStatDto[] getSessionByWeekStart(Long memberId, Instant weekStart) {
-	// 	AnalyzingSessionStatDto[] weeklySessionStatDto = new AnalyzingSessionStatDto[7];
-	// 	List<AnalyzingSessionStatDto> sessionStatDtoList = new ArrayList<>();
-	// 	for (int i = 0; i < 7; i++) {
-	// 		sessionStatDtoList.clear();
-	// 		List<AnalyzingSession> sessionList = analyzingSessionRepository.findAllByMemberAndDate(memberId,
-	// 			weekStart.plus(i, ChronoUnit.DAYS));
-	// 		for (AnalyzingSession session : sessionList) {
-	// 			sessionStatDtoList.add(new AnalyzingSessionStatDto(session));
-	// 		}
-	// 		weeklySessionStatDto[i] = new AnalyzingSessionStatDto(sessionStatDtoList, true);
-	// 	}
-	// 	return weeklySessionStatDto;
-	// }
+	@Override
+	public AnalyzingSessionDto analyzingSessionToAnalyzingSessionDto(AnalyzingSession session) {
+		long sessionDuration = session.getSessionDuration();
+		DetectionStatAggregator detectionStatAggregator = new DetectionStatAggregator();
+		List<DetectionDto> detectionDtoList = new ArrayList<>();
+
+		for (Detection detection : session.getDetections()) {
+			detectionStatAggregator.addDetectionStat(detection);
+			detectionDtoList.add(DetectionDto.fromDetection(detection));
+		}
+
+		DetectionStatDto detectionStatDto = new DetectionStatDto(detectionStatAggregator.getTotalDetection(),
+			detectionStatAggregator.getCounts());
+
+		long properPoseDuration = sessionDuration - detectionStatAggregator.getDetectionDuration();
+		int averagePoseDuration = (int)(((double)properPoseDuration / sessionDuration) * 60);
+		AnalyzingSessionStatDto analyzingSessionStatDto = new AnalyzingSessionStatDto(sessionDuration,
+			properPoseDuration, averagePoseDuration);
+
+		return new AnalyzingSessionDto(session.getStartedAt(), session.getEndedAt(),
+			detectionDtoList, detectionStatDto, analyzingSessionStatDto);
+
+	}
 }

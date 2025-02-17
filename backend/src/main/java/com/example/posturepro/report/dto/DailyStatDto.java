@@ -1,6 +1,7 @@
 package com.example.posturepro.report.dto;
 
-import com.example.posturepro.detection.entity.DetectionCountStatDto;
+import com.example.posturepro.detection.entity.DetectionStatAggregator;
+import com.example.posturepro.detection.entity.DetectionStatDto;
 import com.example.posturepro.report.entity.DailyStat;
 
 import lombok.Getter;
@@ -12,13 +13,15 @@ public class DailyStatDto {
 	private long totalDuration;
 	private int averagePoseDuration;
 	private long properPoseDuration;
-	private DetectionCountStatDto detectionCountStat;
+	private DetectionStatDto detectionCountStat;
 
 	private DailyStatDto(DailyStat dailyStat) {
 		this.totalDuration = dailyStat.getTotalDuration();
 		this.averagePoseDuration = dailyStat.getAveragePoseDuration();
 		this.properPoseDuration = dailyStat.getProperPoseDuration();
-		this.detectionCountStat = new DetectionCountStatDto(dailyStat);
+		DetectionStatAggregator detectionStatAggregator = new DetectionStatAggregator(dailyStat);
+		this.detectionCountStat = new DetectionStatDto(detectionStatAggregator.getTotalDetection(),
+			detectionStatAggregator.getCounts());
 	}
 
 	public static DailyStatDto from(DailyStat dailyStat) {
