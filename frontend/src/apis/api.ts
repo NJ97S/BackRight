@@ -1,5 +1,5 @@
 import { SignUpInfoType } from "../types/type";
-import instance from "./instance";
+import { instance, refreshTokenInstance } from "./instance";
 
 export const postUserInfo = async (userInfo: SignUpInfoType) => {
   try {
@@ -18,5 +18,15 @@ export const getUserInfo = async () => {
     return response.data;
   } catch (error) {
     throw new Error("유저정보 로드 실패");
+  }
+};
+
+export const postRefreshToken = async () => {
+  try {
+    const response = await refreshTokenInstance.post("/auth/refresh-token");
+
+    return response.data;
+  } catch (error) {
+    throw new Error("Access token 재발급 실패");
   }
 };
