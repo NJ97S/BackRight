@@ -13,5 +13,5 @@ public interface DetectionService {
 
 	void endDetection(long detectionId);
 
-	boolean updateVideoUrl(Long detectionId, String videoUrl);
+	String getPreSignedVideoUrl(long detectionId);
 }

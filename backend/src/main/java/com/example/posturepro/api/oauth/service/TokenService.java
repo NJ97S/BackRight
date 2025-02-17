@@ -32,4 +32,6 @@ public class TokenService {
 	public boolean validateTempToken(String token) {
 		return jwtUtil.validateToken(token);
 	}
+
+	public long getRemainingTime(String token) {return jwtUtil.getRemainingExpirationTime(token);}
 }

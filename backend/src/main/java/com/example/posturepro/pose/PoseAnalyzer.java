@@ -85,35 +85,33 @@ public class PoseAnalyzer {
 			response.setPoseCollapsed(true);
 
 			if (detectionId == 0) {
-				Detection detection = createDetection(problemStatus);
+				Map<String, String> s3VideoData = fetchPreSignedVideoUrl();
+				Detection detection = createDetection(problemStatus, s3VideoData.get("videoUrl"));
 
 				detectionId = detection.getId();
 
 				response.setDetectionId(detection.getId());
 				response.setStartedAt(detection.getStartedAt());
-				String videoUrl = fetchPreSignedVideoUrl();
-				response.setVideoPreSignedUrl(videoUrl);
+				response.setVideoPreSignedUrl(s3VideoData.get("videoPreSignedUrl"));
 			}
 		}
 
 		return response.JSONString();
 	}
 
-	private Detection createDetection(PartProblemStatus problemStatus) {
-		CreateDetectionDto createDetectionDto = new CreateDetectionDto();
-		createDetectionDto.setStartedAt(Instant.now());
-		createDetectionDto.setProblemParts(problemStatus);
-		createDetectionDto.setSession(session);
-		return detectionService.createDetection(createDetectionDto);
+	private Detection createDetection(PartProblemStatus problemStatus, String videoUrl) {
+		CreateDetectionDto detectionDto = new CreateDetectionDto();
+		detectionDto.setVideoUrl(videoUrl);
+		detectionDto.setStartedAt(Instant.now());
+		detectionDto.setProblemParts(problemStatus);
+		detectionDto.setSession(session);
+		return detectionService.createDetection(detectionDto);
 	}
 
-	private String fetchPreSignedVideoUrl() {
+	private Map<String,String> fetchPreSignedVideoUrl() {
 		String providerId = this.providerId;
 		String videoFileName = "detection";
-		Map<String, String> preSignedUrls = s3Component.generatePreSignedUrls(providerId, videoFileName, null);
-		String videoPreSignedUrl = preSignedUrls.get("videoPreSignedUrl");
-		logger.info("✅ Video Pre-Signed URL: {}", videoPreSignedUrl);
-		return videoPreSignedUrl;
+		return s3Component.generatePreSignedUrls(providerId, videoFileName, null);
 	}
 
 	// JSON 형식의 문자열을 파싱하여 PoseNode 객체 배열로 변환

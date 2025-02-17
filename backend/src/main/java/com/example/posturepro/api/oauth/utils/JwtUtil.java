@@ -79,4 +79,19 @@ public class JwtUtil {
 			return false;
 		}
 	}
+
+	public long getRemainingExpirationTime(String token) {
+		try {
+			Claims claims = parseToken(token);
+			long expirationTime = claims.getExpiration().getTime(); // 처음 설정된 만료 시간
+			long currentTime = System.currentTimeMillis(); // 현재 시간
+			long remainingTime = expirationTime - currentTime; // 현재 시점에서 남은 시간 계산
+
+			return (remainingTime > 0) ? remainingTime : 0; // 만료되었으면 0 반환
+		} catch (ExpiredJwtException e) {
+			logger.warn("Token is already expired: {}", e.getMessage());
+			return 0; // 만료된 토큰이면 0 반환 (블랙리스트 추가 X)
+		}
+	}
+
 }

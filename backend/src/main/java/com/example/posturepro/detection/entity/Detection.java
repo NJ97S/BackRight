@@ -34,6 +34,7 @@ public class Detection {
 	private Instant endedAt;
 
 	@Setter
+	@Getter
 	@Column(name = "video_url", columnDefinition = "TEXT")
 	private String videoUrl;
 
@@ -50,17 +51,19 @@ public class Detection {
 	private boolean backDetected;
 
 	// 외래키 관계 설정
+	@Getter
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "analyzing_session_id", nullable = false)
 	private AnalyzingSession session;
 
-	public Detection(CreateDetectionDto createDetectionDto) {
-		this.startedAt = createDetectionDto.getStartedAt();
-		this.session = createDetectionDto.getSession();
-		this.neckDetected = createDetectionDto.isNeckDetected();
-		this.leftShoulderDetected = createDetectionDto.isLeftShoulderDetected();
-		this.rightShoulderDetected = createDetectionDto.isRightShoulderDetected();
-		this.backDetected = createDetectionDto.isBackDetected();
+	public Detection(CreateDetectionDto detectionDto) {
+		this.startedAt = detectionDto.getStartedAt();
+		this.session = detectionDto.getSession();
+		this.neckDetected = detectionDto.isNeckDetected();
+		this.leftShoulderDetected = detectionDto.isLeftShoulderDetected();
+		this.rightShoulderDetected = detectionDto.isRightShoulderDetected();
+		this.backDetected = detectionDto.isBackDetected();
+		this.videoUrl = detectionDto.getVideoUrl();
 	}
 
 }

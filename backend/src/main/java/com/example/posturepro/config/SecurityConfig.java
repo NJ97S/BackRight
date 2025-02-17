@@ -21,18 +21,21 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.example.posturepro.api.oauth.filter.JwtAuthenticationFilter;
 import com.example.posturepro.api.oauth.handler.CustomAuthenticationSuccessHandler;
 import com.example.posturepro.api.oauth.service.TokenService;
+import com.example.posturepro.api.oauth.service.TokenBlacklistService;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 	private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
 	private final TokenService tokenService;
+	private final TokenBlacklistService blacklistService;
 
 	@Autowired
 	public SecurityConfig(CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler,
-		TokenService tokenService) {
+		TokenService tokenService, TokenBlacklistService blacklistService) {
 		this.customAuthenticationSuccessHandler = customAuthenticationSuccessHandler;
 		this.tokenService = tokenService;
+		this.blacklistService = blacklistService;
 	}
 
 	@Bean
@@ -57,7 +60,7 @@ public class SecurityConfig {
 				response.sendError(HttpStatus.UNAUTHORIZED.value(), "인증에 실패하였습니다.");
 			}))
 
-			.addFilterBefore(new JwtAuthenticationFilter(tokenService), OAuth2LoginAuthenticationFilter.class)
+			.addFilterBefore(new JwtAuthenticationFilter(tokenService, blacklistService), OAuth2LoginAuthenticationFilter.class)
 			.headers(headers -> headers
 					.contentSecurityPolicy(csp -> csp
 						.policyDirectives("default-src 'self'; script-src 'self'; style-src 'self'")
