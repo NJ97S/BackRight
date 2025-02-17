@@ -5,6 +5,7 @@ import com.example.posturepro.api.oauth.utils.CookieUtil;
 import com.example.posturepro.domain.member.Member;
 import com.example.posturepro.domain.member.service.MemberService;
 import com.example.posturepro.api.oauth.service.TokenService;
+import com.example.posturepro.api.oauth.service.TokenBlacklistService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,11 +26,13 @@ public class OAuth2Controller {
 
 	private final MemberService memberService;
 	private final TokenService tokenService;
+	private final TokenBlacklistService blacklistService;
 	private static final Logger logger = LoggerFactory.getLogger(OAuth2Controller.class);
 
-	public OAuth2Controller(MemberService memberService, TokenService tokenService) {
+	public OAuth2Controller(MemberService memberService, TokenService tokenService, TokenBlacklistService blacklistService) {
 		this.memberService = memberService;
 		this.tokenService = tokenService;
+		this.blacklistService = blacklistService;
 	}
 
 	@PostMapping("/refresh-token")
@@ -67,5 +70,20 @@ public class OAuth2Controller {
 		response.addCookie(refreshCookie);
 
 		return ResponseEntity.ok(new RefreshTokenResponse("Token refreshed", newAccessToken, newRefreshToken));
+	}
+
+	@PostMapping("/logout")
+	public ResponseEntity<String> logout(@CookieValue(name = "refresh-token", required = false) String refreshToken,
+		HttpServletResponse response) {
+		if (refreshToken != null) {
+			long remainingTime = tokenService.getRemainingTime(refreshToken); // 현재 시점에서 남은 만료 시간 가져오기
+
+			blacklistService.addToBlacklist(refreshToken, remainingTime);
+
+			// 쿠키 삭제 (로그아웃 처리)
+			response.addCookie(CookieUtil.deleteCookie("access-token", true, "/", "Strict"));
+			response.addCookie(CookieUtil.deleteCookie("refresh-token", true, "/", "Strict"));
+		}
+		return ResponseEntity.ok("Logout successful");
 	}
 }
