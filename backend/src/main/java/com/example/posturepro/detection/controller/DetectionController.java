@@ -22,7 +22,7 @@ public class DetectionController {
 	}
 
 	@GetMapping("/{detectionId}/video")
-	public ResponseEntity<Map<String, String>> getPreSignedVideoUrl(@PathVariable Long detectionId) {
+	public ResponseEntity<Map<String, String>> generatePreSignedVideoUrl(@PathVariable Long detectionId) {
 		try {
 			String preSignedUrl = detectionService.getPreSignedVideoUrl(detectionId);
 			return ResponseEntity.ok(Map.of("preSignedUrl", preSignedUrl));
