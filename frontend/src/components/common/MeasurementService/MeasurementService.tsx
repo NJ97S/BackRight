@@ -2,7 +2,11 @@
 
 import { useEffect, useRef } from "react";
 
-import { FilesetResolver, Landmark, PoseLandmarker } from "@mediapipe/tasks-vision";
+import {
+  FilesetResolver,
+  Landmark,
+  PoseLandmarker,
+} from "@mediapipe/tasks-vision";
 
 import useMeasurementStore from "../../../store/useMeasurementStore";
 import useWebRTC from "../../../hooks/useWebRTC";
@@ -21,7 +25,18 @@ const MeasurementService = () => {
   const lastVideoTimeRef = useRef<number>(-1);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const { setStream, setElapsedTime, setLandmarkResult, stream, isMeasuring } = useMeasurementStore();
+  const {
+    setStream,
+    setElapsedTime,
+    setLandmarkResult,
+    addSessionAlert,
+    clearSessionAlerts,
+    setNewAlertCount,
+    stream,
+    isMeasuring,
+    receivedData,
+    newAlertCount,
+  } = useMeasurementStore();
   const { startConnection, sendMessage, closeConnection } = useWebRTC({
     serverUrl: import.meta.env.VITE_WEBSOCKET_URL,
   });
@@ -88,7 +103,11 @@ const MeasurementService = () => {
 
     if (!video || !landmarker) return;
 
-    if (video.currentTime === lastVideoTimeRef.current || video.videoWidth === 0 || video.videoHeight === 0) {
+    if (
+      video.currentTime === lastVideoTimeRef.current ||
+      video.videoWidth === 0 ||
+      video.videoHeight === 0
+    ) {
       animationFrameRef.current = requestAnimationFrame(detectPose);
 
       return;
@@ -107,7 +126,7 @@ const MeasurementService = () => {
   };
 
   const startMeasurementProcess = async () => {
-    await startConnection(); // WebRTC 연결
+    await startConnection();
 
     await setupCamera();
     await loadPoseLandmarker();
@@ -138,7 +157,7 @@ const MeasurementService = () => {
 
     stopRecording();
 
-    closeConnection(); // WebRTC 연결 종료
+    closeConnection();
 
     streamRef.current.getTracks().forEach((track) => track.stop());
     setStream(null);
@@ -153,6 +172,8 @@ const MeasurementService = () => {
 
     landmarkerRef.current = null;
     setLandmarkResult(null);
+
+    clearSessionAlerts();
   };
 
   useEffect(() => {
@@ -170,6 +191,14 @@ const MeasurementService = () => {
 
     detectPose();
   }, [landmarkerRef]);
+
+  useEffect(() => {
+    if (!receivedData || !receivedData.videoPreSignedUrl) return;
+
+    addSessionAlert(receivedData);
+
+    setNewAlertCount(newAlertCount + 1);
+  }, [receivedData]);
 
   return (
     <>
