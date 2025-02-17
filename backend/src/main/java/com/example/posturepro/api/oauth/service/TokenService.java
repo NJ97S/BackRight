@@ -29,6 +29,10 @@ public class TokenService {
 		return jwtUtil.getProviderIdFromToken(token);
 	}
 
+	public String getRegistrationIdFromToken(String token) {
+		return jwtUtil.getRegistrationIdFromToken(token);
+	}
+
 	public boolean validateTempToken(String token) {
 		return jwtUtil.validateToken(token);
 	}

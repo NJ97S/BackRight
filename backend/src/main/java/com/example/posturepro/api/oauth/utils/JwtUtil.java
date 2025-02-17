@@ -70,6 +70,11 @@ public class JwtUtil {
 		return claims.get("providerId", String.class);
 	}
 
+	public String getRegistrationIdFromToken(String token) {
+		Claims claims = parseToken(token);
+		return claims.get("registrationId", String.class);
+	}
+
 	public boolean validateToken(String token) {
 		try {
 			parseToken(token);

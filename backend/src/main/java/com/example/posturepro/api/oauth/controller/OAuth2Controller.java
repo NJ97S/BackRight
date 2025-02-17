@@ -36,12 +36,9 @@ public class OAuth2Controller {
 	}
 
 	@PostMapping("/refresh-token")
-	public ResponseEntity<RefreshTokenResponse> refreshToken(@CookieValue Map<String, String> tokens,
+	public ResponseEntity<RefreshTokenResponse> refreshToken(@CookieValue(name = "refresh-token") String refreshToken,
 		HttpServletResponse response, Authentication authentication) {
-		String refreshToken = tokens.get("refresh-token");
-		OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
-		String registrationId = oauthToken.getAuthorizedClientRegistrationId();
-
+		String registrationId = tokenService.getRegistrationIdFromToken(refreshToken);
 		if (refreshToken == null || refreshToken.isEmpty()) {
 			return ResponseEntity.badRequest().body(new RefreshTokenResponse("Refresh token is missing", null, null));
 		}
