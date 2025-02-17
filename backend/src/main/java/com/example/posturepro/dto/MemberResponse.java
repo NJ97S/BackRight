@@ -18,7 +18,7 @@ public class MemberResponse {
 		String profileImgKey = member.getProfileImgUrl();
 
 		String profileImgUrl = (profileImgKey != null && !profileImgKey.isEmpty())
-			? cloudFrontBaseUrl + "/" + profileImgKey
+			? cloudFrontBaseUrl + "/" + profileImgKey + "?v=" + System.currentTimeMillis()
 			: null;
 
 		return new MemberResponse(
