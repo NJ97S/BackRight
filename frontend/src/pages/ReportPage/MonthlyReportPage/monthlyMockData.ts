@@ -3,7 +3,6 @@ import { MonthlyReportType } from "../../../types/reportType";
 const MONTHLY_MOCK_DATA: MonthlyReportType = {
   detectionCountStat: {
     totalDetection: 1200,
-    detectionDuration: 5400,
     counts: {
       NECK: 300,
       LEFT_SHOULDER: 250,

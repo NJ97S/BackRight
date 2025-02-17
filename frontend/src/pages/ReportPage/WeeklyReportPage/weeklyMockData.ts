@@ -1,7 +1,6 @@
 const WEEKLY_MOCK_DATA = {
   detectionCountStat: {
     totalDetection: 50,
-    detectionDuration: 600,
     counts: {
       NECK: 20,
       LEFT_SHOULDER: 15,
