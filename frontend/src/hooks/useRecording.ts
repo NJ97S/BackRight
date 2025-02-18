@@ -67,6 +67,8 @@ const useRecording = () => {
       const blob = new Blob(recordedChunks.current, { type: "video/webm" });
 
       saveToIndexedDB(blob);
+
+      recordedChunks.current = [];
     };
 
     mediaRecorderRef.current.start();
