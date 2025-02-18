@@ -1,6 +1,20 @@
 import { SignUpInfoType } from "../types/type";
 import { instance, refreshTokenInstance } from "./instance";
 
+export const postSignUpPreSignedImageUrl = async (
+  profileImgFileName: string
+) => {
+  try {
+    const response = await instance.post(
+      `/members/signup/imgpresigned-url?profileImgFileName=${profileImgFileName}`
+    );
+
+    return response.data;
+  } catch (error) {
+    throw new Error("프로필 이미지 업로드 실패");
+  }
+};
+
 export const postUserInfo = async (userInfo: SignUpInfoType) => {
   try {
     const response = await instance.post("/members/signup", userInfo);
