@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.posturepro.report.dto.DailyReportDto;
+import com.example.posturepro.report.dto.MonthlyReportDto;
 import com.example.posturepro.report.dto.WeeklyReportDto;
 import com.example.posturepro.report.service.ReportService;
 
@@ -35,4 +36,13 @@ public class ReportController {
 
 		return ResponseEntity.ok(weeklyReport);
 	}
+
+	@GetMapping("/monthly")
+	public ResponseEntity<MonthlyReportDto> getMonthlyReport(@PathVariable Long memberId, @RequestParam String date) {
+
+		MonthlyReportDto monthlyReport = service.getMonthlyReport(memberId, date);
+
+		return ResponseEntity.ok(monthlyReport);
+	}
+
 }
