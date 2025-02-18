@@ -71,8 +71,8 @@ public class MemberController {
 	// 회원가입에서 이미지를 등록 시 preSignedUrl 생성
 	@PostMapping("/signup/imgpresigned-url")
 	public ResponseEntity<Map<String, String>> generateImgPreSignedUrl(@RequestParam String profileImgFileName,
-		Authentication authentication) {
-		String providerId = authentication.getName();
+		HttpServletRequest request) {
+		String providerId = extractAndValidateTempToken(request);
 
 		Map<String, String> preSignedUrls = s3Component.generatePreSignedUrls(providerId, null, profileImgFileName);
 
