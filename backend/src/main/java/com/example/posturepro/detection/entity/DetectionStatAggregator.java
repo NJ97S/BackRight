@@ -12,8 +12,8 @@ import lombok.Data;
 @Data
 public class DetectionStatAggregator {
 	private int totalDetection;
-	private Map<DetectionType, Integer> counts;
 	private long detectionDuration;
+	private Map<DetectionType, Integer> counts;
 
 	public DetectionStatAggregator() {
 		this.totalDetection = 0;
@@ -39,7 +39,7 @@ public class DetectionStatAggregator {
 				counts.compute(DetectionType.RIGHT_SHOULDER, (k, v) -> v + 1);
 			if (detection.isBackDetected())
 				counts.compute(DetectionType.BACK, (k, v) -> v + 1);
-			detectionDuration += Duration.between(detection.getStartedAt(), detection.getEndedAt()).toMinutes();
+			detectionDuration += Duration.between(detection.getStartedAt(), detection.getEndedAt()).toSeconds();
 		}
 	}
 
@@ -63,6 +63,6 @@ public class DetectionStatAggregator {
 			counts.compute(DetectionType.RIGHT_SHOULDER, (k, v) -> v + 1);
 		if (detection.isBackDetected())
 			counts.compute(DetectionType.BACK, (k, v) -> v + 1);
-		detectionDuration += Duration.between(detection.getStartedAt(), detection.getEndedAt()).toMinutes();
+		detectionDuration += Duration.between(detection.getStartedAt(), detection.getEndedAt()).toSeconds();
 	}
 }
