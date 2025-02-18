@@ -43,9 +43,11 @@ public class ReportService {
 
 	public WeeklyReportDto getWeeklyReport(Long memberId, String weekStart) {
 		Instant weekStartAsInstant = Instant.parse(weekStart);
-		List<DailyStat> dailyStatList = dailyStatRepository.findAllByMemberIdAndTargetDayBetween(memberId,
-			weekStartAsInstant,
-			weekStartAsInstant.plus(7, ChronoUnit.DAYS));
+		List<DailyStat> dailyStatList = dailyStatRepository
+			.findAllByMemberIdAndTargetDayGreaterThanEqualAndTargetDayLessThan(
+				memberId,
+				weekStartAsInstant,
+				weekStartAsInstant.plus(7, ChronoUnit.DAYS));
 
 		DetectionStatAggregator detectionStatAggregator = new DetectionStatAggregator();
 		int[] dailyProperPoseSecondsPerHours = new int[7];
@@ -56,8 +58,7 @@ public class ReportService {
 			dailyProperPoseSecondsPerHours[dayIndex] = dailyStat.getAveragePoseDuration();
 		}
 
-		DetectionStatDto detectionStatDto = new DetectionStatDto(detectionStatAggregator.getTotalDetection(),
-			detectionStatAggregator.getCounts());
+		DetectionStatDto detectionStatDto = detectionStatAggregator.toDto();
 
 		double age_group_percentile = 0.0;
 		double[] age_group_posture_time_distribution = new double[] {0.0, 0.0};
