@@ -62,8 +62,8 @@ public class AnalyzingSessionServiceImpl implements AnalyzingSessionService {
 	public void endSession(AnalyzingSession session) {
 		session = getSessionById(session.getId());
 		session.setEndedAt(Instant.now());
-		analyzingSessionRepository.save(session);
-		renewDailyStat(session);
+		var endedSession = analyzingSessionRepository.save(session);
+		renewDailyStat(endedSession);
 	}
 
 	public void renewDailyStat(AnalyzingSession session) {
