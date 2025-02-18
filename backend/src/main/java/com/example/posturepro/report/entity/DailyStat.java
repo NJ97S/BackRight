@@ -3,7 +3,7 @@ package com.example.posturepro.report.entity;
 import java.time.Instant;
 
 import com.example.posturepro.analyzingsession.entity.AnalyzingSession;
-import com.example.posturepro.detection.entity.DetectionCountStatDto;
+import com.example.posturepro.detection.entity.DetectionStatAggregator;
 import com.example.posturepro.detection.entity.DetectionType;
 import com.example.posturepro.domain.member.Member;
 
@@ -62,14 +62,14 @@ public class DailyStat {
 	private DailyStat(AnalyzingSession session, Instant startOfDay) {
 		this.targetDay = startOfDay;
 		this.totalDuration = session.getSessionDuration();
-		DetectionCountStatDto detectionCountStat = new DetectionCountStatDto(session.getDetections());
-		this.properPoseDuration = totalDuration - detectionCountStat.getDetectionDuration();
+		DetectionStatAggregator detectionStatAggregator = new DetectionStatAggregator(session.getDetections());
+		this.properPoseDuration = totalDuration - detectionStatAggregator.getDetectionDuration();
 		this.averagePoseDuration = (int)(((double)properPoseDuration / totalDuration) * 60);
-		this.totalDetection = detectionCountStat.getTotalDetection();
-		this.neckDetectionCount = detectionCountStat.getCounts().get(DetectionType.NECK);
-		this.leftShoulderDetectionCount = detectionCountStat.getCounts().get(DetectionType.LEFT_SHOULDER);
-		this.rightShoulderDetectionCount = detectionCountStat.getCounts().get(DetectionType.RIGHT_SHOULDER);
-		this.backDetectionCount = detectionCountStat.getCounts().get(DetectionType.BACK);
+		this.totalDetection = detectionStatAggregator.getTotalDetection();
+		this.neckDetectionCount = detectionStatAggregator.getCounts().get(DetectionType.NECK);
+		this.leftShoulderDetectionCount = detectionStatAggregator.getCounts().get(DetectionType.LEFT_SHOULDER);
+		this.rightShoulderDetectionCount = detectionStatAggregator.getCounts().get(DetectionType.RIGHT_SHOULDER);
+		this.backDetectionCount = detectionStatAggregator.getCounts().get(DetectionType.BACK);
 		this.member = session.getMember();
 	}
 
@@ -79,14 +79,14 @@ public class DailyStat {
 
 	public void renew(AnalyzingSession session) {
 		this.totalDuration += session.getSessionDuration();
-		DetectionCountStatDto detectionCountStat = new DetectionCountStatDto(session.getDetections());
-		this.properPoseDuration += totalDuration - detectionCountStat.getDetectionDuration();
+		DetectionStatAggregator detectionStatAggregator = new DetectionStatAggregator(session.getDetections());
+		this.properPoseDuration += totalDuration - detectionStatAggregator.getDetectionDuration();
 		this.averagePoseDuration = (int)(((double)properPoseDuration / totalDuration) * 60);
-		this.totalDetection += detectionCountStat.getTotalDetection();
-		this.neckDetectionCount += detectionCountStat.getCounts().get(DetectionType.NECK);
-		this.leftShoulderDetectionCount += detectionCountStat.getCounts().get(DetectionType.LEFT_SHOULDER);
-		this.rightShoulderDetectionCount += detectionCountStat.getCounts().get(DetectionType.RIGHT_SHOULDER);
-		this.backDetectionCount += detectionCountStat.getCounts().get(DetectionType.BACK);
+		this.totalDetection += detectionStatAggregator.getTotalDetection();
+		this.neckDetectionCount += detectionStatAggregator.getCounts().get(DetectionType.NECK);
+		this.leftShoulderDetectionCount += detectionStatAggregator.getCounts().get(DetectionType.LEFT_SHOULDER);
+		this.rightShoulderDetectionCount += detectionStatAggregator.getCounts().get(DetectionType.RIGHT_SHOULDER);
+		this.backDetectionCount += detectionStatAggregator.getCounts().get(DetectionType.BACK);
 	}
 
 }
