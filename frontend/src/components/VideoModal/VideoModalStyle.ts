@@ -21,6 +21,13 @@ export const Video = styled.video`
   background-color: var(--cream);
 `;
 
+export const Canvas = styled.canvas`
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+`;
+
 export const CloseIcon = styled.img`
   position: absolute;
   top: 0.75rem;
