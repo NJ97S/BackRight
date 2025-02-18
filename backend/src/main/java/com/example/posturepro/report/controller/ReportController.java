@@ -29,7 +29,7 @@ public class ReportController {
 	}
 
 	@GetMapping("/weekly")
-	public ResponseEntity<Object> getWeeklyReport(@PathVariable Long memberId, @RequestParam String date) {
+	public ResponseEntity<WeeklyReportDto> getWeeklyReport(@PathVariable Long memberId, @RequestParam String date) {
 		String dateString = date + "T00:00:00+09:00";
 		WeeklyReportDto weeklyReport = service.getWeeklyReport(memberId, dateString);
 
