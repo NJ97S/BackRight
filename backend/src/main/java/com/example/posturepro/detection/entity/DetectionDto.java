@@ -11,7 +11,6 @@ public class DetectionDto {
 	private Long id;
 	private Instant startedAt;
 	private Instant endedAt;
-	private String videoUrl;
 	private boolean neckDetected;
 	private boolean leftShoulderDetected;
 	private boolean rightShoulderDetected;
@@ -20,7 +19,6 @@ public class DetectionDto {
 	private DetectionDto(Detection detection) {
 		this.id = detection.getId();
 		this.startedAt = detection.getStartedAt();
-		this.videoUrl = detection.getVideoUrl();
 		this.neckDetected = detection.isNeckDetected();
 		this.leftShoulderDetected = detection.isLeftShoulderDetected();
 		this.rightShoulderDetected = detection.isRightShoulderDetected();
