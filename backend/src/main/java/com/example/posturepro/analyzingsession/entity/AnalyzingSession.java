@@ -54,6 +54,6 @@ public class AnalyzingSession {
 	}
 
 	public long getSessionDuration() {
-		return Duration.between(this.getStartedAt(), this.getEndedAt()).toMinutes();
+		return Duration.between(this.getStartedAt(), this.getEndedAt()).toSeconds();
 	}
 }

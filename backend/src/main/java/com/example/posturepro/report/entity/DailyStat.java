@@ -80,7 +80,7 @@ public class DailyStat {
 	public void renew(AnalyzingSession session) {
 		this.totalDuration += session.getSessionDuration();
 		DetectionStatAggregator detectionStatAggregator = new DetectionStatAggregator(session.getDetections());
-		this.properPoseDuration += totalDuration - detectionStatAggregator.getDetectionDuration();
+		this.properPoseDuration += session.getSessionDuration() - detectionStatAggregator.getDetectionDuration();
 		this.averagePoseDuration = (int)(((double)properPoseDuration / totalDuration) * 60);
 		this.totalDetection += detectionStatAggregator.getTotalDetection();
 		this.neckDetectionCount += detectionStatAggregator.getCounts().get(DetectionType.NECK);
