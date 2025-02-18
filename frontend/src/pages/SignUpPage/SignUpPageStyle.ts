@@ -10,26 +10,56 @@ export const SignUpPageContainer = styled.div`
   background-color: var(--navy-100);
 `;
 
+export const ContentContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+
+  width: 100%;
+  max-width: 36rem;
+  max-height: 80vh;
+
+  padding: 2.5rem 2rem;
+  border-radius: 12px;
+  background-color: var(--cream);
+
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
+export const UploadProfileImageButton = styled.label`
+  position: relative;
+  width: 6rem;
+  height: 6rem;
+  border-radius: 999px;
+  cursor: pointer;
+`;
+
+export const ProfileImage = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 999px;
+  border: 2px solid var(--gray-100);
+`;
+
+export const CameraIcon = styled.img`
+  position: absolute;
+  right: -0.3rem;
+  bottom: -0.3rem;
+`;
+
 export const FormContainer = styled.form`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 2rem;
-
   width: 100%;
-  max-width: 36rem;
-  max-height: 80vh;
-
-  padding: 4rem 2rem;
-  border-radius: 12px;
-  background-color: var(--cream);
-
-  overflow-y: scroll;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
 `;
 
 export const SubmitButton = styled.button`
@@ -46,4 +76,8 @@ export const SubmitButton = styled.button`
   &:disabled {
     background-color: var(--gray-200);
   }
+`;
+
+export const HiddenImageInput = styled.input`
+  display: none;
 `;
