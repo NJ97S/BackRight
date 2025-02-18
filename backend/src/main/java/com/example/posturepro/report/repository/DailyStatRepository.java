@@ -16,5 +16,7 @@ public interface DailyStatRepository extends JpaRepository<DailyStat, Long> {
 
 	Optional<DailyStat> findByMemberIdAndTargetDay(Long memberId, Instant targetDay);
 
-	List<DailyStat> findAllByMemberIdAndTargetDayBetween(Long memberID, Instant startDate, Instant endDate);
+	List<DailyStat> findAllByMemberIdAndTargetDayGreaterThanEqualAndTargetDayLessThan(
+		Long memberID, Instant startDate, Instant endDate
+	);
 }

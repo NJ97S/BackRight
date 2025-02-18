@@ -20,8 +20,7 @@ public class DailyStatDto {
 		this.averagePoseDuration = dailyStat.getAveragePoseDuration();
 		this.properPoseDuration = dailyStat.getProperPoseDuration();
 		DetectionStatAggregator detectionStatAggregator = new DetectionStatAggregator(dailyStat);
-		this.detectionCountStat = new DetectionStatDto(detectionStatAggregator.getTotalDetection(),
-			detectionStatAggregator.getCounts());
+		this.detectionCountStat = detectionStatAggregator.toDto();
 	}
 
 	public static DailyStatDto from(DailyStat dailyStat) {

@@ -100,8 +100,7 @@ public class AnalyzingSessionServiceImpl implements AnalyzingSessionService {
 			detectionDtoList.add(DetectionDto.fromDetection(detection));
 		}
 
-		DetectionStatDto detectionStatDto = new DetectionStatDto(detectionStatAggregator.getTotalDetection(),
-			detectionStatAggregator.getCounts());
+		DetectionStatDto detectionStatDto = detectionStatAggregator.toDto();
 
 		long properPoseDuration = sessionDuration - detectionStatAggregator.getDetectionDuration();
 		int averagePoseDuration = (int)(((double)properPoseDuration / sessionDuration) * 60);

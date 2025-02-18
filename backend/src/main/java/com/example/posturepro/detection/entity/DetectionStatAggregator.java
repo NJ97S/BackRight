@@ -73,4 +73,8 @@ public class DetectionStatAggregator {
 		counts.compute(DetectionType.RIGHT_SHOULDER, (k, v) -> v + dailyStat.getRightShoulderDetectionCount());
 		counts.compute(DetectionType.BACK, (k, v) -> v + dailyStat.getBackDetectionCount());
 	}
+
+	public DetectionStatDto toDto() {
+		return new DetectionStatDto(this.totalDetection, this.getCounts());
+	}
 }
