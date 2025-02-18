@@ -1,5 +1,6 @@
 import { SignUpInfoType } from "../types/type";
 import { instance, refreshTokenInstance } from "./instance";
+import { ProfileEditFieldType } from "../pages/ProfilePage/ProfilePage";
 
 export const postSignUpPreSignedImageUrl = async (
   profileImgFileName: string
@@ -32,6 +33,16 @@ export const getUserInfo = async () => {
     return response.data;
   } catch (error) {
     throw new Error("유저정보 로드 실패");
+  }
+};
+
+export const patchUserInfo = async (updateInfo: ProfileEditFieldType) => {
+  try {
+    const response = await instance.patch("/members/update", updateInfo);
+
+    return response.data;
+  } catch (error) {
+    throw new Error("유저정보 수정 실패");
   }
 };
 
