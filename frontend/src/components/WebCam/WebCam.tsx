@@ -14,6 +14,7 @@ import StandardPoseGuide from "../StandardPoseGuide/StandardPoseGuide";
 import VideoModal from "../VideoModal/VideoModal";
 
 import useMeasurementStore from "../../store/useMeasurementStore";
+import useSelectedPostureAlertStore from "../../store/useSelectedPostureAlertStore";
 import formatRunningTime from "../../utils/formatRunningTime";
 import {
   ERROR_CONNECTIONS,
@@ -39,6 +40,7 @@ const WebCam = () => {
     receivedData,
     landmarkResult,
   } = useMeasurementStore();
+  const { selectedDetectionId } = useSelectedPostureAlertStore();
 
   const handleGuideOpenButtonClick = () => {
     setIsGuideOpened(true);
@@ -151,36 +153,44 @@ const WebCam = () => {
           <StandardPoseGuide onClick={handleGuideCloseButtonClick} />
         ) : (
           <>
-            <S.Video ref={videoRef} />
-            <S.Canvas ref={canvasRef} />
+            <S.Blur $isBlur={!!selectedDetectionId}>
+              <S.Video ref={videoRef} />
+              <S.Canvas ref={canvasRef} />
 
-            <S.RecordingStartContainer isStreaming={stream !== null}>
-              <S.GuideButton type="button" onClick={handleGuideOpenButtonClick}>
-                바른 자세 가이드
-              </S.GuideButton>
-              <S.RecordingStartButton type="button" onClick={startMeasurement}>
-                분석 시작
-              </S.RecordingStartButton>
-            </S.RecordingStartContainer>
+              <S.RecordingStartContainer isStreaming={stream !== null}>
+                <S.GuideButton
+                  type="button"
+                  onClick={handleGuideOpenButtonClick}
+                >
+                  바른 자세 가이드
+                </S.GuideButton>
+                <S.RecordingStartButton
+                  type="button"
+                  onClick={startMeasurement}
+                >
+                  분석 시작
+                </S.RecordingStartButton>
+              </S.RecordingStartContainer>
 
-            <S.ElapsedTimeContainer isStreaming={stream !== null}>
-              <S.RecordingIcon src={recordingIcon} alt="녹화중" />
-              {formatRunningTime(elapsedTime)}
-            </S.ElapsedTimeContainer>
+              <S.ElapsedTimeContainer isStreaming={stream !== null}>
+                <S.RecordingIcon src={recordingIcon} alt="녹화중" />
+                {formatRunningTime(elapsedTime)}
+              </S.ElapsedTimeContainer>
 
-            <RealtimeMessage
-              type="setting"
-              isDisplayed={!!receivedData && !receivedData.referenceSet}
-            >
-              초기 자세를 설정중입니다. 바른 자세를 유지해주세요.
-            </RealtimeMessage>
+              <RealtimeMessage
+                type="setting"
+                isDisplayed={!!receivedData && !receivedData.referenceSet}
+              >
+                초기 자세를 설정중입니다. 바른 자세를 유지해주세요.
+              </RealtimeMessage>
 
-            <RealtimeMessage
-              type="alert"
-              isDisplayed={!!receivedData?.poseCollapsed}
-            >
-              자세 경고가 감지되었습니다. 바른 자세를 취해주세요.
-            </RealtimeMessage>
+              <RealtimeMessage
+                type="alert"
+                isDisplayed={!!receivedData?.poseCollapsed}
+              >
+                자세 경고가 감지되었습니다. 바른 자세를 취해주세요.
+              </RealtimeMessage>
+            </S.Blur>
 
             <VideoModal />
 

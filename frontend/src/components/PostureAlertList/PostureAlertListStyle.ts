@@ -12,6 +12,7 @@ export const PostureAlertListContainer = styled.div`
   padding: 1.25rem;
   width: 18rem;
   background: rgba(238, 238, 238, 0.8);
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
 `;
 
 export const Title = styled.div`

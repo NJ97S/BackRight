@@ -1,6 +1,7 @@
 import styled from "styled-components";
 
 export const VideoModalContainer = styled.div<{ $isOpened: boolean }>`
+  z-index: 10;
   position: absolute;
   top: 50%;
   left: 1rem;

@@ -16,6 +16,13 @@ export const VideoContainer = styled.div`
   height: 90%;
 `;
 
+export const Blur = styled.div<{ $isBlur: boolean }>`
+  width: 100%;
+  height: 100%;
+
+  filter: ${({ $isBlur }) => ($isBlur ? "blur(0.4rem)" : "blur(0)")};
+`;
+
 export const Video = styled.video`
   height: 100%;
   aspect-ratio: 1.8;
