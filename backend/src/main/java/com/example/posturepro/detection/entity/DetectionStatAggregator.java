@@ -65,4 +65,12 @@ public class DetectionStatAggregator {
 			counts.compute(DetectionType.BACK, (k, v) -> v + 1);
 		detectionDuration += Duration.between(detection.getStartedAt(), detection.getEndedAt()).toSeconds();
 	}
+
+	public void addDailyStat(DailyStat dailyStat) {
+		this.totalDetection += dailyStat.getTotalDetection();
+		counts.compute(DetectionType.NECK, (k, v) -> v + dailyStat.getNeckDetectionCount());
+		counts.compute(DetectionType.LEFT_SHOULDER, (k, v) -> v + dailyStat.getLeftShoulderDetectionCount());
+		counts.compute(DetectionType.RIGHT_SHOULDER, (k, v) -> v + dailyStat.getRightShoulderDetectionCount());
+		counts.compute(DetectionType.BACK, (k, v) -> v + dailyStat.getBackDetectionCount());
+	}
 }
