@@ -41,7 +41,7 @@ export const BodyPart = styled.div`
   align-items: center;
   gap: 1.25rem;
 
-  padding: 1rem 2rem;
+  padding: 1.5rem 2rem;
   border: 1px solid var(--gray-200);
   border-radius: 12px;
 `;

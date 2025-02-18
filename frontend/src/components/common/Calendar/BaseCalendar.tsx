@@ -30,6 +30,7 @@ const BaseCalendar = ({
         date.toLocaleDateString("en-US", { weekday: "short" }).toUpperCase()
       }
       tileClassName={tileClassName}
+      showFixedNumberOfWeeks={true}
     />
   </S.CalendarContainer>
 );
