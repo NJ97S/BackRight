@@ -34,4 +34,10 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ErrorResponse> handleExpiredJwtException() {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("토큰이 만료되었습니다. 다시 로그인해주세요."));
 	}
+
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<ErrorResponse> handleUnhandledException() {
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+			.body(new ErrorResponse("처리되지 않은 에러입니다. 문의해주세요."));
+	}
 }
