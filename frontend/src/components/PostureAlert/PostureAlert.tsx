@@ -5,6 +5,7 @@ import PostureAlertButton from "../PostureAlertButton/PostureAlertButton";
 import PostureAlertList from "../PostureAlertList/PostureAlertList";
 
 import * as S from "./PostureAlertStyle";
+import useSelectedPostureAlertStore from "../../store/useSelectedPostureAlertStore";
 
 const PostureAlert = () => {
   const [isAlertListOpened, setIsAlertListOpened] = useState(false);
@@ -12,6 +13,7 @@ const PostureAlert = () => {
   const isFirstRendering = useRef(true);
 
   const { stream, newAlertCount, setNewAlertCount } = useMeasurementStore();
+  const { setSelectedDetectionId } = useSelectedPostureAlertStore();
 
   const openAlertList = () => {
     setIsAlertListOpened(true);
@@ -19,6 +21,7 @@ const PostureAlert = () => {
 
   const closeAlertList = () => {
     setIsAlertListOpened(false);
+    setSelectedDetectionId(null);
   };
 
   useEffect(() => {

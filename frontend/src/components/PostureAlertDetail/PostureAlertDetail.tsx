@@ -10,10 +10,12 @@ interface PostureAlertDetailProps {
 }
 
 const PostureAlertDetail = ({ sessionAlert }: PostureAlertDetailProps) => {
-  const { setSelectedDetectionId } = useSelectedPostureAlertStore();
+  const { setSelectedDetectionId, setProblemPart } =
+    useSelectedPostureAlertStore();
 
   const handleAlertClick = () => {
     setSelectedDetectionId(sessionAlert.detectionId);
+    setProblemPart(sessionAlert.problemPart);
   };
 
   return (

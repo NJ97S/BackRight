@@ -1,6 +1,7 @@
 import styled from "styled-components";
 
 export const VideoModalContainer = styled.div<{ $isOpened: boolean }>`
+  z-index: 10;
   position: absolute;
   top: 50%;
   left: 1rem;
@@ -19,6 +20,13 @@ export const Video = styled.video`
   width: 100%;
   height: 100%;
   background-color: var(--cream);
+`;
+
+export const Canvas = styled.canvas`
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
 `;
 
 export const CloseIcon = styled.img`
