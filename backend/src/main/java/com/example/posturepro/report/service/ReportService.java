@@ -78,46 +78,69 @@ public class ReportService {
 
 		ZoneId zoneId = ZoneId.of("Asia/Seoul");
 
-		LocalDate monthStartAsLocalDate = LocalDate.parse(monthStart);
-		LocalDate firstMondayAsLocalDate = monthStartAsLocalDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY));
+		LocalDate monthStartDate = LocalDate.parse(monthStart);
+		Instant monthStartInstant = monthStartDate.atStartOfDay(zoneId).toInstant();
+		Instant nextMonthStartInstant = monthStartDate.plusMonths(1).atStartOfDay(zoneId).toInstant();
 
-		Instant monthStartTime = monthStartAsLocalDate.atStartOfDay(zoneId).toInstant();
-		Instant monthMonday = firstMondayAsLocalDate.atStartOfDay(zoneId).toInstant();
-		Instant nextMonth = monthStartAsLocalDate.plusMonths(1).atStartOfDay(zoneId).toInstant();
+		LocalDate firstMonday = monthStartDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY));
+		Instant currentMondayInstant = firstMonday.atStartOfDay(zoneId).toInstant();
 
-		List<Integer> weeklyProperPoseSecondsPerHours = new ArrayList<>();
 		DetectionStatAggregator detectionStatAggregator = new DetectionStatAggregator();
 
-		List<DailyStat> dailyStatList = dailyStatRepository
-			.findAllByMemberIdAndTargetDayGreaterThanEqualAndTargetDayLessThan(
-				memberId, monthStartTime, nextMonth);
-
-		if (monthStartTime.isBefore(monthMonday)) {
-			weeklyProperPoseSecondsPerHours.add(
-				getWeeklyAveragePoseDurationByDailyStatList(
-					filterByDateRange(dailyStatList, monthStartTime, monthMonday), detectionStatAggregator)
-			);
-		}
-
-		while (monthMonday.isBefore(nextMonth)) {
-			Instant toDateTime = monthMonday.plus(7, ChronoUnit.DAYS).isBefore(nextMonth)
-				? monthMonday.plus(7, ChronoUnit.DAYS)
-				: nextMonth;
-
-			weeklyProperPoseSecondsPerHours.add(
-				getWeeklyAveragePoseDurationByDailyStatList(
-					filterByDateRange(dailyStatList, monthMonday, toDateTime), detectionStatAggregator)
-			);
-			monthMonday = toDateTime;
-		}
+		List<Integer> weeklyProperPoseSecondsPerHours = calculateAllWeeklyAverages(
+			memberId, monthStartInstant, nextMonthStartInstant, currentMondayInstant, detectionStatAggregator
+		);
 
 		DetectionStatDto detectionStatDto = detectionStatAggregator.toDto();
 
-		double age_group_percentile = 0.0;
-		double[] age_group_posture_time_distribution = new double[] {0.0, 0.0};
+		double ageGroupPercentile = 0.0;
+		double[] ageGroupPostureTimeDistribution = new double[] {0.0, 0.0};
 
-		return new MonthlyReportDto(weeklyProperPoseSecondsPerHours, detectionStatDto, age_group_percentile,
-			age_group_posture_time_distribution);
+		return new MonthlyReportDto(weeklyProperPoseSecondsPerHours, detectionStatDto, ageGroupPercentile,
+			ageGroupPostureTimeDistribution);
+	}
+
+	private List<Integer> calculateAllWeeklyAverages(Long memberId, Instant monthStartInstant,
+		Instant nextMonthStartInstant, Instant currentMondayInstant, DetectionStatAggregator aggregator) {
+
+		List<Integer> weeklyProperPoseSecondsPerHours = new ArrayList<>();
+		List<DailyStat> dailyStatList = dailyStatRepository
+			.findAllByMemberIdAndTargetDayGreaterThanEqualAndTargetDayLessThan(
+				memberId, monthStartInstant, nextMonthStartInstant);
+
+		if (monthStartInstant.isBefore(currentMondayInstant)) {
+			weeklyProperPoseSecondsPerHours.add(
+				calculateWeeklyAverage(monthStartInstant, currentMondayInstant, dailyStatList, aggregator));
+		}
+
+		while (currentMondayInstant.isBefore(nextMonthStartInstant)) {
+			Instant nextMondayInstant = currentMondayInstant.plus(7, ChronoUnit.DAYS);
+			if (nextMondayInstant.isAfter(nextMonthStartInstant)) {
+				nextMondayInstant = nextMonthStartInstant;
+			}
+
+			weeklyProperPoseSecondsPerHours.add(
+				calculateWeeklyAverage(currentMondayInstant, nextMondayInstant, dailyStatList, aggregator));
+
+			currentMondayInstant = nextMondayInstant;
+		}
+
+		return weeklyProperPoseSecondsPerHours;
+	}
+
+	private int calculateWeeklyAverage(Instant from, Instant to, List<DailyStat> dailyStatList,
+		DetectionStatAggregator detectionStatAggregator) {
+		List<DailyStat> filteredList = filterByDateRange(dailyStatList, from, to);
+		long totalDuration = 0;
+		long properPoseDuration = 0;
+
+		for (DailyStat dailyStat : filteredList) {
+			detectionStatAggregator.addDailyStat(dailyStat);
+			totalDuration += dailyStat.getTotalDuration();
+			properPoseDuration += dailyStat.getProperPoseDuration();
+		}
+
+		return totalDuration == 0 ? 0 : (int)(((double)properPoseDuration / totalDuration) * 60);
 	}
 
 	private List<DailyStat> filterByDateRange(List<DailyStat> dailyStats, Instant startDate, Instant endDate) {
@@ -125,19 +148,5 @@ public class ReportService {
 			.filter(dailyStat -> !dailyStat.getTargetDay().isBefore(startDate) && dailyStat.getTargetDay()
 				.isBefore(endDate))
 			.collect(Collectors.toList());
-	}
-
-	private int getWeeklyAveragePoseDurationByDailyStatList(List<DailyStat> dailyStatList,
-		DetectionStatAggregator aggregator) {
-		long totalDuration = 0;
-		long properPoseDuration = 0;
-
-		for (DailyStat dailyStat : dailyStatList) {
-			aggregator.addDailyStat(dailyStat);
-			totalDuration += dailyStat.getTotalDuration();
-			properPoseDuration += dailyStat.getProperPoseDuration();
-		}
-
-		return totalDuration == 0 ? 0 : (int)(((double)properPoseDuration / totalDuration) * 60);
 	}
 }
