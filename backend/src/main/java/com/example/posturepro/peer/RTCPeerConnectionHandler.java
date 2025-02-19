@@ -12,10 +12,10 @@ import org.slf4j.Logger;
 
 import com.example.posturepro.peer.observer.CreateDescriptionObserver;
 import com.example.posturepro.peer.observer.SetDescriptionObserver;
-import com.example.posturepro.pose.AbstractResponse;
 import com.example.posturepro.pose.PoseAnalyzer;
 import com.example.posturepro.pose.PoseAnalyzerFactory;
-import com.example.posturepro.pose.ResponseType;
+import com.example.posturepro.pose.response.AbstractResponse;
+import com.example.posturepro.pose.response.ResponseType;
 import com.example.posturepro.signaling.IceCandidateListener;
 
 import dev.onvoid.webrtc.PeerConnectionFactory;
@@ -114,7 +114,7 @@ public class RTCPeerConnectionHandler implements PeerConnectionObserver {
 				// logger.info("Received Text {}",receivedText);
 
 				AbstractResponse response = poseAnalyzer.analyzePoseDataProcess(receivedText);
-				logger.info("Sending Text {}", response.toJSONString());
+				// logger.info("Sending Text {}", response.toJSONString());
 
 				try {
 					sendTextMessage(response.toJSONString());

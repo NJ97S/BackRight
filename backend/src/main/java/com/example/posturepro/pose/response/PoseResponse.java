@@ -1,6 +1,8 @@
-package com.example.posturepro.pose;
+package com.example.posturepro.pose.response;
 
 import java.time.Instant;
+
+import com.example.posturepro.pose.PartProblemStatus;
 
 import lombok.Getter;
 import lombok.Setter;

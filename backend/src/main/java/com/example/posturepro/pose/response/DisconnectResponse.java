@@ -1,4 +1,4 @@
-package com.example.posturepro.pose;
+package com.example.posturepro.pose.response;
 
 import lombok.Getter;
 

@@ -17,6 +17,9 @@ import com.example.posturepro.detection.entity.CreateDetectionDto;
 import com.example.posturepro.detection.entity.Detection;
 import com.example.posturepro.detection.entity.DetectionType;
 import com.example.posturepro.detection.service.DetectionService;
+import com.example.posturepro.pose.response.AbstractResponse;
+import com.example.posturepro.pose.response.DisconnectResponse;
+import com.example.posturepro.pose.response.PoseResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

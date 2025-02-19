@@ -1,4 +1,4 @@
-package com.example.posturepro.pose;
+package com.example.posturepro.pose.response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
