@@ -6,7 +6,11 @@ import logo from "../../assets/images/logo.webp";
 import * as S from "./LandingPageStyle";
 import * as A from "../../animations/landingAnimations";
 
+import { useNavigate } from "react-router-dom";
+import PATH from "../../constants/path";
+
 const LandingPage = () => {
+  const navigate = useNavigate();
   const [lampState, setLampState] = useState<string>(LAMP_STATES[0].src);
   const [clickCount, setClickCount] = useState(0);
   const [showText, setShowText] = useState(false);
@@ -154,6 +158,7 @@ const LandingPage = () => {
               </S.PrimaryButton>
               <S.SecondaryButton
                 as={motion.button}
+                onClick={() => navigate(PATH.SIGN_IN)}
                 whileHover={{
                   scale: 1.05,
                   y: -3,

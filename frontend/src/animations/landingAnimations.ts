@@ -1,8 +1,8 @@
 import { Variants } from "framer-motion";
 
 export const containerVariants: Variants = {
-  initial: { backgroundColor: "#000" },
-  animate: { backgroundColor: "#31363F" },
+  initial: { backgroundColor: "var(--black)" },
+  animate: { backgroundColor: "var(--navy-100)" },
 };
 
 export const lampWrapperVariants: Variants = {
@@ -71,7 +71,7 @@ export const wordVariants = (
         },
     transition: {
       duration: 1.2,
-      delay: !showOnlyBrandName ? wordIndex * 0.2 : 1, // 나타날 때는 순차적으로, 사라질 때는 1초 딜레이
+      delay: !showOnlyBrandName ? wordIndex * 0.2 : 0.5, // 나타날 때는 순차적으로, 사라질 때는 1초 딜레이
       ease: "easeOut",
     },
   };

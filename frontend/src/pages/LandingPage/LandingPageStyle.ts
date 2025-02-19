@@ -11,7 +11,7 @@ export const Container = styled.main`
   align-items: center;
   min-height: 100vh;
   padding: 1rem;
-  background-color: #31363f;
+  background-color: var(--navy-100);
   overflow: hidden;
 `;
 
@@ -35,7 +35,7 @@ export const LampImage = styled.img`
 export const PulsingBorder = styled.div`
   position: absolute;
   inset: -1rem;
-  border: 2px solid #64adac;
+  border: 2px solid var(--mint);
   border-radius: 50%;
   pointer-events: none;
 `;
@@ -71,7 +71,7 @@ export const HeadingLine = styled.div`
 `;
 
 export const Heading = styled.h1`
-  color: #64adac;
+  color: var(--mint);
   font-family: "Pretendard", sans-serif;
   font-size: 4rem;
   will-change: transform;
@@ -83,7 +83,7 @@ export const Heading = styled.h1`
 
 export const WordSpan = styled.span<WordSpanProps>`
   display: inline-block;
-  color: ${({ $accent }) => ($accent ? "#64ADAC" : "white")};
+  color: ${({ $accent }) => ($accent ? "var(--mint)" : "white")};
   font-size: 4rem;
   font-weight: bold;
   transition: all 0.5s ease;
@@ -142,21 +142,21 @@ const ButtonBase = styled.button`
 `;
 
 export const PrimaryButton = styled(ButtonBase)`
-  background-color: #64adac;
+  background-color: var(--mint);
   color: white;
 
   &:hover {
-    background-color: #558e8d;
+    background-color: var(--mint);
   }
 `;
 
 export const SecondaryButton = styled(ButtonBase)`
-  border: 2px solid #64adac;
+  border: 2px solid var(--mint);
   background-color: white;
-  color: #64adac;
+  color: var(--mint);
 
   &:hover {
-    background-color: #f8f8f8;
+    background-color: white;
   }
 `;
 
