@@ -31,6 +31,10 @@ export const ContentContainer = styled.div`
   }
 `;
 
+export const HiddenImageInput = styled.input`
+  display: none;
+`;
+
 export const UploadProfileImageButton = styled.label`
   position: relative;
   width: 6rem;
@@ -76,8 +80,4 @@ export const SubmitButton = styled.button`
   &:disabled {
     background-color: var(--gray-200);
   }
-`;
-
-export const HiddenImageInput = styled.input`
-  display: none;
 `;

@@ -21,7 +21,10 @@ const useAuthStore = create<useAuthStoreType>((set) => ({
         providerId: data.providerId,
         name: data.name,
         nickname: data.nickname,
+        birthDate: data.birthDate,
+        gender: data.gender,
         profileImgUrl: data.profileImgUrl,
+        message: data.message,
       };
 
       set({ user: userInfo, isAuthenticated: true });
