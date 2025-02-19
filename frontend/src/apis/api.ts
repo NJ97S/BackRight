@@ -82,6 +82,16 @@ export const getDailyReport = async (date: string) => {
   }
 };
 
+export const getWeeklyReport = async (date: string) => {
+  try {
+    const response = await instance.get(`/reports/weekly?date=${date}`);
+
+    return response.data;
+  } catch (error) {
+    throw new Error("주간보고서 불러오기 실패");
+  }
+};
+
 export const postLogout = async () => {
   try {
     const response = await instance.post("/auth/logout");

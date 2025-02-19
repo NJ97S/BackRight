@@ -1,13 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import PostureWarningSummary from "../../../components/common/PostureWarningSummary/PostureWarningSummary";
 import WeeklyCalendar from "../../../components/common/Calendar/WeeklyCalendar";
 import AveragePostureTime from "../../../components/common/AveragePostureTime/AveragePostureTime";
+import Loading from "../../../components/common/Loading/Loading";
 
-import WEEKLY_MOCK_DATA from "./weeklyMockData";
+import RankingSummary from "../../../components/common/RankingSummary/RankingSummary";
+import { convertDateToString } from "../../../utils/timeFormatUtils";
+import { getWeeklyReport } from "../../../apis/api";
+import { WeeklyReportType } from "../../../types/reportType";
 
 import * as S from "./WeeklyReportPageStyle";
-import RankingSummary from "../../../components/common/RankingSummary/RankingSummary";
 
 const getMondayOfWeek = (date: Date): Date => {
   const day = date.getDay();
@@ -18,20 +21,37 @@ const getMondayOfWeek = (date: Date): Date => {
   return monday;
 };
 
-const { detectionCountStat, dailyProperPostureMinutesPerHours } =
-  WEEKLY_MOCK_DATA;
-
 const WeeklyReportPage = () => {
   const [selectedDate, setSelectedDate] = useState(getMondayOfWeek(new Date()));
+  const [weeklyReport, setWeeklyReport] = useState<WeeklyReportType | null>(
+    null
+  );
 
   const handleDateSelect = (date: Date) => {
     setSelectedDate(getMondayOfWeek(date));
   };
 
+  const requestWeeklyReport = async (date: Date) => {
+    const formattedDate = convertDateToString(date);
+
+    const reportData = await getWeeklyReport(formattedDate);
+
+    setWeeklyReport(reportData);
+  };
+
+  useEffect(() => {
+    requestWeeklyReport(selectedDate);
+  }, [selectedDate]);
+
+  if (!weeklyReport)
+    return <Loading backgroundColor="cream">Loading...</Loading>;
+
   return (
     <S.WeeklyReportPageContainer>
       <S.FirstRowContainer>
-        <PostureWarningSummary detectionCountStat={detectionCountStat} />
+        <PostureWarningSummary
+          detectionCountStat={weeklyReport.detectionCountStat}
+        />
         <WeeklyCalendar
           selectedDate={selectedDate}
           onDateChange={handleDateSelect}
@@ -40,7 +60,7 @@ const WeeklyReportPage = () => {
 
       <S.SecondeRowContainer>
         <AveragePostureTime
-          data={dailyProperPostureMinutesPerHours}
+          data={weeklyReport.dailyProperPostureMinutesPerHours}
           labels={["월", "화", "수", "목", "금", "토", "일"]}
         />
         <RankingSummary />
