@@ -14,6 +14,8 @@ import com.example.posturepro.peer.observer.CreateDescriptionObserver;
 import com.example.posturepro.peer.observer.SetDescriptionObserver;
 import com.example.posturepro.pose.PoseAnalyzer;
 import com.example.posturepro.pose.PoseAnalyzerFactory;
+import com.example.posturepro.pose.response.AbstractResponse;
+import com.example.posturepro.pose.response.ResponseType;
 import com.example.posturepro.signaling.IceCandidateListener;
 
 import dev.onvoid.webrtc.PeerConnectionFactory;
@@ -111,11 +113,14 @@ public class RTCPeerConnectionHandler implements PeerConnectionObserver {
 				String receivedText = decodeMessage(buffer);
 				// logger.info("Received Text {}",receivedText);
 
-				String sendingText = poseAnalyzer.analyzePoseDataProcess(receivedText);
-				// logger.info("Sending Text {}",sendingText);
+				AbstractResponse response = poseAnalyzer.analyzePoseDataProcess(receivedText);
+				// logger.info("Sending Text {}", response.toJSONString());
 
 				try {
-					sendTextMessage(sendingText);
+					sendTextMessage(response.toJSONString());
+
+					if (response.getResponseType() == ResponseType.DISCONNECT_RESPONSE)
+						close(); // 세션 종료
 				} catch (Exception e) {
 					throw new RuntimeException("Send Text Message Failed.");
 				}

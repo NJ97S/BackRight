@@ -17,14 +17,7 @@ public interface AnalyzingSessionRepository extends JpaRepository<AnalyzingSessi
 		WHERE member_id = :memberId
 		AND started_at BETWEEN CAST(:date AS DATETIME)
 		AND DATE_ADD(CAST(:date AS DATETIME), INTERVAL 1 DAY)
+		AND ended_at IS NOT NULL
 		""", nativeQuery = true)
 	List<AnalyzingSession> findAllByMemberAndDate(@Param("memberId") Long memberId, @Param("date") Instant date);
-
-	@Query(value = """
-		SELECT * FROM analyzing_session
-		WHERE member_id = :memberId
-		AND started_at BETWEEN CAST(:week AS DATETIME)
-		AND DATE_ADD(CAST(:week AS DATETIME), INTERVAL 7 DAY)
-		""", nativeQuery = true)
-	List<AnalyzingSession> findAllByMemberAndWeek(@Param("memberId") Long memberId, @Param("week") Instant weekStart);
 }
