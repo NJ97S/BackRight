@@ -36,8 +36,9 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(Exception.class)
-	public ResponseEntity<ErrorResponse> handleUnhandledException() {
+	public ResponseEntity<ErrorResponse> handleUnhandledException(Exception exception) {
+		exception.printStackTrace();
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-			.body(new ErrorResponse("처리되지 않은 에러입니다. 문의해주세요."));
+			.body(new ErrorResponse(exception.getMessage() + "처리되지 않은 에러입니다. 문의해주세요."));
 	}
 }

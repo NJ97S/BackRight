@@ -1,75 +1,161 @@
-import { Controller, useForm } from "react-hook-form";
+import { useEffect, useRef, useState } from "react";
+
+import { useForm } from "react-hook-form";
+import axios from "axios";
 
 import TextInput from "../../components/common/TextInput/TextInput";
-import BirthdaySelect from "../../components/common/BirthdaySelect/BirthdaySelect";
-import GenderSelect from "../../components/common/GenderSelect/GenderSelect";
-
-import { ProfileType } from "../../types/type";
+import useAuthStore from "../../store/useAuthStore";
+import useGetProfileImage from "../../hooks/useGetProfileImage";
+import { patchUserInfo } from "../../apis/api";
 
 import * as S from "./ProfilePageStyle";
 
+import defaultProfileImage from "../../assets/images/default-profile.svg";
+import cameraIcon from "../../assets/icons/camera.svg";
+import RealtimeMessage from "../../components/RealtimeMessage/RealtimeMessage";
+
+export interface ProfileEditFieldType {
+  nickname: string;
+  profileImgUrl: string | null;
+}
+
 const ProfilePage = () => {
+  const isFirstRendering = useRef(true);
+
+  const [isMessageShown, setIsMessageShown] = useState(false);
+
+  const { user, fetchUserInfo } = useAuthStore();
+  const { handleEditProfileImageChange, uploadedImgUrl, imgFile } =
+    useGetProfileImage();
+
   const {
     register,
     handleSubmit,
-    control,
-    formState: { errors, isValid },
-  } = useForm<ProfileType>({
+    getValues,
+    setValue,
+    reset,
+    formState: { errors, isDirty, isValid },
+  } = useForm<ProfileEditFieldType>({
     mode: "all",
-    defaultValues: { gender: "MALE", profileImgUrl: null },
+    defaultValues: {
+      nickname: user?.nickname,
+      profileImgUrl: null,
+    },
   });
 
-  const onSubmit = (data: ProfileType) => {
-    if (!isValid) return;
+  const currentProfileImage = user?.profileImgUrl
+    ? user.profileImgUrl
+    : defaultProfileImage;
 
-    console.log(data);
+  const isFormDirty = isDirty || !!getValues("profileImgUrl");
+
+  const onSubmit = async (data: ProfileEditFieldType) => {
+    if (!isValid || !isFormDirty) return;
+
+    const { preSignedUrl } = await patchUserInfo(data);
+
+    if (!preSignedUrl) {
+      fetchUserInfo();
+      return;
+    }
+
+    await axios.put(preSignedUrl, imgFile, {
+      headers: {
+        "Content-Type": "image/jpeg",
+      },
+    });
+
+    fetchUserInfo();
   };
+
+  const handleShowMessage = () => {
+    setIsMessageShown(true);
+
+    const timer = setTimeout(() => setIsMessageShown(false), 2000);
+
+    return () => clearTimeout(timer);
+  };
+
+  useEffect(() => {
+    if (!imgFile?.name) return;
+
+    setValue("profileImgUrl", imgFile?.name);
+  }, [imgFile]);
+
+  useEffect(() => {
+    if (isFirstRendering.current) {
+      isFirstRendering.current = false;
+      return;
+    }
+
+    if (!user) return;
+
+    reset({
+      nickname: user.nickname,
+      profileImgUrl: null,
+    });
+
+    handleShowMessage();
+  }, [user]);
 
   return (
     <S.ProfilePageContainer>
-      <S.FormContainer onSubmit={handleSubmit(onSubmit)}>
-        <TextInput
-          label="닉네임"
-          type="text"
-          errorMessage={errors.nickname?.message}
-          placeholder="닉네임을 입력해주세요"
-          {...register("nickname", {
-            required: "닉네임을 입력해주세요",
-            validate: (value: string | null) => {
-              if (!value) return "닉네임을 입력해주세요";
-              if (/\s/.test(value)) {
-                return "닉네임에는 공백을 포함할 수 없습니다";
-              }
-              if (/[^a-zA-Z0-9ㄱ-힣]/.test(value)) {
-                return "닉네임에는 특수문자를 사용할 수 없습니다";
-              }
-              if (value.length > 10) {
-                return "닉네임은 최대 10자까지 입력 가능합니다";
-              }
-              return true;
-            },
-          })}
+      <S.ContentContainer>
+        <RealtimeMessage type="setting" isDisplayed={isMessageShown}>
+          프로필 수정이 완료되었습니다.
+        </RealtimeMessage>
+
+        <S.Title>내 정보 관리</S.Title>
+
+        <S.HiddenImageInput
+          id="file"
+          type="file"
+          accept="image/*"
+          onChange={handleEditProfileImageChange}
         />
+        <S.UploadProfileImageButton htmlFor="file">
+          <S.ProfileImage src={uploadedImgUrl ?? currentProfileImage} />
+          <S.CameraIcon src={cameraIcon} />
+        </S.UploadProfileImageButton>
 
-        <Controller
-          name="birthDate"
-          control={control}
-          rules={{ required: "생년월일을 선택해주세요" }}
-          render={({ field: { value, onChange }, fieldState: { error } }) => (
-            <BirthdaySelect
-              value={value ? new Date(value) : null}
-              onChange={onChange}
-              errorMessage={error?.message}
-            />
-          )}
-        />
+        <S.FormContainer onSubmit={handleSubmit(onSubmit)}>
+          <TextInput label="이름" type="text" value={user?.name} disabled />
 
-        <GenderSelect {...register("gender")} />
+          <TextInput
+            label="닉네임"
+            type="text"
+            errorMessage={errors.nickname?.message}
+            placeholder="닉네임을 입력해주세요"
+            {...register("nickname", {
+              required: "닉네임을 입력해주세요",
+              validate: (value: string | null) => {
+                if (!value) return "닉네임을 입력해주세요";
+                if (/\s/.test(value)) {
+                  return "닉네임에는 공백을 포함할 수 없습니다";
+                }
+                if (/[^a-zA-Z0-9ㄱ-힣]/.test(value)) {
+                  return "닉네임에는 특수문자를 사용할 수 없습니다";
+                }
+                if (value.length > 10) {
+                  return "닉네임은 최대 10자까지 입력 가능합니다";
+                }
+                return true;
+              },
+            })}
+          />
 
-        <S.SubmitButton type="submit" disabled={!isValid}>
-          수정하기
-        </S.SubmitButton>
-      </S.FormContainer>
+          <TextInput
+            label="생년월일"
+            type="text"
+            value={user?.birthDate}
+            disabled
+          />
+
+          <S.SubmitButton type="submit" disabled={!isValid || !isFormDirty}>
+            수정하기
+          </S.SubmitButton>
+        </S.FormContainer>
+      </S.ContentContainer>
     </S.ProfilePageContainer>
   );
 };

@@ -10,7 +10,6 @@ import lombok.Setter;
 public class DetectionDto {
 	private Long id;
 	private Instant startedAt;
-	private Instant endedAt;
 	private boolean neckDetected;
 	private boolean leftShoulderDetected;
 	private boolean rightShoulderDetected;

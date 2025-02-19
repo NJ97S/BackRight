@@ -1,5 +1,6 @@
 import { SignUpInfoType } from "../types/type";
 import { instance, refreshTokenInstance } from "./instance";
+import { ProfileEditFieldType } from "../pages/ProfilePage/ProfilePage";
 
 export const postSignUpPreSignedImageUrl = async (
   profileImgFileName: string
@@ -35,6 +36,16 @@ export const getUserInfo = async () => {
   }
 };
 
+export const patchUserInfo = async (updateInfo: ProfileEditFieldType) => {
+  try {
+    const response = await instance.patch("/members/update", updateInfo);
+
+    return response.data;
+  } catch (error) {
+    throw new Error("유저정보 수정 실패");
+  }
+};
+
 export const postRefreshToken = async () => {
   try {
     const response = await refreshTokenInstance.post("/auth/refresh-token");
@@ -52,5 +63,15 @@ export const getDetectionVideo = async (detectionId: number) => {
     return response.data;
   } catch (error) {
     throw new Error("비디오 불러오기 실패");
+  }
+};
+
+export const postLogout = async () => {
+  try {
+    const response = await instance.post("/auth/logout");
+
+    return response.data;
+  } catch (error) {
+    throw new Error("로그아웃 실패");
   }
 };

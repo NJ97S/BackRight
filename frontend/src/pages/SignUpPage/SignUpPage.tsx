@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
@@ -68,9 +68,7 @@ const FORM_FIELDS = [
 const SignUpPage = () => {
   const navigate = useNavigate();
 
-  const profileImageInputRef = useRef<HTMLInputElement>(null);
-
-  const { handleProfileImageChange, uploadedImgUrl, imgKey } =
+  const { handleSignUpProfileImageChange, uploadedImgUrl, imgKey } =
     useGetProfileImage();
 
   const {
@@ -105,8 +103,7 @@ const SignUpPage = () => {
           id="file"
           type="file"
           accept="image/*"
-          ref={profileImageInputRef}
-          onChange={handleProfileImageChange}
+          onChange={handleSignUpProfileImageChange}
         />
         <S.UploadProfileImageButton htmlFor="file">
           <S.ProfileImage src={uploadedImgUrl ?? defaultProfileImage} />

@@ -10,7 +10,10 @@ export interface UserInfoType {
   providerId: string;
   name: string;
   nickname: string;
+  birthDate: string;
+  gender: "FEMALE" | "MALE";
   profileImgUrl: string | null;
+  message: string | null;
 }
 
 export interface ProfileType {

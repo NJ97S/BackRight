@@ -17,6 +17,7 @@ import com.example.posturepro.dto.SignUpRequest;
 import com.example.posturepro.dto.SignUpToken;
 import com.example.posturepro.dto.UpdateProfileRequest;
 import com.example.posturepro.dto.UpdateProfileResponse;
+import com.example.posturepro.exception.EntityNotFoundException;
 
 import jakarta.transaction.Transactional;
 
@@ -65,6 +66,12 @@ public class MemberService {
 			.build();
 
 		return memberRepository.save(newMember);
+	}
+
+	public Member getMember(Long memberId) {
+		return memberRepository.findById(memberId).orElseThrow(
+			() -> new EntityNotFoundException(Member.class.getName(), "id", memberId)
+		);
 	}
 
 	@Transactional
