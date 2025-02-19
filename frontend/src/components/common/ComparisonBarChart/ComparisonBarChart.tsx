@@ -9,7 +9,7 @@ import {
   Title,
 } from "chart.js";
 
-import { convertMinutesToTimeString } from "../../../utils/timeFormatUtils";
+import { convertSecondsToTimeString } from "../../../utils/timeFormatUtils";
 
 import * as S from "./ComparisonBarChartStyle";
 
@@ -56,7 +56,7 @@ const ComparisonBarChart = ({ current, previous }: ComparisonBarChartProps) => {
           stepSize: Math.max(previous, current),
           callback: (tickValue: string | number) => {
             if (typeof tickValue === "number" && tickValue > 0) {
-              return convertMinutesToTimeString(tickValue);
+              return convertSecondsToTimeString(tickValue);
             }
             return "";
           },
@@ -102,7 +102,7 @@ const ComparisonBarChart = ({ current, previous }: ComparisonBarChartProps) => {
       <S.DescriptionContainer>
         <S.Description>1일 전과 비교했을 때</S.Description>
         <S.Description>
-          <span>{convertMinutesToTimeString(Math.abs(diffTime))}</span>{" "}
+          <span>{convertSecondsToTimeString(Math.abs(diffTime))}</span>{" "}
           {diffText} 정자세를 유지했어요.
         </S.Description>
       </S.DescriptionContainer>

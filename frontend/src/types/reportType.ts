@@ -40,6 +40,16 @@ export interface DailyStatType {
   detectionCountStat: DetectionCountStatType;
 }
 
+export interface DistributionType {
+  groupPercentile: number;
+  groupProperPoseTimeDistribution: [
+    {
+      lowerBound: number;
+      upperBound: number;
+    }
+  ];
+}
+
 export interface DailyReportType {
   sessions: SessionType[];
   dailyStat: DailyStatType;
@@ -47,15 +57,17 @@ export interface DailyReportType {
 }
 
 export interface WeeklyReportType {
+  dailyProperPoseMinutesPerHours: number[];
   detectionCountStat: DetectionCountStatType;
-  dailyProperPostureMinutesPerHours: number[];
-  ageGroupPercentile: number;
-  ageGroupPostureTimeDistribution: number[];
+  overallDistribution: DistributionType;
+  ageRangeDistribution: DistributionType;
+  ageRangeGenderDistribution: DistributionType;
 }
 
 export interface MonthlyReportType {
+  weeklyProperPoseMinutesPerHours: number[];
   detectionCountStat: DetectionCountStatType;
-  weeklyProperPostureMinutesPerHours: number[];
-  ageGroupPercentile: number;
-  ageGroupPostureTimeDistribution: number[];
+  overallDistribution: DistributionType;
+  ageRangeDistribution: DistributionType;
+  ageRangeGenderDistribution: DistributionType;
 }

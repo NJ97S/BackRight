@@ -2,7 +2,7 @@ import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 
 import * as S from "./DoughnutGraphStyle";
-import { convertMinutesToTimeString } from "../../../utils/timeFormatUtils";
+import { convertSecondsToTimeString } from "../../../utils/timeFormatUtils";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -40,16 +40,16 @@ const DoughnutGraph = ({
         <Doughnut data={data} options={options} />
 
         <S.CenterText>
-          {convertMinutesToTimeString(properPoseDuration)}
+          {convertSecondsToTimeString(properPoseDuration)}
         </S.CenterText>
       </S.DoughnutGraph>
 
       <S.DescriptionContainer>
         <S.Description>
-          {convertMinutesToTimeString(totalDuration)} 중
+          {convertSecondsToTimeString(totalDuration)} 중
         </S.Description>
         <S.Description>
-          <span>{convertMinutesToTimeString(properPoseDuration)}</span> 동안
+          <span>{convertSecondsToTimeString(properPoseDuration)}</span> 동안
           정자세를 유지했어요.
         </S.Description>
       </S.DescriptionContainer>

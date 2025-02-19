@@ -1,3 +1,5 @@
+import axios from "axios";
+
 import { SignUpInfoType } from "../types/type";
 import { instance, refreshTokenInstance } from "./instance";
 import { ProfileEditFieldType } from "../pages/ProfilePage/ProfilePage";
@@ -63,6 +65,40 @@ export const getDetectionVideo = async (detectionId: number) => {
     return response.data;
   } catch (error) {
     throw new Error("비디오 불러오기 실패");
+  }
+};
+
+export const getDailyReport = async (date: string) => {
+  try {
+    const response = await instance.get(`/reports/daily?date=${date}`);
+
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 400) return null;
+    }
+
+    throw new Error("일일보고서 불러오기 실패");
+  }
+};
+
+export const getWeeklyReport = async (date: string) => {
+  try {
+    const response = await instance.get(`/reports/weekly?date=${date}`);
+
+    return response.data;
+  } catch (error) {
+    throw new Error("주간보고서 불러오기 실패");
+  }
+};
+
+export const getMonthlyReport = async (date: string) => {
+  try {
+    const response = await instance.get(`/reports/monthly?date=${date}`);
+
+    return response.data;
+  } catch (error) {
+    throw new Error("월간보고서 불러오기 실패");
   }
 };
 

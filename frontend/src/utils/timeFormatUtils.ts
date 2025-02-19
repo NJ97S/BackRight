@@ -11,6 +11,16 @@ export const convertMinutesToTimeString = (minutes: number): string => {
   return hours > 0 ? `${hours}시간 ${mins}분` : `${mins}분`;
 };
 
+export const convertSecondsToTimeString = (seconds: number): string => {
+  const hours = Math.floor(seconds / 60 / 60);
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+
+  if (hours > 0) return `${hours}시간 ${mins}분`;
+  else if (mins > 0) return `${mins}분 ${secs}초`;
+  else return `${secs}초`;
+};
+
 export const convertISOToTimeString = (isoString: string): string => {
   const date = new Date(isoString);
 
