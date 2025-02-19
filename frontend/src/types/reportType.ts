@@ -51,6 +51,9 @@ export interface WeeklyReportType {
   dailyProperPostureMinutesPerHours: number[];
   ageGroupPercentile: number;
   ageGroupPostureTimeDistribution: number[];
+  userAgeGroup: string;
+  ageGroupAverageTime: number;
+  userName: string;
 }
 
 export interface MonthlyReportType {
@@ -58,4 +61,7 @@ export interface MonthlyReportType {
   weeklyProperPostureMinutesPerHours: number[];
   ageGroupPercentile: number;
   ageGroupPostureTimeDistribution: number[];
+  userAgeGroup: string;
+  ageGroupAverageTime: number;
+  userName: string;
 }

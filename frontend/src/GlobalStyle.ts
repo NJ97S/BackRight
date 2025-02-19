@@ -30,6 +30,8 @@ const GlobalStyle = createGlobalStyle`
 
     --kakao: #fee500;
     --naver: #03C75A;
+
+    --lightmint: #ebf3f3;
   }
 
   a {

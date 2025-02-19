@@ -3,11 +3,10 @@ import { useState } from "react";
 import MonthlyCalendar from "../../../components/common/Calendar/MonthlyCalendar";
 import PostureWarningSummary from "../../../components/common/PostureWarningSummary/PostureWarningSummary";
 import AveragePostureTime from "../../../components/common/AveragePostureTime/AveragePostureTime";
+import RankingSummary from "../../../components/common/RankingSummary/RankingSummary";
 
 import MONTHLY_MOCK_DATA from "./monthlyMockData";
-
 import * as S from "./MonthlyReportPageStyle";
-import RankingSummary from "../../../components/common/RankingSummary/RankingSummary";
 
 const { detectionCountStat, weeklyProperPostureMinutesPerHours } =
   MONTHLY_MOCK_DATA;
@@ -37,7 +36,7 @@ const MonthlyReportPage = () => {
             (_, i) => `${i + 1}주차`
           )}
         />
-        <RankingSummary />
+        <RankingSummary report={MONTHLY_MOCK_DATA} />
       </S.SecondeRowContainer>
     </S.MonthlyReportPageContainer>
   );

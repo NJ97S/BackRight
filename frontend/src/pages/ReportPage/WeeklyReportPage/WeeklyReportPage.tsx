@@ -3,11 +3,10 @@ import { useState } from "react";
 import PostureWarningSummary from "../../../components/common/PostureWarningSummary/PostureWarningSummary";
 import WeeklyCalendar from "../../../components/common/Calendar/WeeklyCalendar";
 import AveragePostureTime from "../../../components/common/AveragePostureTime/AveragePostureTime";
+import RankingSummary from "../../../components/common/RankingSummary/RankingSummary";
 
 import WEEKLY_MOCK_DATA from "./weeklyMockData";
-
 import * as S from "./WeeklyReportPageStyle";
-import RankingSummary from "../../../components/common/RankingSummary/RankingSummary";
 
 const getMondayOfWeek = (date: Date): Date => {
   const day = date.getDay();
@@ -15,6 +14,7 @@ const getMondayOfWeek = (date: Date): Date => {
   const monday = new Date(date);
 
   monday.setDate(date.getDate() + diff);
+
   return monday;
 };
 
@@ -43,7 +43,7 @@ const WeeklyReportPage = () => {
           data={dailyProperPostureMinutesPerHours}
           labels={["월", "화", "수", "목", "금", "토", "일"]}
         />
-        <RankingSummary />
+        <RankingSummary report={WEEKLY_MOCK_DATA} />
       </S.SecondeRowContainer>
     </S.WeeklyReportPageContainer>
   );
