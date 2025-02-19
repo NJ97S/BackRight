@@ -89,10 +89,6 @@ const SideBar = ({ isExpanded }: SideBarProps) => {
       </S.ImageContainer>
 
       <S.ImageContainer isExpanded={isExpanded}>
-        <S.IconButton onClick={handleLogoutButtonClick} isExpanded={isExpanded}>
-          <S.Icon src={logoutIcon} alt="로그아웃" />
-          <S.LinkName isExpanded={isExpanded}>로그아웃</S.LinkName>
-        </S.IconButton>
         <S.IconLink to={PATH.SETTING} isExpanded={isExpanded}>
           <S.Icon src={settingIcon} alt="환경설정" />
           <S.LinkName isExpanded={isExpanded}>환경설정</S.LinkName>
@@ -101,6 +97,10 @@ const SideBar = ({ isExpanded }: SideBarProps) => {
           <S.Icon src={helpIcon} alt="도움말" />
           <S.LinkName isExpanded={isExpanded}>도움말</S.LinkName>
         </S.IconLink>
+        <S.IconButton onClick={handleLogoutButtonClick} isExpanded={isExpanded}>
+          <S.Icon src={logoutIcon} alt="로그아웃" />
+          <S.LinkName isExpanded={isExpanded}>로그아웃</S.LinkName>
+        </S.IconButton>
       </S.ImageContainer>
     </S.SideBarContainer>
   );
