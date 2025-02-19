@@ -6,6 +6,7 @@ import { postSignUpPreSignedImageUrl } from "../apis/api";
 
 const useGetProfileImage = () => {
   const [uploadedImgUrl, setUploadedImgUrl] = useState<string | null>(null);
+  const [imgFileName, setImgFileName] = useState<string | null>(null);
   const [imgKey, setImgKey] = useState<string | null>(null);
 
   const handleSignUpProfileImageChange = async (
@@ -55,6 +56,8 @@ const useGetProfileImage = () => {
       setUploadedImgUrl(fileReader.result as string);
     };
     fileReader.readAsDataURL(imageFile);
+
+    setImgFileName(imageFile.name);
   };
 
   return {
@@ -62,6 +65,7 @@ const useGetProfileImage = () => {
     handleEditProfileImageChange,
     uploadedImgUrl,
     imgKey,
+    imgFileName,
   };
 };
 

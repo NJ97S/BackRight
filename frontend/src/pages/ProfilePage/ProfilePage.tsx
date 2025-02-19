@@ -19,7 +19,8 @@ export interface ProfileEditFieldType {
 
 const ProfilePage = () => {
   const { user } = useAuthStore();
-  const { handleEditProfileImageChange, uploadedImgUrl } = useGetProfileImage();
+  const { handleEditProfileImageChange, uploadedImgUrl, imgFileName } =
+    useGetProfileImage();
 
   const {
     register,
@@ -49,10 +50,10 @@ const ProfilePage = () => {
   };
 
   useEffect(() => {
-    if (!uploadedImgUrl) return;
+    if (!imgFileName) return;
 
-    setValue("profileImgUrl", uploadedImgUrl);
-  }, [uploadedImgUrl]);
+    setValue("profileImgUrl", imgFileName);
+  }, [imgFileName]);
 
   return (
     <S.ProfilePageContainer>
