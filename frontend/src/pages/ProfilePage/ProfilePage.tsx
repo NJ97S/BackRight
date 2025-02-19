@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { useForm } from "react-hook-form";
 import axios from "axios";
@@ -12,6 +12,7 @@ import * as S from "./ProfilePageStyle";
 
 import defaultProfileImage from "../../assets/images/default-profile.svg";
 import cameraIcon from "../../assets/icons/camera.svg";
+import RealtimeMessage from "../../components/RealtimeMessage/RealtimeMessage";
 
 export interface ProfileEditFieldType {
   nickname: string;
@@ -19,6 +20,10 @@ export interface ProfileEditFieldType {
 }
 
 const ProfilePage = () => {
+  const isFirstRendering = useRef(true);
+
+  const [isMessageShown, setIsMessageShown] = useState(false);
+
   const { user, fetchUserInfo } = useAuthStore();
   const { handleEditProfileImageChange, uploadedImgUrl, imgFile } =
     useGetProfileImage();
@@ -63,6 +68,14 @@ const ProfilePage = () => {
     fetchUserInfo();
   };
 
+  const handleShowMessage = () => {
+    setIsMessageShown(true);
+
+    const timer = setTimeout(() => setIsMessageShown(false), 2000);
+
+    return () => clearTimeout(timer);
+  };
+
   useEffect(() => {
     if (!imgFile?.name) return;
 
@@ -70,17 +83,28 @@ const ProfilePage = () => {
   }, [imgFile]);
 
   useEffect(() => {
+    if (isFirstRendering.current) {
+      isFirstRendering.current = false;
+      return;
+    }
+
     if (!user) return;
 
     reset({
       nickname: user.nickname,
       profileImgUrl: null,
     });
+
+    handleShowMessage();
   }, [user]);
 
   return (
     <S.ProfilePageContainer>
       <S.ContentContainer>
+        <RealtimeMessage type="setting" isDisplayed={isMessageShown}>
+          프로필 수정이 완료되었습니다.
+        </RealtimeMessage>
+
         <S.Title>내 정보 관리</S.Title>
 
         <S.HiddenImageInput

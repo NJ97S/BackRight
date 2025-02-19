@@ -10,6 +10,8 @@ export const ProfilePageContainer = styled.div`
 `;
 
 export const ContentContainer = styled.div`
+  position: relative;
+
   display: flex;
   flex-direction: column;
   align-items: center;
