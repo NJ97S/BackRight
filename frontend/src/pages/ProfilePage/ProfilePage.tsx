@@ -1,16 +1,17 @@
 import { useEffect } from "react";
 
 import { useForm } from "react-hook-form";
+import axios from "axios";
 
 import TextInput from "../../components/common/TextInput/TextInput";
 import useAuthStore from "../../store/useAuthStore";
 import useGetProfileImage from "../../hooks/useGetProfileImage";
+import { patchUserInfo } from "../../apis/api";
 
 import * as S from "./ProfilePageStyle";
 
 import defaultProfileImage from "../../assets/images/default-profile.svg";
 import cameraIcon from "../../assets/icons/camera.svg";
-import { patchUserInfo } from "../../apis/api";
 
 export interface ProfileEditFieldType {
   nickname: string;
@@ -18,20 +19,22 @@ export interface ProfileEditFieldType {
 }
 
 const ProfilePage = () => {
-  const { user } = useAuthStore();
-  const { handleEditProfileImageChange, uploadedImgUrl, imgFileName } =
+  const { user, fetchUserInfo } = useAuthStore();
+  const { handleEditProfileImageChange, uploadedImgUrl, imgFile } =
     useGetProfileImage();
 
   const {
     register,
     handleSubmit,
+    getValues,
     setValue,
+    reset,
     formState: { errors, isDirty, isValid },
   } = useForm<ProfileEditFieldType>({
     mode: "all",
     defaultValues: {
       nickname: user?.nickname,
-      profileImgUrl: user?.profileImgUrl,
+      profileImgUrl: null,
     },
   });
 
@@ -39,21 +42,41 @@ const ProfilePage = () => {
     ? user.profileImgUrl
     : defaultProfileImage;
 
-  const isFormDirty = isDirty || !!uploadedImgUrl;
+  const isFormDirty = isDirty || !!getValues("profileImgUrl");
 
   const onSubmit = async (data: ProfileEditFieldType) => {
     if (!isValid || !isFormDirty) return;
 
-    console.log(data);
+    const { preSignedUrl } = await patchUserInfo(data);
 
-    await patchUserInfo(data);
+    if (!preSignedUrl) {
+      fetchUserInfo();
+      return;
+    }
+
+    await axios.put(preSignedUrl, imgFile, {
+      headers: {
+        "Content-Type": "image/jpeg",
+      },
+    });
+
+    fetchUserInfo();
   };
 
   useEffect(() => {
-    if (!imgFileName) return;
+    if (!imgFile?.name) return;
 
-    setValue("profileImgUrl", imgFileName);
-  }, [imgFileName]);
+    setValue("profileImgUrl", imgFile?.name);
+  }, [imgFile]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    reset({
+      nickname: user.nickname,
+      profileImgUrl: null,
+    });
+  }, [user]);
 
   return (
     <S.ProfilePageContainer>

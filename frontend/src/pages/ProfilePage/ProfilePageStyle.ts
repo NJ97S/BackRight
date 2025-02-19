@@ -71,12 +71,6 @@ export const FormContainer = styled.form`
 
   border-radius: 12px;
   background-color: var(--cream);
-
-  overflow-y: scroll;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
 `;
 
 export const SubmitButton = styled.button`
