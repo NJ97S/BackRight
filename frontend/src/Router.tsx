@@ -11,10 +11,12 @@ import ReportLayout from "./pages/ReportPage/ReportLayout";
 import DailyReportPage from "./pages/ReportPage/DailyReportPage/DailyReportPage";
 import WeeklyReportPage from "./pages/ReportPage/WeeklyReportPage/WeeklyReportPage";
 import MonthlyReportPage from "./pages/ReportPage/MonthlyReportPage/MonthlyReportPage";
+import LandingPage from "./pages/LandingPage/LandingPage";
 
 const Router = () => (
   <BrowserRouter>
     <Routes>
+      <Route path="landing" element={<LandingPage />} />
       <Route path="sign-in" element={<SignInPage />} />
       <Route path="sign-up" element={<SignUpPage />} />
       <Route path="/" element={<AppLayout />}>
