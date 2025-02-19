@@ -35,3 +35,12 @@ export const Divider = styled.div`
     var(--gray-100) 8px
   );
 `;
+
+export const NoPreviousGraph = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-weight: 600;
+`;
