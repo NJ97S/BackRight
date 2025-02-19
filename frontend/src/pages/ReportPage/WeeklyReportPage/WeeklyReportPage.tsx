@@ -60,7 +60,7 @@ const WeeklyReportPage = () => {
 
       <S.SecondeRowContainer>
         <AveragePostureTime
-          data={weeklyReport.dailyProperPostureMinutesPerHours}
+          data={weeklyReport.dailyProperPoseMinutesPerHours}
           labels={["월", "화", "수", "목", "금", "토", "일"]}
         />
         <RankingSummary />

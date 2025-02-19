@@ -92,6 +92,16 @@ export const getWeeklyReport = async (date: string) => {
   }
 };
 
+export const getMonthlyReport = async (date: string) => {
+  try {
+    const response = await instance.get(`/reports/monthly?date=${date}`);
+
+    return response.data;
+  } catch (error) {
+    throw new Error("월간보고서 불러오기 실패");
+  }
+};
+
 export const postLogout = async () => {
   try {
     const response = await instance.post("/auth/logout");
