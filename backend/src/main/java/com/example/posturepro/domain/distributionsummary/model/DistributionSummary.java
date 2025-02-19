@@ -38,8 +38,8 @@ public class DistributionSummary {
 	private Long id;
 
 	// 분포가 산출된 날짜
-	@Column(name = "aggregation_base_time ", nullable = false)
-	private final Instant aggregationBaseTime = getBaseTime();
+	@Column(name = "aggregation_base_time ", nullable = false, columnDefinition = "TIMESTAMP")
+	private Instant aggregationBaseTime;
 
 	// 분포 타입 : OVERALL, AGE, GENDER_AGE
 	@Enumerated(EnumType.STRING)
@@ -108,6 +108,7 @@ public class DistributionSummary {
 
 	private DistributionSummary(DistributionType distributionType, String ageRange, Gender gender,
 		int bin, int lowerBound, int upperBound, int count) {
+		this.aggregationBaseTime = getBaseTime();
 		this.distributionType = distributionType;
 		this.ageRange = ageRange;
 		this.gender = gender;
