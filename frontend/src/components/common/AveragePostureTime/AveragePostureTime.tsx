@@ -9,7 +9,7 @@ interface AveragePostureTimeProps {
 
 const AveragePostureTime = ({ data, labels }: AveragePostureTimeProps) => (
   <S.AveragePostureTimeContainer>
-    <S.Title>시간당 평균 자세 유지 시간</S.Title>
+    <S.Title>시간당 바른 자세 유지 시간 (분)</S.Title>
 
     <S.GraphContainer>
       <AveragePostureTimeGraph data={data} labels={labels} />
