@@ -5,8 +5,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -14,20 +12,16 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.example.posturepro.api.oauth.service.TokenService;
-import com.example.posturepro.peer.RTCPeerConnectionHandler;
-import com.example.posturepro.pose.PoseAnalyzerFactory;
+import com.example.posturepro.peer.RTCPeerConnectionManager;
 import com.example.posturepro.signaling.dto.ClientIceCandidate;
 import com.example.posturepro.signaling.dto.SignalingMessage;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import dev.onvoid.webrtc.PeerConnectionFactory;
 import dev.onvoid.webrtc.RTCIceCandidate;
 import dev.onvoid.webrtc.RTCIceConnectionState;
 import dev.onvoid.webrtc.RTCSdpType;
 import dev.onvoid.webrtc.RTCSessionDescription;
-import dev.onvoid.webrtc.media.audio.AudioDeviceModule;
-import dev.onvoid.webrtc.media.audio.AudioLayer;
 
 @Component
 public class SignalingHandler extends TextWebSocketHandler implements IceCandidateListener {
@@ -35,43 +29,42 @@ public class SignalingHandler extends TextWebSocketHandler implements IceCandida
 	private static final ObjectMapper objectMapper = new ObjectMapper();
 	private final TokenService tokenService;
 
-	protected PeerConnectionFactory factory;
-	protected AudioDeviceModule audioDevModule;
-	private final PoseAnalyzerFactory poseAnalyzerFactory;
-
-	private final ConcurrentHashMap<String, RTCPeerConnectionHandler> sessionIdToPeerConnectionMap =
-		new ConcurrentHashMap<>();
+	private final RTCPeerConnectionManager connectionManager;
 
 	private final ConcurrentHashMap<String, SerializedWebSocketSender> sessionIdToSenderMap =
 		new ConcurrentHashMap<>();
 
-	SignalingHandler(PoseAnalyzerFactory poseAnalyzerFactory, TokenService tokenService) {
-		this.audioDevModule = new AudioDeviceModule(AudioLayer.kDummyAudio);
-		this.factory = new PeerConnectionFactory(audioDevModule);
-		this.poseAnalyzerFactory = poseAnalyzerFactory;
+	private final ConcurrentHashMap<String, String> webSocketToRtcMap = new ConcurrentHashMap<>(); // WebSocket -> RTC Session 매핑
+
+	SignalingHandler(TokenService tokenService,
+		RTCPeerConnectionManager connectionManager) {
+
 		this.tokenService = tokenService;
+		this.connectionManager = connectionManager;
 		logger.info("Signaling Handler started");
 	}
 
-	private RTCPeerConnectionHandler initializeSession(final WebSocketSession session) {
-		final String sessionId = session.getId();
+	private String getPeerConnectionKey(final WebSocketSession session) {
+		final String webSocketSessionId = session.getId();
 
-		if (sessionIdToPeerConnectionMap.containsKey(sessionId)) {
-			return sessionIdToPeerConnectionMap.get(sessionId);
+		if (webSocketToRtcMap.containsKey(webSocketSessionId)) {
+			return webSocketToRtcMap.get(webSocketSessionId);
 		}
 
-		logger.info("[Handler::initializeSession] Initializing session, sessionId: {}", sessionId);
+		logger.info("[Handler::initializeSession] Initializing session, WebSocketSessionId: {}", webSocketSessionId);
 
-		var sessionHandler = new SerializedWebSocketSender(session);
-		sessionIdToSenderMap.put(sessionId, sessionHandler);
+		var webSocketSender = new SerializedWebSocketSender(session);
+		sessionIdToSenderMap.put(webSocketSessionId, webSocketSender);
 
 		String accessToken = (String)session.getAttributes().get("access-token");
 		logger.info("[Handler::initializeSession] Token {}", accessToken);
 		String providerId = this.tokenService.getProviderIdFromToken(accessToken);
-		var serverConnection = new RTCPeerConnectionHandler(factory, sessionId, this, logger, this.poseAnalyzerFactory,
-			providerId);
-		sessionIdToPeerConnectionMap.put(sessionId, serverConnection);
-		return serverConnection;
+
+		// RTC Peer Connection Manager를 통해 새 연결 생성
+		String rtcSessionId = connectionManager.createPeerConnection(this, webSocketSessionId, providerId);
+
+		webSocketToRtcMap.put(webSocketSessionId, rtcSessionId);
+		return rtcSessionId;
 	}
 
 	@Override
@@ -91,7 +84,7 @@ public class SignalingHandler extends TextWebSocketHandler implements IceCandida
 		}
 		logger.info("[Handler::afterConnectionClosed] sessionId: {}", sessionId);
 		sessionIdToSenderMap.remove(sessionId);
-		sessionIdToPeerConnectionMap.remove(sessionId);
+		webSocketToRtcMap.remove(sessionId);
 	}
 
 	@Override
@@ -100,7 +93,6 @@ public class SignalingHandler extends TextWebSocketHandler implements IceCandida
 
 		try {
 			String jsonString = objectMapper.writeValueAsString(signalingMessage);
-
 			sessionIdToSenderMap.get(sessionId).sendMessage(jsonString);
 		} catch (IOException e) {
 			logger.error("Failed to serialize ICE Candidate message", e);
@@ -113,9 +105,8 @@ public class SignalingHandler extends TextWebSocketHandler implements IceCandida
 	}
 
 	@Override
-	protected void handleTextMessage(WebSocketSession session,
-		TextMessage message) throws Exception {
-		final String sessionId = session.getId();
+	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+		final String webSocketSessionId = session.getId();
 		JsonNode rootNode = objectMapper.readTree(message.getPayload());
 		try {
 			final String type = rootNode.get("type").asText();
@@ -133,45 +124,47 @@ public class SignalingHandler extends TextWebSocketHandler implements IceCandida
 			}
 		} catch (Throwable ex) {
 			logger.error("[Handler::handleTextMessage] Exception: {}, sessionId: {}",
-				ex, sessionId);
+				ex, webSocketSessionId);
 		}
 
 	}
 
 	private void handleProcessSdpOffer(final WebSocketSession session, JsonNode rootNode) {
-		final String sessionId = session.getId();
-		logger.info("[Handler::handleProcessSdpOffer] Processing offer, sessionId: {}", sessionId);
+		final String webSocketSessionId = session.getId();
+		logger.info("[Handler::handleProcessSdpOffer] Processing offer, sessionId: {}", webSocketSessionId);
 
-		var serverConnection = initializeSession(session);
+		String rtcSessionId = getPeerConnectionKey(session);
+		var serverConnection = connectionManager.getPeerConnection(rtcSessionId);
 		var sdpNode = rootNode.get("sdp");
 
 		try {
 			var remoteDescription = new RTCSessionDescription(RTCSdpType.OFFER, sdpNode.get("sdp").asText());
 			serverConnection.setRemoteDescription(remoteDescription);
-			logger.info("[Handler::handleProcessSdpOffer] Remote description set, sessionId: {}", sessionId);
+			logger.info("[Handler::handleProcessSdpOffer] Remote description set, sessionId: {}", webSocketSessionId);
 
 			var answerDescription = serverConnection.createAnswer();
 			SignalingMessage signalingMessage = new SignalingMessage("answer", answerDescription);
 
 			String jsonString = objectMapper.writeValueAsString(signalingMessage);
 			logger.info("[Handler::sendAnswerMessage] {}", jsonString);
-			sessionIdToSenderMap.get(sessionId).sendMessage(jsonString);
+			sessionIdToSenderMap.get(webSocketSessionId).sendMessage(jsonString);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	private void handleAddIceCandidate(final WebSocketSession session, JsonNode rootNode) {
-		final String sessionId = session.getId();
-		logger.info("[Handler::handleAddIceCandidate] Adding ICE candidate, sessionId: {}", sessionId);
+		final String webSocketSessionId = session.getId();
+		logger.info("[Handler::handleAddIceCandidate] Adding ICE candidate, webSocketSessionId: {}",
+			webSocketSessionId);
 
-		var serverConnection = initializeSession(session);
+		String rtcSessionId = getPeerConnectionKey(session);
+		var serverConnection = connectionManager.getPeerConnection(rtcSessionId);
 		var clientCandidate = objectMapper.convertValue(rootNode.get("candidate"), ClientIceCandidate.class);
 		var rtcIceCandidate = new RTCIceCandidate(clientCandidate.sdpMid(), clientCandidate.sdpMLineIndex(),
 			clientCandidate.candidate());
 
 		serverConnection.addIceCandidate(rtcIceCandidate);
-		logger.info("[Handler::handleAddIceCandidate] ICE Candidate added, sessionId: {}", sessionId);
+		logger.info("[Handler::handleAddIceCandidate] ICE Candidate added, webSocketSessionId: {}", webSocketSessionId);
 	}
-
 }

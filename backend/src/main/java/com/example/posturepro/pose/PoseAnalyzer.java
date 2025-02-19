@@ -34,7 +34,7 @@ public class PoseAnalyzer {
 	private final String providerId;
 
 	private long detectionId;
-	private final AnalyzingSession session;
+	private AnalyzingSession session;
 	private int continuousDetectionCount;
 
 	private final int ALERT_DETECTION_THRESHOLD = 30; // 10seconds - 3 messages per second
@@ -190,5 +190,10 @@ public class PoseAnalyzer {
 	public void forceEndSession() {
 		endDetection();
 		analyzingSessionService.endSession(session, AnalyzingSessionStatus.FORCED);
+	}
+
+	public void resetSession() {
+		endSession();
+		this.session = analyzingSessionService.createSession(providerId);
 	}
 }

@@ -5,10 +5,9 @@ import static java.util.Objects.*;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.example.posturepro.peer.observer.CreateDescriptionObserver;
 import com.example.posturepro.peer.observer.SetDescriptionObserver;
@@ -33,26 +32,23 @@ import dev.onvoid.webrtc.RTCPeerConnection;
 import dev.onvoid.webrtc.RTCSessionDescription;
 
 public class RTCPeerConnectionHandler implements PeerConnectionObserver {
-	private final List<String> receivedTexts;
-
 	private RTCPeerConnection localPeerConnection;
 
 	private RTCDataChannel localDataChannel;
 
-	private final String sessionId;
+	private final String websocketSessionId;
 	private final IceCandidateListener listener;
 
-	private final Logger logger;
+	private final Logger logger = LoggerFactory.getLogger(RTCPeerConnectionHandler.class);
 	private final PoseAnalyzer poseAnalyzer;
 
-	public RTCPeerConnectionHandler(PeerConnectionFactory factory, String sessionId, IceCandidateListener listener,
-		Logger logger, PoseAnalyzerFactory poseAnalyzerFactory, String providerId) {
-		this.sessionId = sessionId;
+	public RTCPeerConnectionHandler(PeerConnectionFactory factory, String websocketSessionId,
+		IceCandidateListener listener,
+		PoseAnalyzerFactory poseAnalyzerFactory, String providerId) {
+		this.websocketSessionId = websocketSessionId;
 		this.listener = listener;
-		this.logger = logger;
 		RTCConfiguration config = new RTCConfiguration();
 		RTCIceServer iceServer = new RTCIceServer();
-		// iceServer.urls.add("stun:stun.l.google.com:19302");
 		iceServer.urls.add("turn:i12a601.p.ssafy.io:3478");
 		iceServer.username = "username";
 		iceServer.password = "password";
@@ -62,7 +58,6 @@ public class RTCPeerConnectionHandler implements PeerConnectionObserver {
 		localPeerConnection = factory.createPeerConnection(config, this);
 
 		this.poseAnalyzer = poseAnalyzerFactory.create(providerId);
-		receivedTexts = new ArrayList<>();
 	}
 
 	public void addIceCandidate(RTCIceCandidate candidate) {
@@ -73,7 +68,7 @@ public class RTCPeerConnectionHandler implements PeerConnectionObserver {
 	@Override
 	public void onIceCandidate(RTCIceCandidate candidate) {
 		if (listener != null) {
-			listener.onIceCandidate(sessionId, candidate);
+			listener.onIceCandidate(websocketSessionId, candidate);
 		}
 	}
 
@@ -81,7 +76,7 @@ public class RTCPeerConnectionHandler implements PeerConnectionObserver {
 	public void onIceConnectionChange(RTCIceConnectionState state) {
 		if (listener != null) {
 			try {
-				listener.onIceConnectionChange(sessionId, state);
+				listener.onIceConnectionChange(websocketSessionId, state);
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
@@ -119,8 +114,9 @@ public class RTCPeerConnectionHandler implements PeerConnectionObserver {
 				try {
 					sendTextMessage(response.toJSONString());
 
-					if (response.getResponseType() == ResponseType.DISCONNECT_RESPONSE)
+					if (response.getResponseType() == ResponseType.DISCONNECT_RESPONSE) {
 						close(); // 세션 종료
+					}
 				} catch (Exception e) {
 					throw new RuntimeException("Send Text Message Failed.");
 				}
@@ -156,10 +152,6 @@ public class RTCPeerConnectionHandler implements PeerConnectionObserver {
 		localDataChannel.send(buffer);
 	}
 
-	List<String> getReceivedTexts() {
-		return receivedTexts;
-	}
-
 	void close() {
 		if (nonNull(localDataChannel)) {
 			localDataChannel.unregisterObserver();
@@ -186,10 +178,11 @@ public class RTCPeerConnectionHandler implements PeerConnectionObserver {
 			byteBuffer.get(payload);
 		}
 
-		String text = new String(payload, StandardCharsets.UTF_8);
+		return new String(payload, StandardCharsets.UTF_8);
+	}
 
-		receivedTexts.add(text);
-		return text;
+	public void resetPoseAnalyzer() {
+		poseAnalyzer.resetSession();
 	}
 
 	RTCSessionDescription getRemoteDescription() {
