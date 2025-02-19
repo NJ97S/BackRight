@@ -17,25 +17,36 @@ import com.example.posturepro.analyzingsession.dto.AnalyzingSessionDto;
 import com.example.posturepro.analyzingsession.service.AnalyzingSessionService;
 import com.example.posturepro.detection.entity.DetectionStatAggregator;
 import com.example.posturepro.detection.entity.DetectionStatDto;
+import com.example.posturepro.domain.distributionsummary.dto.BinResponseDto;
+import com.example.posturepro.domain.distributionsummary.service.DistributionSummaryService;
+import com.example.posturepro.domain.member.Member;
+import com.example.posturepro.domain.member.service.MemberService;
 import com.example.posturepro.exception.EntityNotFoundException;
 import com.example.posturepro.report.dto.DailyReportDto;
 import com.example.posturepro.report.dto.DailyStatDto;
+import com.example.posturepro.report.dto.DistributionDataDto;
 import com.example.posturepro.report.dto.MonthlyReportDto;
 import com.example.posturepro.report.dto.WeeklyReportDto;
 import com.example.posturepro.report.entity.DailyStat;
 import com.example.posturepro.report.repository.DailyStatRepository;
+import com.example.posturepro.report.util.ReportStatCalculator;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class ReportService {
 	private final AnalyzingSessionService analyzingSessionService;
 	private final DailyStatRepository dailyStatRepository;
+	private final DistributionSummaryService distributionSummaryService;
+	private final MemberService memberService;
 
-	public ReportService(AnalyzingSessionService analyzingSessionService, DailyStatRepository dailyStatRepository) {
-		this.analyzingSessionService = analyzingSessionService;
-		this.dailyStatRepository = dailyStatRepository;
-	}
-
-	public DailyReportDto getDailyReport(Long memberId, String date) {
+	public DailyReportDto getDailyReport(String providerId, String date) {
+		var memberOpt = memberService.findByProviderId(providerId);
+		if (memberOpt.isEmpty()) {
+			throw new EntityNotFoundException(Member.class.getName(), "providerId", providerId);
+		}
+		Long memberId = memberOpt.get().getId();
 		Instant dateAsInstant = Instant.parse(date);
 		List<AnalyzingSessionDto> sessionList = analyzingSessionService.getSessionByDate(memberId, dateAsInstant);
 
@@ -48,7 +59,12 @@ public class ReportService {
 		return new DailyReportDto(sessionList, DailyStatDto.from(todayStat), previousStatDto);
 	}
 
-	public WeeklyReportDto getWeeklyReport(Long memberId, String weekStart) {
+	public WeeklyReportDto getWeeklyReport(String providerId, String weekStart) {
+		var memberOpt = memberService.findByProviderId(providerId);
+		if (memberOpt.isEmpty()) {
+			throw new EntityNotFoundException(Member.class.getName(), "providerId", providerId);
+		}
+		Long memberId = memberOpt.get().getId();
 		Instant weekStartAsInstant = Instant.parse(weekStart);
 		List<DailyStat> dailyStatList = dailyStatRepository
 			.findAllByMemberIdAndTargetDayGreaterThanEqualAndTargetDayLessThan(
@@ -58,24 +74,44 @@ public class ReportService {
 
 		DetectionStatAggregator detectionStatAggregator = new DetectionStatAggregator();
 		int[] dailyProperPoseSecondsPerHours = new int[7];
-
+		long properPoseDurationSum = 0;
+		long totalDurationSum = 0;
 		for (DailyStat dailyStat : dailyStatList) {
 			int dayIndex = (int)Duration.between(weekStartAsInstant, dailyStat.getTargetDay()).toDays();
 			detectionStatAggregator.addDailyStat(dailyStat);
 			dailyProperPoseSecondsPerHours[dayIndex] = dailyStat.getAveragePoseDuration();
+			properPoseDurationSum += dailyStat.getProperPoseDuration();
+			totalDurationSum += dailyStat.getTotalDuration();
 		}
 
 		DetectionStatDto detectionStatDto = detectionStatAggregator.toDto();
 
-		double age_group_percentile = 0.0;
-		double[] age_group_posture_time_distribution = new double[] {0.0, 0.0};
+		int weeklyAveragePoseDuration = (int)((double)properPoseDurationSum / totalDurationSum * 60);
+		var overallDistribution = distributionSummaryService.getLatestOverallDistribution();
+		int overallPercentile = ReportStatCalculator.findPercentileIndex(overallDistribution,
+			weeklyAveragePoseDuration);
+		var ageRangeDistribution = distributionSummaryService.getLatestAgeRangeDistribution(memberId);
+		int ageRangePercentile = ReportStatCalculator.findPercentileIndex(ageRangeDistribution,
+			weeklyAveragePoseDuration);
+		var ageRangeGenderDistribution = distributionSummaryService.getLatestAgeRangeGenderDistribution(memberId);
+		int ageRangeGenderPercentile = ReportStatCalculator.findPercentileIndex(ageRangeGenderDistribution,
+			weeklyAveragePoseDuration);
 
-		return new WeeklyReportDto(dailyProperPoseSecondsPerHours, detectionStatDto, age_group_percentile,
-			age_group_posture_time_distribution);
+		return new WeeklyReportDto(dailyProperPoseSecondsPerHours, detectionStatDto,
+			new DistributionDataDto(overallPercentile,
+				BinResponseDto.fromDistribution(overallDistribution)),
+			new DistributionDataDto(ageRangePercentile,
+				BinResponseDto.fromDistribution(ageRangeDistribution)),
+			new DistributionDataDto(ageRangeGenderPercentile,
+				BinResponseDto.fromDistribution(ageRangeGenderDistribution)));
 	}
 
-	public MonthlyReportDto getMonthlyReport(Long memberId, String monthStart) {
-
+	public MonthlyReportDto getMonthlyReport(String providerId, String monthStart) {
+		var memberOpt = memberService.findByProviderId(providerId);
+		if (memberOpt.isEmpty()) {
+			throw new EntityNotFoundException(Member.class.getName(), "providerId", providerId);
+		}
+		Long memberId = memberOpt.get().getId();
 		ZoneId zoneId = ZoneId.of("Asia/Seoul");
 
 		LocalDate monthStartDate = LocalDate.parse(monthStart);
@@ -87,26 +123,51 @@ public class ReportService {
 
 		DetectionStatAggregator detectionStatAggregator = new DetectionStatAggregator();
 
-		List<Integer> weeklyProperPoseSecondsPerHours = calculateAllWeeklyAverages(
-			memberId, monthStartInstant, nextMonthStartInstant, currentMondayInstant, detectionStatAggregator
-		);
-
-		DetectionStatDto detectionStatDto = detectionStatAggregator.toDto();
-
-		double ageGroupPercentile = 0.0;
-		double[] ageGroupPostureTimeDistribution = new double[] {0.0, 0.0};
-
-		return new MonthlyReportDto(weeklyProperPoseSecondsPerHours, detectionStatDto, ageGroupPercentile,
-			ageGroupPostureTimeDistribution);
-	}
-
-	private List<Integer> calculateAllWeeklyAverages(Long memberId, Instant monthStartInstant,
-		Instant nextMonthStartInstant, Instant currentMondayInstant, DetectionStatAggregator aggregator) {
-
-		List<Integer> weeklyProperPoseSecondsPerHours = new ArrayList<>();
 		List<DailyStat> dailyStatList = dailyStatRepository
 			.findAllByMemberIdAndTargetDayGreaterThanEqualAndTargetDayLessThan(
 				memberId, monthStartInstant, nextMonthStartInstant);
+
+		List<Integer> weeklyProperPoseMinutesPerHours = calculateAllWeeklyAverages(
+			dailyStatList, monthStartInstant, nextMonthStartInstant, currentMondayInstant, detectionStatAggregator
+		);
+
+		DetectionStatDto detectionStatDto = detectionStatAggregator.toDto();
+		int monthlyAveragePoseDuration = calculateMonthlyAverage(dailyStatList);
+		var overallDistribution = distributionSummaryService.getLatestOverallDistribution();
+		int overallPercentile = ReportStatCalculator.findPercentileIndex(overallDistribution,
+			monthlyAveragePoseDuration);
+		var ageRangeDistribution = distributionSummaryService.getLatestAgeRangeDistribution(memberId);
+		int ageRangePercentile = ReportStatCalculator.findPercentileIndex(ageRangeDistribution,
+			monthlyAveragePoseDuration);
+		var ageRangeGenderDistribution = distributionSummaryService.getLatestAgeRangeGenderDistribution(memberId);
+		int ageRangeGenderPercentile = ReportStatCalculator.findPercentileIndex(ageRangeGenderDistribution,
+			monthlyAveragePoseDuration);
+
+		return new MonthlyReportDto(weeklyProperPoseMinutesPerHours, detectionStatDto,
+			new DistributionDataDto(overallPercentile,
+				BinResponseDto.fromDistribution(overallDistribution)),
+			new DistributionDataDto(ageRangePercentile,
+				BinResponseDto.fromDistribution(ageRangeDistribution)),
+			new DistributionDataDto(ageRangeGenderPercentile,
+				BinResponseDto.fromDistribution(ageRangeGenderDistribution)));
+	}
+
+	private int calculateMonthlyAverage(List<DailyStat> dailyStatList) {
+		long totalDuration = 0;
+		long properPoseDuration = 0;
+
+		for (DailyStat dailyStat : dailyStatList) {
+			totalDuration += dailyStat.getTotalDuration();
+			properPoseDuration += dailyStat.getProperPoseDuration();
+		}
+
+		return totalDuration == 0 ? 0 : (int)(((double)properPoseDuration / totalDuration) * 60);
+	}
+
+	private List<Integer> calculateAllWeeklyAverages(List<DailyStat> dailyStatList, Instant monthStartInstant,
+		Instant nextMonthStartInstant, Instant currentMondayInstant, DetectionStatAggregator aggregator) {
+
+		List<Integer> weeklyProperPoseSecondsPerHours = new ArrayList<>();
 
 		if (monthStartInstant.isBefore(currentMondayInstant)) {
 			weeklyProperPoseSecondsPerHours.add(
