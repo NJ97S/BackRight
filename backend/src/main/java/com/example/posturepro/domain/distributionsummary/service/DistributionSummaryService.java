@@ -75,6 +75,6 @@ public class DistributionSummaryService {
 		var member = memberService.getMember(memberId);
 		var ageRange = AgeUtil.getAgeRange(member.getBirthDate());
 		var gender = member.getGender();
-		return distributionSummaryRepository.findLatestGenderAgeDistribution(ageRange, gender);
+		return distributionSummaryRepository.findLatestGenderAgeDistribution(ageRange, gender.name());
 	}
 }

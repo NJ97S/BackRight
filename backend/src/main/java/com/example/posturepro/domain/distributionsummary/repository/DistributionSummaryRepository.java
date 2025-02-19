@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.example.posturepro.domain.distributionsummary.model.DistributionSummary;
-import com.example.posturepro.domain.member.Gender;
 
 import io.lettuce.core.dynamic.annotation.Param;
 
@@ -43,5 +42,5 @@ public interface DistributionSummaryRepository extends JpaRepository<Distributio
 		"                                   AND gender = :gender)",
 		nativeQuery = true)
 	List<DistributionSummary> findLatestGenderAgeDistribution(@Param("ageRange") String ageRange,
-		@Param("gender") Gender gender);
+		@Param("gender") String gender);
 }
