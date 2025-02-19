@@ -40,14 +40,14 @@ export interface DailyStatType {
   detectionCountStat: DetectionCountStatType;
 }
 
+export interface TimeDistributionType {
+  lowerBound: number;
+  upperBound: number;
+}
+
 export interface DistributionType {
   groupPercentile: number;
-  groupProperPoseTimeDistribution: [
-    {
-      lowerBound: number;
-      upperBound: number;
-    }
-  ];
+  groupProperPoseTimeDistribution: TimeDistributionType[];
 }
 
 export interface DailyReportType {
