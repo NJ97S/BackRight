@@ -18,7 +18,7 @@ const getMondayOfWeek = (date: Date): Date => {
   return monday;
 };
 
-const { detectionCountStat, dailyProperPostureMinutesPerHours } =
+const { detectionCountStat, dailyProperPoseMinutesPerHours: dailyData } =
   WEEKLY_MOCK_DATA;
 
 const WeeklyReportPage = () => {
@@ -40,7 +40,7 @@ const WeeklyReportPage = () => {
 
       <S.SecondeRowContainer>
         <AveragePostureTime
-          data={dailyProperPostureMinutesPerHours}
+          data={dailyData}
           labels={["월", "화", "수", "목", "금", "토", "일"]}
         />
         <RankingSummary report={WEEKLY_MOCK_DATA} />

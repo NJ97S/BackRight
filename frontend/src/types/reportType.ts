@@ -45,15 +45,22 @@ export interface DailyReportType {
   dailyStat: DailyStatType;
   previousDailyStat: DailyStatType | null;
 }
+export interface TimeDistribution {
+  lowerBound: number;
+  upperBound: number;
+}
+
+export interface DistributionData {
+  groupPercentile: number;
+  groupProperPoseTimeDistribution: TimeDistribution[];
+}
 
 export interface WeeklyReportType {
+  dailyProperPoseMinutesPerHours: number[];
   detectionCountStat: DetectionCountStatType;
-  dailyProperPostureMinutesPerHours: number[];
-  ageGroupPercentile: number;
-  ageGroupPostureTimeDistribution: number[];
-  userAgeGroup: string;
-  ageGroupAverageTime: number;
-  userName: string;
+  overallDistribution: DistributionData;
+  ageRangeDistribution: DistributionData;
+  ageRangeGenderDistribution: DistributionData;
 }
 
 export interface MonthlyReportType {

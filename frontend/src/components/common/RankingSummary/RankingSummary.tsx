@@ -1,75 +1,86 @@
-import { WeeklyReportType, MonthlyReportType } from "../../../types/reportType";
+import React, { useState } from "react";
+import { WeeklyReportType } from "../../../types/reportType";
 import DistributionBarChart from "../DistributionBarChart/DistributionBarChart";
+import useAuthStore from "../../../store/useAuthStore";
+import {
+  calculateAgeGroup,
+  getDistributionMessage,
+} from "../../../utils/ageUtils";
 import * as S from "./RankingSummaryStyle";
 
 interface RankingSummaryProps {
-  report: WeeklyReportType | MonthlyReportType;
+  report: WeeklyReportType;
 }
 
+type DistributionType = "overall" | "ageRange" | "ageRangeGender";
+
+const distributionLabels: Record<DistributionType, string> = {
+  overall: "전체",
+  ageRange: "연령대",
+  ageRangeGender: "연령대/성별",
+};
+
 const RankingSummary = ({ report }: RankingSummaryProps) => {
-  const {
-    ageGroupPercentile,
-    ageGroupPostureTimeDistribution,
-    userAgeGroup,
-    ageGroupAverageTime,
-    userName,
-  } = report;
+  const { user } = useAuthStore();
+  const [selectedDistribution, setSelectedDistribution] =
+    useState<DistributionType>("overall");
 
-  const properPostureMinutes =
-    "weeklyProperPostureMinutesPerHours" in report
-      ? report.weeklyProperPostureMinutesPerHours
-      : report.dailyProperPostureMinutesPerHours;
+  if (!user) {
+    return null; // 또는 로딩 상태나 에러 처리
+  }
 
+  const ageGroup = calculateAgeGroup(user.birthDate);
+
+  const distributionData = {
+    overall: report.overallDistribution,
+    ageRange: report.ageRangeDistribution,
+    ageRangeGender: report.ageRangeGenderDistribution,
+  };
+
+  const currentDistribution = distributionData[selectedDistribution];
   const averageMinutes = Math.floor(
-    properPostureMinutes.reduce((acc, curr) => acc + curr, 0) /
-      properPostureMinutes.length
+    report.dailyProperPoseMinutesPerHours.reduce((acc, curr) => acc + curr, 0) /
+      report.dailyProperPoseMinutesPerHours.length
   );
 
-  const chartData = ageGroupPostureTimeDistribution.map((count, index) => ({
-    minute: index,
-    count,
-    fill: "var(--gray-100)",
-  }));
+  const rank = Math.round(100 - currentDistribution.groupPercentile);
+  const message = getDistributionMessage(
+    selectedDistribution,
+    rank,
+    ageGroup,
+    user.gender
+  );
 
   return (
     <S.Container>
-      <S.Title>나는 상위 몇 % 일까?</S.Title>
+      <S.Title>나의 바른 자세 성취도</S.Title>
       <S.ContentWrapper>
         <S.StatisticsContainer>
-          <S.StatisticsText>
-            <S.BoldText>{userName}</S.BoldText>님은 상위{" "}
-            <S.HighlightText>{ageGroupPercentile}%</S.HighlightText> 입니다.
-          </S.StatisticsText>
+          <S.CategorySelector>
+            {Object.entries(distributionLabels).map(([key, label]) => (
+              <S.CategoryButton
+                key={key}
+                $isSelected={selectedDistribution === key}
+                onClick={() => setSelectedDistribution(key as DistributionType)}
+              >
+                {label}
+              </S.CategoryButton>
+            ))}
+          </S.CategorySelector>
+          <S.RankContainer>
+            <S.StatisticsText>
+              <S.BoldText>{user.nickname}</S.BoldText>님은 100명 중
+              <S.HighlightText>{rank}번째</S.HighlightText>예요!
+            </S.StatisticsText>
+            <S.MessageText>{message}</S.MessageText>
+          </S.RankContainer>
           <S.SubText>
-            <S.BoldText>{userName}</S.BoldText> 님의 시간당 바른 자세(분)은{" "}
-            <S.BoldText>{averageMinutes}분</S.BoldText>으로,
-            <br />
-            <S.BoldText>{userAgeGroup}</S.BoldText>의 평균인{" "}
-            <S.BoldText>{ageGroupAverageTime}분</S.BoldText>
-            {(() => {
-              const difference = averageMinutes - ageGroupAverageTime;
-
-              if (difference > 0) {
-                return (
-                  <>
-                    보다 <S.MintText>{difference}분</S.MintText> 많습니다.
-                  </>
-                );
-              }
-              if (difference < 0) {
-                return (
-                  <>
-                    보다 <S.MintText>{Math.abs(difference)}분</S.MintText>{" "}
-                    적습니다.
-                  </>
-                );
-              }
-              return "과 같습니다.";
-            })()}
+            시간당 평균 <S.BoldText>{averageMinutes}분</S.BoldText> 동안 바른
+            자세를 유지했어요
           </S.SubText>
         </S.StatisticsContainer>
         <DistributionBarChart
-          data={chartData}
+          data={currentDistribution.groupProperPoseTimeDistribution}
           highlightValue={averageMinutes}
         />
       </S.ContentWrapper>

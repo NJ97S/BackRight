@@ -6,14 +6,11 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { TimeDistribution } from "../../../types/reportType";
 import * as S from "./DistributionBarChartStyle";
 
 interface DistributionBarChartProps {
-  data: Array<{
-    minute: number;
-    count: number;
-    fill: string;
-  }>;
+  data: TimeDistribution[];
   highlightValue?: number;
   highlightColor?: string;
   baseColor?: string;
@@ -29,40 +26,52 @@ const DistributionBarChart = ({
   xAxisInterval = 4,
   height = 10,
 }: DistributionBarChartProps) => {
-  const chartData = data.map((item) => ({
-    ...item,
-    fill: item.minute === highlightValue ? highlightColor : baseColor,
-  }));
+  const chartData = data.map((item, index) => {
+    const isHighlighted =
+      highlightValue !== undefined &&
+      highlightValue >= item.lowerBound &&
+      highlightValue <= item.upperBound;
+
+    return {
+      timeRange: `${item.lowerBound}-${item.upperBound}`,
+      value: 1, // Each interval represents one bin in the distribution
+      fill: isHighlighted ? highlightColor : baseColor,
+      lowerBound: item.lowerBound,
+      upperBound: item.upperBound,
+    };
+  });
 
   return (
     <S.ChartContainer style={{ height: `${height}rem` }}>
-      <ResponsiveContainer>
+      <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={chartData}
           margin={{ top: 20, right: 0, left: 0, bottom: 5 }}
         >
           <XAxis
-            dataKey="minute"
+            dataKey="timeRange"
             interval={xAxisInterval}
             tick={{ fontSize: 12, fill: "var(--gray-300)" }}
           />
-          <YAxis hide={true} />
+          <YAxis hide />
           <Tooltip
             cursor={false}
             content={({ payload }) => {
               if (!payload?.length) return null;
-              const tooltipData = payload[0].payload;
+              const data = payload[0].payload;
 
               return (
                 <S.TooltipContainer>
-                  <span>{tooltipData.minute}분</span>
-                  <span>{tooltipData.count}명</span>
+                  <span>
+                    {data.lowerBound}~{data.upperBound}분
+                  </span>
+                  <span>구간</span>
                 </S.TooltipContainer>
               );
             }}
           />
           <Bar
-            dataKey="count"
+            dataKey="value"
             fill="var(--gray-100)"
             fillOpacity={1}
             radius={[2, 2, 0, 0]}

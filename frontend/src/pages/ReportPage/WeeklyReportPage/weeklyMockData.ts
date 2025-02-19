@@ -1,81 +1,1229 @@
 const WEEKLY_MOCK_DATA = {
+  dailyProperPoseMinutesPerHours: [22, 24, 9, 25, 16, 18, 9],
   detectionCountStat: {
-    totalDetection: 50,
+    totalDetection: 42,
     counts: {
-      NECK: 20,
-      LEFT_SHOULDER: 15,
-      RIGHT_SHOULDER: 10,
-      BACK: 5,
+      NECK: 22,
+      LEFT_SHOULDER: 20,
+      RIGHT_SHOULDER: 21,
+      BACK: 26,
     },
   },
-  dailyProperPostureMinutesPerHours: [32, 35, 30, 38, 33, 31, 34],
-  ageGroupPercentile: 78.5,
-  ageGroupPostureTimeDistribution: [
-    1,
-    1,
-    2,
-    2,
-    2,
-    3,
-    3, // 0-6분
-    3,
-    4,
-    4,
-    4,
-    5,
-    5,
-    5, // 7-13분
-    6,
-    6,
-    7,
-    7,
-    8,
-    8,
-    9, // 14-20분
-    10,
-    11,
-    12,
-    13,
-    14,
-    15,
-    16, // 21-27분
-    17,
-    18,
-    19,
-    20,
-    21,
-    22,
-    23, // 28-34분
-    22,
-    21,
-    20,
-    19,
-    18,
-    17,
-    16, // 35-41분
-    15,
-    14,
-    13,
-    12,
-    11,
-    10,
-    9, // 42-48분
-    8,
-    7,
-    6,
-    5,
-    4,
-    3,
-    2, // 49-55분
-    2,
-    1,
-    1,
-    1,
-    1, // 56-60분
-  ],
-  userAgeGroup: "20대",
-  ageGroupAverageTime: 27,
-  userName: "소남주",
+  overallDistribution: {
+    groupPercentile: 32,
+    groupProperPoseTimeDistribution: [
+      {
+        lowerBound: 1,
+        upperBound: 5,
+      },
+      {
+        lowerBound: 5,
+        upperBound: 7,
+      },
+      {
+        lowerBound: 7,
+        upperBound: 8,
+      },
+      {
+        lowerBound: 8,
+        upperBound: 9,
+      },
+      {
+        lowerBound: 9,
+        upperBound: 9,
+      },
+      {
+        lowerBound: 9,
+        upperBound: 10,
+      },
+      {
+        lowerBound: 10,
+        upperBound: 11,
+      },
+      {
+        lowerBound: 11,
+        upperBound: 11,
+      },
+      {
+        lowerBound: 11,
+        upperBound: 11,
+      },
+      {
+        lowerBound: 11,
+        upperBound: 12,
+      },
+      {
+        lowerBound: 12,
+        upperBound: 12,
+      },
+      {
+        lowerBound: 12,
+        upperBound: 12,
+      },
+      {
+        lowerBound: 12,
+        upperBound: 13,
+      },
+      {
+        lowerBound: 13,
+        upperBound: 13,
+      },
+      {
+        lowerBound: 13,
+        upperBound: 13,
+      },
+      {
+        lowerBound: 13,
+        upperBound: 14,
+      },
+      {
+        lowerBound: 14,
+        upperBound: 14,
+      },
+      {
+        lowerBound: 14,
+        upperBound: 14,
+      },
+      {
+        lowerBound: 14,
+        upperBound: 14,
+      },
+      {
+        lowerBound: 14,
+        upperBound: 15,
+      },
+      {
+        lowerBound: 15,
+        upperBound: 15,
+      },
+      {
+        lowerBound: 15,
+        upperBound: 15,
+      },
+      {
+        lowerBound: 15,
+        upperBound: 15,
+      },
+      {
+        lowerBound: 15,
+        upperBound: 16,
+      },
+      {
+        lowerBound: 16,
+        upperBound: 16,
+      },
+      {
+        lowerBound: 16,
+        upperBound: 16,
+      },
+      {
+        lowerBound: 16,
+        upperBound: 16,
+      },
+      {
+        lowerBound: 16,
+        upperBound: 16,
+      },
+      {
+        lowerBound: 16,
+        upperBound: 17,
+      },
+      {
+        lowerBound: 17,
+        upperBound: 17,
+      },
+      {
+        lowerBound: 17,
+        upperBound: 17,
+      },
+      {
+        lowerBound: 17,
+        upperBound: 17,
+      },
+      {
+        lowerBound: 17,
+        upperBound: 17,
+      },
+      {
+        lowerBound: 17,
+        upperBound: 18,
+      },
+      {
+        lowerBound: 18,
+        upperBound: 18,
+      },
+      {
+        lowerBound: 18,
+        upperBound: 18,
+      },
+      {
+        lowerBound: 18,
+        upperBound: 18,
+      },
+      {
+        lowerBound: 18,
+        upperBound: 18,
+      },
+      {
+        lowerBound: 18,
+        upperBound: 18,
+      },
+      {
+        lowerBound: 18,
+        upperBound: 18,
+      },
+      {
+        lowerBound: 19,
+        upperBound: 19,
+      },
+      {
+        lowerBound: 19,
+        upperBound: 19,
+      },
+      {
+        lowerBound: 19,
+        upperBound: 19,
+      },
+      {
+        lowerBound: 19,
+        upperBound: 19,
+      },
+      {
+        lowerBound: 19,
+        upperBound: 19,
+      },
+      {
+        lowerBound: 20,
+        upperBound: 20,
+      },
+      {
+        lowerBound: 20,
+        upperBound: 20,
+      },
+      {
+        lowerBound: 20,
+        upperBound: 20,
+      },
+      {
+        lowerBound: 20,
+        upperBound: 20,
+      },
+      {
+        lowerBound: 20,
+        upperBound: 20,
+      },
+      {
+        lowerBound: 20,
+        upperBound: 21,
+      },
+      {
+        lowerBound: 21,
+        upperBound: 21,
+      },
+      {
+        lowerBound: 21,
+        upperBound: 21,
+      },
+      {
+        lowerBound: 21,
+        upperBound: 21,
+      },
+      {
+        lowerBound: 21,
+        upperBound: 21,
+      },
+      {
+        lowerBound: 21,
+        upperBound: 22,
+      },
+      {
+        lowerBound: 22,
+        upperBound: 22,
+      },
+      {
+        lowerBound: 22,
+        upperBound: 22,
+      },
+      {
+        lowerBound: 22,
+        upperBound: 22,
+      },
+      {
+        lowerBound: 22,
+        upperBound: 22,
+      },
+      {
+        lowerBound: 22,
+        upperBound: 23,
+      },
+      {
+        lowerBound: 23,
+        upperBound: 23,
+      },
+      {
+        lowerBound: 23,
+        upperBound: 23,
+      },
+      {
+        lowerBound: 23,
+        upperBound: 23,
+      },
+      {
+        lowerBound: 23,
+        upperBound: 23,
+      },
+      {
+        lowerBound: 23,
+        upperBound: 23,
+      },
+      {
+        lowerBound: 23,
+        upperBound: 24,
+      },
+      {
+        lowerBound: 24,
+        upperBound: 24,
+      },
+      {
+        lowerBound: 24,
+        upperBound: 24,
+      },
+      {
+        lowerBound: 24,
+        upperBound: 24,
+      },
+      {
+        lowerBound: 24,
+        upperBound: 24,
+      },
+      {
+        lowerBound: 24,
+        upperBound: 25,
+      },
+      {
+        lowerBound: 25,
+        upperBound: 25,
+      },
+      {
+        lowerBound: 25,
+        upperBound: 25,
+      },
+      {
+        lowerBound: 25,
+        upperBound: 25,
+      },
+      {
+        lowerBound: 25,
+        upperBound: 25,
+      },
+      {
+        lowerBound: 25,
+        upperBound: 26,
+      },
+      {
+        lowerBound: 26,
+        upperBound: 26,
+      },
+      {
+        lowerBound: 26,
+        upperBound: 26,
+      },
+      {
+        lowerBound: 26,
+        upperBound: 26,
+      },
+      {
+        lowerBound: 27,
+        upperBound: 27,
+      },
+      {
+        lowerBound: 27,
+        upperBound: 27,
+      },
+      {
+        lowerBound: 27,
+        upperBound: 27,
+      },
+      {
+        lowerBound: 27,
+        upperBound: 27,
+      },
+      {
+        lowerBound: 27,
+        upperBound: 28,
+      },
+      {
+        lowerBound: 28,
+        upperBound: 28,
+      },
+      {
+        lowerBound: 28,
+        upperBound: 28,
+      },
+      {
+        lowerBound: 28,
+        upperBound: 29,
+      },
+      {
+        lowerBound: 29,
+        upperBound: 29,
+      },
+      {
+        lowerBound: 29,
+        upperBound: 29,
+      },
+      {
+        lowerBound: 29,
+        upperBound: 30,
+      },
+      {
+        lowerBound: 30,
+        upperBound: 30,
+      },
+      {
+        lowerBound: 30,
+        upperBound: 30,
+      },
+      {
+        lowerBound: 31,
+        upperBound: 31,
+      },
+      {
+        lowerBound: 31,
+        upperBound: 32,
+      },
+      {
+        lowerBound: 32,
+        upperBound: 33,
+      },
+      {
+        lowerBound: 33,
+        upperBound: 34,
+      },
+      {
+        lowerBound: 34,
+        upperBound: 35,
+      },
+      {
+        lowerBound: 35,
+        upperBound: 36,
+      },
+      {
+        lowerBound: 37,
+        upperBound: 42,
+      },
+    ],
+  },
+  ageRangeDistribution: {
+    groupPercentile: 29,
+    groupProperPoseTimeDistribution: [
+      {
+        lowerBound: 5,
+        upperBound: 6,
+      },
+      {
+        lowerBound: 6,
+        upperBound: 8,
+      },
+      {
+        lowerBound: 8,
+        upperBound: 9,
+      },
+      {
+        lowerBound: 9,
+        upperBound: 10,
+      },
+      {
+        lowerBound: 10,
+        upperBound: 11,
+      },
+      {
+        lowerBound: 11,
+        upperBound: 11,
+      },
+      {
+        lowerBound: 11,
+        upperBound: 12,
+      },
+      {
+        lowerBound: 12,
+        upperBound: 12,
+      },
+      {
+        lowerBound: 12,
+        upperBound: 13,
+      },
+      {
+        lowerBound: 13,
+        upperBound: 13,
+      },
+      {
+        lowerBound: 13,
+        upperBound: 14,
+      },
+      {
+        lowerBound: 14,
+        upperBound: 14,
+      },
+      {
+        lowerBound: 14,
+        upperBound: 14,
+      },
+      {
+        lowerBound: 14,
+        upperBound: 14,
+      },
+      {
+        lowerBound: 15,
+        upperBound: 15,
+      },
+      {
+        lowerBound: 15,
+        upperBound: 15,
+      },
+      {
+        lowerBound: 15,
+        upperBound: 15,
+      },
+      {
+        lowerBound: 15,
+        upperBound: 15,
+      },
+      {
+        lowerBound: 16,
+        upperBound: 16,
+      },
+      {
+        lowerBound: 16,
+        upperBound: 16,
+      },
+      {
+        lowerBound: 16,
+        upperBound: 16,
+      },
+      {
+        lowerBound: 16,
+        upperBound: 16,
+      },
+      {
+        lowerBound: 16,
+        upperBound: 16,
+      },
+      {
+        lowerBound: 16,
+        upperBound: 17,
+      },
+      {
+        lowerBound: 17,
+        upperBound: 17,
+      },
+      {
+        lowerBound: 17,
+        upperBound: 17,
+      },
+      {
+        lowerBound: 17,
+        upperBound: 17,
+      },
+      {
+        lowerBound: 17,
+        upperBound: 17,
+      },
+      {
+        lowerBound: 17,
+        upperBound: 17,
+      },
+      {
+        lowerBound: 17,
+        upperBound: 17,
+      },
+      {
+        lowerBound: 17,
+        upperBound: 18,
+      },
+      {
+        lowerBound: 18,
+        upperBound: 18,
+      },
+      {
+        lowerBound: 18,
+        upperBound: 18,
+      },
+      {
+        lowerBound: 18,
+        upperBound: 18,
+      },
+      {
+        lowerBound: 18,
+        upperBound: 18,
+      },
+      {
+        lowerBound: 18,
+        upperBound: 18,
+      },
+      {
+        lowerBound: 18,
+        upperBound: 18,
+      },
+      {
+        lowerBound: 18,
+        upperBound: 19,
+      },
+      {
+        lowerBound: 19,
+        upperBound: 19,
+      },
+      {
+        lowerBound: 19,
+        upperBound: 20,
+      },
+      {
+        lowerBound: 20,
+        upperBound: 20,
+      },
+      {
+        lowerBound: 20,
+        upperBound: 20,
+      },
+      {
+        lowerBound: 20,
+        upperBound: 20,
+      },
+      {
+        lowerBound: 20,
+        upperBound: 21,
+      },
+      {
+        lowerBound: 21,
+        upperBound: 21,
+      },
+      {
+        lowerBound: 21,
+        upperBound: 21,
+      },
+      {
+        lowerBound: 21,
+        upperBound: 21,
+      },
+      {
+        lowerBound: 21,
+        upperBound: 21,
+      },
+      {
+        lowerBound: 21,
+        upperBound: 22,
+      },
+      {
+        lowerBound: 22,
+        upperBound: 22,
+      },
+      {
+        lowerBound: 22,
+        upperBound: 22,
+      },
+      {
+        lowerBound: 22,
+        upperBound: 22,
+      },
+      {
+        lowerBound: 22,
+        upperBound: 23,
+      },
+      {
+        lowerBound: 23,
+        upperBound: 23,
+      },
+      {
+        lowerBound: 23,
+        upperBound: 23,
+      },
+      {
+        lowerBound: 23,
+        upperBound: 23,
+      },
+      {
+        lowerBound: 23,
+        upperBound: 24,
+      },
+      {
+        lowerBound: 24,
+        upperBound: 24,
+      },
+      {
+        lowerBound: 24,
+        upperBound: 24,
+      },
+      {
+        lowerBound: 24,
+        upperBound: 24,
+      },
+      {
+        lowerBound: 24,
+        upperBound: 24,
+      },
+      {
+        lowerBound: 24,
+        upperBound: 25,
+      },
+      {
+        lowerBound: 25,
+        upperBound: 25,
+      },
+      {
+        lowerBound: 25,
+        upperBound: 25,
+      },
+      {
+        lowerBound: 26,
+        upperBound: 26,
+      },
+      {
+        lowerBound: 26,
+        upperBound: 26,
+      },
+      {
+        lowerBound: 26,
+        upperBound: 26,
+      },
+      {
+        lowerBound: 26,
+        upperBound: 26,
+      },
+      {
+        lowerBound: 26,
+        upperBound: 26,
+      },
+      {
+        lowerBound: 27,
+        upperBound: 27,
+      },
+      {
+        lowerBound: 27,
+        upperBound: 27,
+      },
+      {
+        lowerBound: 27,
+        upperBound: 27,
+      },
+      {
+        lowerBound: 27,
+        upperBound: 27,
+      },
+      {
+        lowerBound: 27,
+        upperBound: 27,
+      },
+      {
+        lowerBound: 27,
+        upperBound: 27,
+      },
+      {
+        lowerBound: 27,
+        upperBound: 28,
+      },
+      {
+        lowerBound: 28,
+        upperBound: 28,
+      },
+      {
+        lowerBound: 28,
+        upperBound: 28,
+      },
+      {
+        lowerBound: 28,
+        upperBound: 28,
+      },
+      {
+        lowerBound: 28,
+        upperBound: 28,
+      },
+      {
+        lowerBound: 28,
+        upperBound: 28,
+      },
+      {
+        lowerBound: 28,
+        upperBound: 29,
+      },
+      {
+        lowerBound: 29,
+        upperBound: 29,
+      },
+      {
+        lowerBound: 29,
+        upperBound: 29,
+      },
+      {
+        lowerBound: 29,
+        upperBound: 29,
+      },
+      {
+        lowerBound: 29,
+        upperBound: 29,
+      },
+      {
+        lowerBound: 30,
+        upperBound: 30,
+      },
+      {
+        lowerBound: 30,
+        upperBound: 30,
+      },
+      {
+        lowerBound: 30,
+        upperBound: 31,
+      },
+      {
+        lowerBound: 31,
+        upperBound: 31,
+      },
+      {
+        lowerBound: 31,
+        upperBound: 31,
+      },
+      {
+        lowerBound: 31,
+        upperBound: 31,
+      },
+      {
+        lowerBound: 32,
+        upperBound: 32,
+      },
+      {
+        lowerBound: 33,
+        upperBound: 33,
+      },
+      {
+        lowerBound: 33,
+        upperBound: 33,
+      },
+      {
+        lowerBound: 34,
+        upperBound: 34,
+      },
+      {
+        lowerBound: 34,
+        upperBound: 35,
+      },
+      {
+        lowerBound: 36,
+        upperBound: 36,
+      },
+      {
+        lowerBound: 36,
+        upperBound: 36,
+      },
+      {
+        lowerBound: 36,
+        upperBound: 36,
+      },
+    ],
+  },
+  ageRangeGenderDistribution: {
+    groupPercentile: 23,
+    groupProperPoseTimeDistribution: [
+      {
+        lowerBound: 6,
+        upperBound: 8,
+      },
+      {
+        lowerBound: 9,
+        upperBound: 9,
+      },
+      {
+        lowerBound: 10,
+        upperBound: 10,
+      },
+      {
+        lowerBound: 11,
+        upperBound: 11,
+      },
+      {
+        lowerBound: 12,
+        upperBound: 13,
+      },
+      {
+        lowerBound: 13,
+        upperBound: 14,
+      },
+      {
+        lowerBound: 14,
+        upperBound: 14,
+      },
+      {
+        lowerBound: 14,
+        upperBound: 14,
+      },
+      {
+        lowerBound: 14,
+        upperBound: 14,
+      },
+      {
+        lowerBound: 15,
+        upperBound: 15,
+      },
+      {
+        lowerBound: 15,
+        upperBound: 15,
+      },
+      {
+        lowerBound: 15,
+        upperBound: 15,
+      },
+      {
+        lowerBound: 16,
+        upperBound: 16,
+      },
+      {
+        lowerBound: 16,
+        upperBound: 16,
+      },
+      {
+        lowerBound: 16,
+        upperBound: 16,
+      },
+      {
+        lowerBound: 16,
+        upperBound: 16,
+      },
+      {
+        lowerBound: 16,
+        upperBound: 16,
+      },
+      {
+        lowerBound: 17,
+        upperBound: 17,
+      },
+      {
+        lowerBound: 17,
+        upperBound: 17,
+      },
+      {
+        lowerBound: 17,
+        upperBound: 17,
+      },
+      {
+        lowerBound: 17,
+        upperBound: 17,
+      },
+      {
+        lowerBound: 17,
+        upperBound: 17,
+      },
+      {
+        lowerBound: 17,
+        upperBound: 17,
+      },
+      {
+        lowerBound: 17,
+        upperBound: 17,
+      },
+      {
+        lowerBound: 18,
+        upperBound: 18,
+      },
+      {
+        lowerBound: 18,
+        upperBound: 18,
+      },
+      {
+        lowerBound: 18,
+        upperBound: 18,
+      },
+      {
+        lowerBound: 18,
+        upperBound: 18,
+      },
+      {
+        lowerBound: 18,
+        upperBound: 18,
+      },
+      {
+        lowerBound: 19,
+        upperBound: 19,
+      },
+      {
+        lowerBound: 20,
+        upperBound: 20,
+      },
+      {
+        lowerBound: 20,
+        upperBound: 20,
+      },
+      {
+        lowerBound: 20,
+        upperBound: 20,
+      },
+      {
+        lowerBound: 21,
+        upperBound: 21,
+      },
+      {
+        lowerBound: 21,
+        upperBound: 21,
+      },
+      {
+        lowerBound: 21,
+        upperBound: 21,
+      },
+      {
+        lowerBound: 21,
+        upperBound: 21,
+      },
+      {
+        lowerBound: 22,
+        upperBound: 22,
+      },
+      {
+        lowerBound: 22,
+        upperBound: 22,
+      },
+      {
+        lowerBound: 22,
+        upperBound: 22,
+      },
+      {
+        lowerBound: 22,
+        upperBound: 22,
+      },
+      {
+        lowerBound: 22,
+        upperBound: 22,
+      },
+      {
+        lowerBound: 22,
+        upperBound: 22,
+      },
+      {
+        lowerBound: 23,
+        upperBound: 23,
+      },
+      {
+        lowerBound: 23,
+        upperBound: 23,
+      },
+      {
+        lowerBound: 23,
+        upperBound: 23,
+      },
+      {
+        lowerBound: 23,
+        upperBound: 23,
+      },
+      {
+        lowerBound: 23,
+        upperBound: 23,
+      },
+      {
+        lowerBound: 23,
+        upperBound: 23,
+      },
+      {
+        lowerBound: 23,
+        upperBound: 23,
+      },
+      {
+        lowerBound: 24,
+        upperBound: 24,
+      },
+      {
+        lowerBound: 24,
+        upperBound: 24,
+      },
+      {
+        lowerBound: 24,
+        upperBound: 24,
+      },
+      {
+        lowerBound: 24,
+        upperBound: 24,
+      },
+      {
+        lowerBound: 24,
+        upperBound: 24,
+      },
+      {
+        lowerBound: 24,
+        upperBound: 24,
+      },
+      {
+        lowerBound: 25,
+        upperBound: 25,
+      },
+      {
+        lowerBound: 25,
+        upperBound: 25,
+      },
+      {
+        lowerBound: 25,
+        upperBound: 25,
+      },
+      {
+        lowerBound: 25,
+        upperBound: 25,
+      },
+      {
+        lowerBound: 25,
+        upperBound: 25,
+      },
+      {
+        lowerBound: 25,
+        upperBound: 25,
+      },
+      {
+        lowerBound: 26,
+        upperBound: 26,
+      },
+      {
+        lowerBound: 26,
+        upperBound: 26,
+      },
+      {
+        lowerBound: 26,
+        upperBound: 26,
+      },
+      {
+        lowerBound: 26,
+        upperBound: 26,
+      },
+      {
+        lowerBound: 26,
+        upperBound: 26,
+      },
+      {
+        lowerBound: 26,
+        upperBound: 26,
+      },
+      {
+        lowerBound: 27,
+        upperBound: 27,
+      },
+      {
+        lowerBound: 27,
+        upperBound: 27,
+      },
+      {
+        lowerBound: 27,
+        upperBound: 27,
+      },
+      {
+        lowerBound: 27,
+        upperBound: 27,
+      },
+      {
+        lowerBound: 27,
+        upperBound: 27,
+      },
+      {
+        lowerBound: 28,
+        upperBound: 28,
+      },
+      {
+        lowerBound: 28,
+        upperBound: 28,
+      },
+      {
+        lowerBound: 28,
+        upperBound: 28,
+      },
+      {
+        lowerBound: 28,
+        upperBound: 28,
+      },
+      {
+        lowerBound: 28,
+        upperBound: 28,
+      },
+      {
+        lowerBound: 28,
+        upperBound: 28,
+      },
+      {
+        lowerBound: 28,
+        upperBound: 28,
+      },
+      {
+        lowerBound: 29,
+        upperBound: 29,
+      },
+      {
+        lowerBound: 29,
+        upperBound: 29,
+      },
+      {
+        lowerBound: 29,
+        upperBound: 29,
+      },
+      {
+        lowerBound: 29,
+        upperBound: 29,
+      },
+      {
+        lowerBound: 30,
+        upperBound: 30,
+      },
+      {
+        lowerBound: 30,
+        upperBound: 30,
+      },
+      {
+        lowerBound: 30,
+        upperBound: 30,
+      },
+      {
+        lowerBound: 30,
+        upperBound: 30,
+      },
+      {
+        lowerBound: 31,
+        upperBound: 31,
+      },
+      {
+        lowerBound: 31,
+        upperBound: 31,
+      },
+      {
+        lowerBound: 32,
+        upperBound: 32,
+      },
+      {
+        lowerBound: 33,
+        upperBound: 33,
+      },
+      {
+        lowerBound: 33,
+        upperBound: 33,
+      },
+      {
+        lowerBound: 33,
+        upperBound: 33,
+      },
+      {
+        lowerBound: 34,
+        upperBound: 34,
+      },
+      {
+        lowerBound: 34,
+        upperBound: 34,
+      },
+      {
+        lowerBound: 35,
+        upperBound: 35,
+      },
+      {
+        lowerBound: 36,
+        upperBound: 36,
+      },
+      {
+        lowerBound: 36,
+        upperBound: 36,
+      },
+      {
+        lowerBound: 36,
+        upperBound: 36,
+      },
+    ],
+  },
 };
 
 export default WEEKLY_MOCK_DATA;
