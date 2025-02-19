@@ -42,6 +42,17 @@ export const IconLink = styled(Link).withConfig({
   font-weight: 600;
 `;
 
+export const IconButton = styled.button.withConfig({
+  shouldForwardProp: (prop) => prop !== "isExpanded",
+})<SideBarProps>`
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  font-weight: 600;
+`;
+
 export const Icon = styled.img`
   width: 2rem;
   height: 2rem;
