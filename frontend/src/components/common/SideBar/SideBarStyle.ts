@@ -62,6 +62,7 @@ export const LinkName = styled.span.withConfig({
   shouldForwardProp: (prop) => prop !== "isExpanded",
 })<SideBarProps>`
   color: var(--gray-200);
+  font-size: 1rem;
   opacity: ${({ isExpanded }) => (isExpanded ? 1 : 0)};
   visibility: ${({ isExpanded }) => (isExpanded ? "visible" : "hidden")};
   transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
