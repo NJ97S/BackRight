@@ -30,25 +30,30 @@ let win: BrowserWindow | null;
 
 function createWindow() {
   win = new BrowserWindow({
-    icon: path.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
     webPreferences: {
       preload: path.join(__dirname, "preload.mjs"),
+      webSecurity: false,
+      devTools: true,
+      allowRunningInsecureContent: true,
+      backgroundThrottling: false,
     },
+    show: false,
   });
 
-  win.setMenu(null); // remove menu bar
+  win.setMenu(null);
 
-  // Test active push message to Renderer-process.
-  win.webContents.on("did-finish-load", () => {
-    win?.webContents.send("main-process-message", new Date().toLocaleString());
-  });
-
-  if (VITE_DEV_SERVER_URL) {
-    win.loadURL(VITE_DEV_SERVER_URL);
+  if (process.env.VITE_DEV_SERVER_URL) {
+    win.loadURL(process.env.VITE_DEV_SERVER_URL);
   } else {
-    // win.loadFile('dist/index.html')
-    win.loadFile(path.join(RENDERER_DIST, "index.html"));
+    win.loadURL("https://i12a601.p.ssafy.io");
   }
+
+  win.once("ready-to-show", () => {
+    if (win) {
+      win.show();
+      win.webContents.openDevTools();
+    }
+  });
 }
 
 // Quit when all windows are closed, except on macOS. There, it's common
