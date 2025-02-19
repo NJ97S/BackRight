@@ -10,6 +10,8 @@ import com.example.posturepro.domain.member.Member;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -39,6 +41,11 @@ public class AnalyzingSession {
 	@Column(name = "ended_at", columnDefinition = "TIMESTAMP")
 	private Instant endedAt;
 
+	@Enumerated(EnumType.STRING)
+	@Setter
+	@Column(nullable = false)
+	private AnalyzingSessionStatus status;
+
 	// 외래키 관계 설정
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id", nullable = false)
@@ -51,6 +58,7 @@ public class AnalyzingSession {
 	public AnalyzingSession(Instant startedAt, Member member) {
 		this.startedAt = startedAt;
 		this.member = member;
+		this.setStatus(AnalyzingSessionStatus.RUNNING);
 	}
 
 	public long getSessionDuration() {

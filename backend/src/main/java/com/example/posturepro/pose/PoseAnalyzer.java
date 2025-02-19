@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.example.posturepro.analyzingsession.entity.AnalyzingSession;
+import com.example.posturepro.analyzingsession.entity.AnalyzingSessionStatus;
 import com.example.posturepro.analyzingsession.service.AnalyzingSessionService;
 import com.example.posturepro.api.s3.component.S3Component;
 import com.example.posturepro.detection.entity.CreateDetectionDto;
@@ -33,8 +34,9 @@ public class PoseAnalyzer {
 	private final AnalyzingSession session;
 	private int continuousDetectionCount;
 
-	private final int ALERT_DETECTION_COUNT = 20;
+	private final int ALERT_DETECTION_THRESHOLD = 30; // 10seconds - 3 messages per second
 	private final int DETECTION_THRESHOLD = 8;
+	private final int FORCED_DISCONECTION_THRESHOLD = 2700; // 15 minutes 3 * 60 * 15
 
 	private final Map<DetectionType, Integer> detectionCounts;
 
@@ -64,7 +66,7 @@ public class PoseAnalyzer {
 		// 33개 랜드마크로 이루어진 포즈 데이터 10개가 들어온다
 		List<BodyLandmark[]> parsedPoseDataList = parsePoseDataFromJson(jsonData);
 
-		PoseResponse response = new PoseResponse();
+		PoseResponse response = new PoseResponse(session.getId());
 
 		initializeDetectionCounts();
 
@@ -81,7 +83,7 @@ public class PoseAnalyzer {
 		PartProblemStatus problemStatus = updateDetectionStatus();
 		response.setProblemPart(problemStatus);
 
-		if (continuousDetectionCount >= ALERT_DETECTION_COUNT) {
+		if (continuousDetectionCount >= ALERT_DETECTION_THRESHOLD) {
 			response.setPoseCollapsed(true);
 
 			if (detectionId == 0) {
@@ -93,6 +95,11 @@ public class PoseAnalyzer {
 				response.setDetectionId(detection.getId());
 				response.setStartedAt(detection.getStartedAt());
 				response.setVideoPreSignedUrl(s3VideoData.get("videoPreSignedUrl"));
+			}
+
+			if (continuousDetectionCount > FORCED_DISCONECTION_THRESHOLD) {
+				forceEndSession();
+				return new DisconnectResponse().toJSONString();
 			}
 		}
 
@@ -174,6 +181,11 @@ public class PoseAnalyzer {
 
 	public void endSession() {
 		endDetection();
-		analyzingSessionService.endSession(session);
+		analyzingSessionService.endSession(session, AnalyzingSessionStatus.FINISHED);
+	}
+
+	public void forceEndSession() {
+		endDetection();
+		analyzingSessionService.endSession(session, AnalyzingSessionStatus.FORCED);
 	}
 }

@@ -15,6 +15,8 @@ import com.example.posturepro.peer.observer.SetDescriptionObserver;
 import com.example.posturepro.pose.PoseAnalyzer;
 import com.example.posturepro.pose.PoseAnalyzerFactory;
 import com.example.posturepro.signaling.IceCandidateListener;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dev.onvoid.webrtc.PeerConnectionFactory;
 import dev.onvoid.webrtc.PeerConnectionObserver;
@@ -112,10 +114,18 @@ public class RTCPeerConnectionHandler implements PeerConnectionObserver {
 				// logger.info("Received Text {}",receivedText);
 
 				String sendingText = poseAnalyzer.analyzePoseDataProcess(receivedText);
-				// logger.info("Sending Text {}",sendingText);
+				logger.info("Sending Text {}", sendingText);
 
 				try {
+					ObjectMapper objectMapper = new ObjectMapper();
+					JsonNode jsonNode = objectMapper.readTree(sendingText);
+
+					String responseType = jsonNode.get("responseType").asText();
+
 					sendTextMessage(sendingText);
+
+					if ("DISCONNECT_RESPONSE".equals(responseType))
+						close(); // 세션 종료
 				} catch (Exception e) {
 					throw new RuntimeException("Send Text Message Failed.");
 				}

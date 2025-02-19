@@ -16,6 +16,8 @@ import lombok.Data;
 public class PoseResponse {
 	private static final Logger logger = LoggerFactory.getLogger(PoseResponse.class);
 
+	private ResponseType responseType = ResponseType.POSE_RESPONSE;
+	private long sessionId;
 	private long detectionId;
 	private boolean referenceSet;
 	private boolean poseCollapsed;
@@ -23,9 +25,10 @@ public class PoseResponse {
 	private Instant startedAt;
 	private PartProblemStatus problemPart;
 
-	public PoseResponse() {
-		referenceSet = true;
-		poseCollapsed = false;
+	public PoseResponse(long sessionId) {
+		this.sessionId = sessionId;
+		this.referenceSet = true;
+		this.poseCollapsed = false;
 		this.problemPart = new PartProblemStatus();
 	}
 

@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.posturepro.analyzingsession.dto.AnalyzingSessionDto;
 import com.example.posturepro.analyzingsession.dto.AnalyzingSessionStatDto;
 import com.example.posturepro.analyzingsession.entity.AnalyzingSession;
+import com.example.posturepro.analyzingsession.entity.AnalyzingSessionStatus;
 import com.example.posturepro.analyzingsession.repository.AnalyzingSessionRepository;
 import com.example.posturepro.detection.entity.Detection;
 import com.example.posturepro.detection.entity.DetectionDto;
@@ -23,6 +24,7 @@ import com.example.posturepro.detection.entity.DetectionStatDto;
 import com.example.posturepro.domain.member.Member;
 import com.example.posturepro.domain.member.service.MemberService;
 import com.example.posturepro.exception.EntityNotFoundException;
+import com.example.posturepro.exception.InvalidSessionStateException;
 import com.example.posturepro.report.entity.DailyStat;
 import com.example.posturepro.report.repository.DailyStatRepository;
 
@@ -59,11 +61,27 @@ public class AnalyzingSessionServiceImpl implements AnalyzingSessionService {
 
 	@Override
 	@Transactional
-	public void endSession(AnalyzingSession session) {
+	public void endSession(AnalyzingSession session, AnalyzingSessionStatus status) {
 		session = getSessionById(session.getId());
 		session.setEndedAt(Instant.now());
+		session.setStatus(status);
 		var endedSession = analyzingSessionRepository.save(session);
 		renewDailyStat(endedSession);
+	}
+
+	@Override
+	@Transactional
+	public void patchSessionStateToAbsent(Long sessionId) {
+		AnalyzingSession session = getSessionById(sessionId);
+		if (session == null)
+			throw new EntityNotFoundException(AnalyzingSession.class.toString(), "sessionId", sessionId);
+
+		if (session.getStatus() != AnalyzingSessionStatus.FINISHED
+			&& session.getStatus() != AnalyzingSessionStatus.RUNNING)
+			throw new InvalidSessionStateException(sessionId);
+
+		session.setStatus(AnalyzingSessionStatus.ABSENT);
+		analyzingSessionRepository.save(session);
 	}
 
 	public void renewDailyStat(AnalyzingSession session) {
@@ -107,7 +125,7 @@ public class AnalyzingSessionServiceImpl implements AnalyzingSessionService {
 		AnalyzingSessionStatDto analyzingSessionStatDto = new AnalyzingSessionStatDto(sessionDuration,
 			properPoseDuration, averagePoseDuration);
 
-		return new AnalyzingSessionDto(session.getStartedAt(), session.getEndedAt(),
+		return new AnalyzingSessionDto(session.getStartedAt(), session.getEndedAt(), session.getStatus(),
 			detectionDtoList, detectionStatDto, analyzingSessionStatDto);
 
 	}
