@@ -62,7 +62,7 @@ public class PoseAnalyzer {
 	}
 
 	// 파싱된 포즈 데이터를 기준 포즈로 설정
-	public String analyzePoseDataProcess(String jsonData) {
+	public AbstractResponse analyzePoseDataProcess(String jsonData) {
 		// 33개 랜드마크로 이루어진 포즈 데이터 10개가 들어온다
 		List<BodyLandmark[]> parsedPoseDataList = parsePoseDataFromJson(jsonData);
 
@@ -99,11 +99,11 @@ public class PoseAnalyzer {
 
 			if (continuousDetectionCount > FORCED_DISCONECTION_THRESHOLD) {
 				forceEndSession();
-				return new DisconnectResponse().toJSONString();
+				return new DisconnectResponse();
 			}
 		}
 
-		return response.JSONString();
+		return response;
 	}
 
 	private Detection createDetection(PartProblemStatus problemStatus) {
