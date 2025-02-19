@@ -38,7 +38,7 @@ public class DistributionSummary {
 	private Long id;
 
 	// 분포가 산출된 날짜
-	@Column(name = "aggregation_base_time ", nullable = false)
+	@Column(name = "aggregation_base_time ", nullable = false, columnDefinition = "TIMESTAMP")
 	private final Instant aggregationBaseTime = getBaseTime();
 
 	// 분포 타입 : OVERALL, AGE, GENDER_AGE
