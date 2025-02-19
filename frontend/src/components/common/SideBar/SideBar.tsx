@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 
+import { postLogout } from "../../../apis/api";
 import PATH from "../../../constants/path";
 
 import * as S from "./SideBarStyle";
@@ -7,6 +8,7 @@ import * as S from "./SideBarStyle";
 import recordIcon from "../../../assets/icons/record.svg";
 import reportIcon from "../../../assets/icons/report.svg";
 import myPageIcon from "../../../assets/icons/my-page.svg";
+import logoutIcon from "../../../assets/icons/logout.svg";
 import settingIcon from "../../../assets/icons/setting.svg";
 import helpIcon from "../../../assets/icons/help.svg";
 import arrowIcon from "../../../assets/icons/arrow-down.svg";
@@ -34,6 +36,12 @@ const SideBar = ({ isExpanded }: SideBarProps) => {
     } else {
       setIsReportMenuOpened(false);
     }
+  };
+
+  const handleLogoutButtonClick = async () => {
+    await postLogout();
+
+    location.href = PATH.SIGN_IN;
   };
 
   useEffect(() => {
@@ -81,6 +89,10 @@ const SideBar = ({ isExpanded }: SideBarProps) => {
       </S.ImageContainer>
 
       <S.ImageContainer isExpanded={isExpanded}>
+        <S.IconButton onClick={handleLogoutButtonClick} isExpanded={isExpanded}>
+          <S.Icon src={logoutIcon} alt="로그아웃" />
+          <S.LinkName isExpanded={isExpanded}>로그아웃</S.LinkName>
+        </S.IconButton>
         <S.IconLink to={PATH.SETTING} isExpanded={isExpanded}>
           <S.Icon src={settingIcon} alt="환경설정" />
           <S.LinkName isExpanded={isExpanded}>환경설정</S.LinkName>

@@ -65,3 +65,13 @@ export const getDetectionVideo = async (detectionId: number) => {
     throw new Error("비디오 불러오기 실패");
   }
 };
+
+export const postLogout = async () => {
+  try {
+    const response = await instance.post("/auth/logout");
+
+    return response.data;
+  } catch (error) {
+    throw new Error("로그아웃 실패");
+  }
+};
