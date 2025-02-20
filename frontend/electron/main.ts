@@ -30,6 +30,8 @@ let win: BrowserWindow | null;
 
 function createWindow() {
   win = new BrowserWindow({
+    width: 1200,
+    height: 800,
     webPreferences: {
       preload: path.join(__dirname, "preload.mjs"),
       webSecurity: false,
@@ -40,6 +42,7 @@ function createWindow() {
     show: false,
   });
 
+  win.setAspectRatio(12 / 8);
   win.setMenu(null);
 
   if (process.env.VITE_DEV_SERVER_URL) {
