@@ -101,7 +101,7 @@ const RankingSummary = ({
                   <b>{averagePoseDuration}분</b>으로,
                   <br />
                   <b>{getRange()}</b>의 최빈값인 <b>{minuteIndex}분</b>보다{" "}
-                  <span>{diffTime}분</span> {diffText}
+                  <span>{Math.abs(diffTime)}분</span> {diffText}
                 </S.Description>
               </S.DescriptionContainer>
               <Histogram
