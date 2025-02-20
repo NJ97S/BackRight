@@ -21,14 +21,12 @@ const AveragePostureTimeGraph = ({
   data,
   labels,
 }: AveragePostureTimeGraphProps) => {
-  const dataInMinutes = data.map((seconds) => Math.floor(seconds / 60));
-
   const chartData = {
     labels,
     datasets: [
       {
         label: "자세 유지 시간 (분)",
-        data: dataInMinutes,
+        data,
         backgroundColor: "#76abae",
         borderRadius: 8,
         barThickness: 36,
