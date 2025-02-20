@@ -32,23 +32,19 @@ export const textWrapperVariants: Variants = {
   },
 };
 
-export const wordVariants = (
-  showOnlyBrandName: boolean,
-  isAccent: boolean,
-  wordIndex: number
-) => ({
+export const wordVariants = (wordIndex: number) => ({
   initial: { opacity: 0, y: -50 },
-  animate: {
-    opacity: showOnlyBrandName ? 0 : 1,
-    y: showOnlyBrandName ? -100 : 0,
-    scale: showOnlyBrandName ? 0.5 : 1,
+  animate: { opacity: 1, y: 0 },
+  exit: {
+    opacity: 0,
+    y: -100,
+    scale: 0.5,
   },
   transition: {
     duration: 0.8,
-    delay: showOnlyBrandName ? 0 : wordIndex * 0.2,
+    delay: wordIndex * 0.2,
   },
 });
-
 export const logoVariants: Variants = {
   initial: { opacity: 0, y: -100, scale: 2 },
   animate: {

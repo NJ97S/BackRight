@@ -69,20 +69,20 @@ const LandingPage = () => {
         {showText && !showLogo && (
           <S.TextWrapper as={motion.div} variants={A.textWrapperVariants}>
             <S.HeadingLine>
-              <motion.div {...A.wordVariants(showOnlyBrandName, false, 0)}>
+              <motion.div {...A.wordVariants(0)}>
                 <S.WordSpan>We will</S.WordSpan>
               </motion.div>
 
-              <motion.div {...A.wordVariants(showOnlyBrandName, true, 1)}>
+              <motion.div {...A.wordVariants(1)}>
                 <S.WordSpan $accent>Back</S.WordSpan>
               </motion.div>
 
-              <motion.div {...A.wordVariants(showOnlyBrandName, false, 2)}>
+              <motion.div {...A.wordVariants(2)}>
                 <S.WordSpan>you up</S.WordSpan>
               </motion.div>
 
-              <motion.div {...A.wordVariants(showOnlyBrandName, true, 3)}>
-                <S.WordSpan $accent>Right</S.WordSpan>
+              <motion.div {...A.wordVariants(3)}>
+                <S.WordSpan $accent>Right!</S.WordSpan>
               </motion.div>
             </S.HeadingLine>
           </S.TextWrapper>
