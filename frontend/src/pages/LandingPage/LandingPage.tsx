@@ -12,7 +12,6 @@ const LandingPage = () => {
   const [lampState, setLampState] = useState<string>(LAMP_STATES[0].src);
   const [showText, setShowText] = useState(false);
   const [showLogo, setShowLogo] = useState(false);
-  const [showOnlyBrandName, setShowOnlyBrandName] = useState(false);
 
   const handleAppDownload = () => {
     const link = document.createElement("a");
@@ -41,7 +40,6 @@ const LandingPage = () => {
 
   useEffect(() => {
     if (showText) {
-      setTimeout(() => setShowOnlyBrandName(true), 3000);
       setTimeout(() => setShowLogo(true), 4500);
     }
   }, [showText]);
