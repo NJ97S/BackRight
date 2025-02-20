@@ -1,11 +1,9 @@
 package com.example.posturepro.domain.distributionsummary.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.example.posturepro.domain.distributionsummary.dto.PercentileBinDto;
 import com.example.posturepro.domain.distributionsummary.model.DistributionSummary;
 import com.example.posturepro.domain.distributionsummary.repository.DistributionSummaryJdbcRepository;
 import com.example.posturepro.domain.distributionsummary.repository.DistributionSummaryRepository;
@@ -25,40 +23,17 @@ public class DistributionSummaryService {
 
 	@Transactional
 	public void insertOverallDistributionSummary() {
-		List<PercentileBinDto> dtos = jdbcRepository.findOverallDistribution();
-
-		List<DistributionSummary> summaries = new ArrayList<>();
-		for (PercentileBinDto dto : dtos) {
-			var summary = DistributionSummary.createOverallSummary(dto.bin(),
-				dto.lowerBound(), dto.upperBound(), dto.memberCount());
-			summaries.add(summary);
-		}
-
-		jdbcRepository.bulkInsertDistribution(summaries);
+		jdbcRepository.insertOverallDistributionSummary();
 	}
 
 	@Transactional
 	public void insertAgeRangeSummary(String ageRange) {
-		List<PercentileBinDto> dtos = jdbcRepository.findAgeDistribution(ageRange);
-		List<DistributionSummary> summaries = new ArrayList<>();
-		for (PercentileBinDto dto : dtos) {
-			var summary = DistributionSummary.createAgeRangeSummary(ageRange, dto.bin(),
-				dto.lowerBound(), dto.upperBound(), dto.memberCount());
-			summaries.add(summary);
-		}
-		jdbcRepository.bulkInsertDistribution(summaries);
+		jdbcRepository.insertAgeDistributionSummary(ageRange);
 	}
 
 	@Transactional
 	public void insertAgeRangeGenderSummary(String ageRange, Gender gender) {
-		List<PercentileBinDto> dtos = jdbcRepository.findAgeRangeGenderDistribution(ageRange, gender);
-		List<DistributionSummary> summaries = new ArrayList<>();
-		for (PercentileBinDto dto : dtos) {
-			var summary = DistributionSummary.createAgeRangeGenderSummary(ageRange, gender, dto.bin(),
-				dto.lowerBound(), dto.upperBound(), dto.memberCount());
-			summaries.add(summary);
-		}
-		jdbcRepository.bulkInsertDistribution(summaries);
+		jdbcRepository.insertGenderAgeDistributionSummary(ageRange, gender);
 	}
 
 	public List<DistributionSummary> getLatestOverallDistribution() {

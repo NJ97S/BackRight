@@ -17,19 +17,17 @@ import com.example.posturepro.analyzingsession.dto.AnalyzingSessionDto;
 import com.example.posturepro.analyzingsession.service.AnalyzingSessionService;
 import com.example.posturepro.detection.entity.DetectionStatAggregator;
 import com.example.posturepro.detection.entity.DetectionStatDto;
-import com.example.posturepro.domain.distributionsummary.dto.BinResponseDto;
+import com.example.posturepro.domain.distributionsummary.model.DistributionSummary;
 import com.example.posturepro.domain.distributionsummary.service.DistributionSummaryService;
 import com.example.posturepro.domain.member.Member;
 import com.example.posturepro.domain.member.service.MemberService;
 import com.example.posturepro.exception.EntityNotFoundException;
 import com.example.posturepro.report.dto.DailyReportDto;
 import com.example.posturepro.report.dto.DailyStatDto;
-import com.example.posturepro.report.dto.DistributionDataDto;
 import com.example.posturepro.report.dto.MonthlyReportDto;
 import com.example.posturepro.report.dto.WeeklyReportDto;
 import com.example.posturepro.report.entity.DailyStat;
 import com.example.posturepro.report.repository.DailyStatRepository;
-import com.example.posturepro.report.util.ReportStatCalculator;
 
 import lombok.RequiredArgsConstructor;
 
@@ -88,22 +86,18 @@ public class ReportService {
 
 		int weeklyAveragePoseDuration = (int)((double)properPoseDurationSum / totalDurationSum * 60);
 		var overallDistribution = distributionSummaryService.getLatestOverallDistribution();
-		int overallPercentile = ReportStatCalculator.findPercentileIndex(overallDistribution,
-			weeklyAveragePoseDuration);
-		var ageRangeDistribution = distributionSummaryService.getLatestAgeRangeDistribution(memberId);
-		int ageRangePercentile = ReportStatCalculator.findPercentileIndex(ageRangeDistribution,
-			weeklyAveragePoseDuration);
-		var ageRangeGenderDistribution = distributionSummaryService.getLatestAgeRangeGenderDistribution(memberId);
-		int ageRangeGenderPercentile = ReportStatCalculator.findPercentileIndex(ageRangeGenderDistribution,
-			weeklyAveragePoseDuration);
 
-		return new WeeklyReportDto(dailyProperPoseSecondsPerHours, detectionStatDto,
-			new DistributionDataDto(overallPercentile,
-				BinResponseDto.fromDistribution(overallDistribution)),
-			new DistributionDataDto(ageRangePercentile,
-				BinResponseDto.fromDistribution(ageRangeDistribution)),
-			new DistributionDataDto(ageRangeGenderPercentile,
-				BinResponseDto.fromDistribution(ageRangeGenderDistribution)));
+		var ageRangeDistribution = distributionSummaryService.getLatestAgeRangeDistribution(memberId);
+
+		var ageRangeGenderDistribution = distributionSummaryService.getLatestAgeRangeGenderDistribution(memberId);
+
+		return new WeeklyReportDto(dailyProperPoseSecondsPerHours, detectionStatDto, weeklyAveragePoseDuration,
+			overallDistribution.stream().map(DistributionSummary::getCount).mapToInt(Integer::intValue).toArray(),
+			ageRangeDistribution.stream().map(DistributionSummary::getCount).mapToInt(Integer::intValue).toArray(),
+			ageRangeGenderDistribution.stream()
+				.map(DistributionSummary::getCount)
+				.mapToInt(Integer::intValue)
+				.toArray());
 	}
 
 	public MonthlyReportDto getMonthlyReport(String providerId, String monthStart) {
@@ -134,22 +128,17 @@ public class ReportService {
 		DetectionStatDto detectionStatDto = detectionStatAggregator.toDto();
 		int monthlyAveragePoseDuration = calculateMonthlyAverage(dailyStatList);
 		var overallDistribution = distributionSummaryService.getLatestOverallDistribution();
-		int overallPercentile = ReportStatCalculator.findPercentileIndex(overallDistribution,
-			monthlyAveragePoseDuration);
 		var ageRangeDistribution = distributionSummaryService.getLatestAgeRangeDistribution(memberId);
-		int ageRangePercentile = ReportStatCalculator.findPercentileIndex(ageRangeDistribution,
-			monthlyAveragePoseDuration);
 		var ageRangeGenderDistribution = distributionSummaryService.getLatestAgeRangeGenderDistribution(memberId);
-		int ageRangeGenderPercentile = ReportStatCalculator.findPercentileIndex(ageRangeGenderDistribution,
-			monthlyAveragePoseDuration);
 
 		return new MonthlyReportDto(weeklyProperPoseMinutesPerHours, detectionStatDto,
-			new DistributionDataDto(overallPercentile,
-				BinResponseDto.fromDistribution(overallDistribution)),
-			new DistributionDataDto(ageRangePercentile,
-				BinResponseDto.fromDistribution(ageRangeDistribution)),
-			new DistributionDataDto(ageRangeGenderPercentile,
-				BinResponseDto.fromDistribution(ageRangeGenderDistribution)));
+			monthlyAveragePoseDuration,
+			overallDistribution.stream().map(DistributionSummary::getCount).mapToInt(Integer::intValue).toArray(),
+			ageRangeDistribution.stream().map(DistributionSummary::getCount).mapToInt(Integer::intValue).toArray(),
+			ageRangeGenderDistribution.stream()
+				.map(DistributionSummary::getCount)
+				.mapToInt(Integer::intValue)
+				.toArray());
 	}
 
 	private int calculateMonthlyAverage(List<DailyStat> dailyStatList) {
