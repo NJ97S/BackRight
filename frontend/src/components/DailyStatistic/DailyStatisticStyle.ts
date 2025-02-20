@@ -11,17 +11,16 @@ export const DailyStatisticContainer = styled.div`
 `;
 
 export const Title = styled.div`
-  position: relative;
   font-weight: 700;
   text-align: center;
 `;
 
 export const GraphContainer = styled.div`
-  flex: 1;
-  display: flex;
-  justify-content: space-evenly;
+  display: grid;
+  grid-template-columns: 1fr 2px 1fr;
   align-items: center;
   gap: 2rem;
+  min-height: 300px;
 `;
 
 export const Divider = styled.div`
@@ -37,7 +36,6 @@ export const Divider = styled.div`
 `;
 
 export const NoPreviousGraph = styled.div`
-  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
