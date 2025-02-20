@@ -5,7 +5,7 @@ import * as S from "./HeaderStyle";
 import bellIcon from "../../../assets/icons/bell.svg";
 import hamburgerIcon from "../../../assets/icons/hamburger.svg";
 import logo from "../../../assets/images/logo.webp";
-import defaultProfileImg from "../../../assets/images/mock-profile.jpg";
+import defaultProfileImg from "../../../assets/images/default-profile.svg";
 import PATH from "../../../constants/path";
 
 interface HeaderProps {
