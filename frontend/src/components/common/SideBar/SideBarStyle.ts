@@ -8,6 +8,9 @@ interface SideBarProps {
 export const SideBarContainer = styled.div.withConfig({
   shouldForwardProp: (prop) => prop !== "isExpanded",
 })<SideBarProps>`
+  z-index: 30;
+  position: absolute;
+  left: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
