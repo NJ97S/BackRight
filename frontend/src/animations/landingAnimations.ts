@@ -35,40 +35,20 @@ export const textWrapperVariants: Variants = {
 export const wordVariants = (
   showOnlyBrandName: boolean,
   isAccent: boolean,
-  wordIndex: number // 단어의 순서를 받는 매개변수 추가
-) => {
-  if (!isAccent) {
-    return {
-      initial: { opacity: 0, y: -50 },
-      animate: showOnlyBrandName ? { opacity: 0 } : { opacity: 1, y: 0 },
-      transition: {
-        duration: 0.8,
-        delay: showOnlyBrandName ? 0 : wordIndex * 0.2, // 나타날 때는 순차적으로
-      },
-    };
-  }
+  wordIndex: number
+) => ({
+  initial: { opacity: 0, y: -50 },
+  animate: {
+    opacity: showOnlyBrandName ? 0 : 1,
+    y: showOnlyBrandName ? -100 : 0,
+    scale: showOnlyBrandName ? 0.5 : 1,
+  },
+  transition: {
+    duration: 0.8,
+    delay: showOnlyBrandName ? 0 : wordIndex * 0.2,
+  },
+});
 
-  return {
-    initial: { opacity: 0, scale: 0.5 },
-    animate: !showOnlyBrandName
-      ? {
-          opacity: 1,
-          scale: [0.5, 1.2, 1],
-          y: [50, -20, 0],
-          x: 0,
-        }
-      : {
-          opacity: [1, 0],
-          y: [0, -100],
-          scale: [1, 0.5],
-        },
-    transition: {
-      duration: 1.2,
-      delay: !showOnlyBrandName ? wordIndex * 0.2 : 0.5,
-      ease: "easeOut",
-    },
-  };
-};
 export const logoVariants: Variants = {
   initial: { opacity: 0, y: -100, scale: 2 },
   animate: {

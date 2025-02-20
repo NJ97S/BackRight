@@ -33,21 +33,6 @@ export const LampImage = styled.img`
   will-change: transform;
 `;
 
-export const PulsingBorder = styled.div`
-  position: absolute;
-  inset: -1rem;
-  border: 2px solid var(--mint);
-  border-radius: 50%;
-  pointer-events: none;
-`;
-
-export const BrandWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0 auto;
-`;
-
 export const TextWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -58,28 +43,11 @@ export const TextWrapper = styled.div`
   perspective: 1000px;
 `;
 
-export const HeadingWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 2rem;
-`;
-
 export const HeadingLine = styled.div`
   display: flex;
   justify-content: center;
   gap: 1rem;
-`;
-
-export const Heading = styled.h1`
-  color: var(--mint);
-  font-family: "Pretendard", sans-serif;
-  font-size: 4rem;
-  will-change: transform;
-
-  @media (min-width: 768px) {
-    font-size: 5rem;
-  }
+  margin-bottom: 2rem;
 `;
 
 export const WordSpan = styled.span<WordSpanProps>`
@@ -169,38 +137,4 @@ export const LogoImage = styled.img`
   @media (min-width: 768px) {
     width: 30rem;
   }
-`;
-
-export const ButtonContainer = styled.div`
-  position: relative;
-  display: inline-block;
-`;
-
-export const Tooltip = styled(motion.div)`
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  margin-bottom: 0.5rem;
-  padding: 0.5rem 1rem;
-  border-radius: 0.75rem;
-  background-color: white;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-
-  &::after {
-    content: "";
-    position: absolute;
-    bottom: -0.375rem;
-    left: 50%;
-    transform: translateX(-50%);
-    border-width: 0.375rem;
-    border-style: solid;
-    border-color: white transparent transparent transparent;
-  }
-`;
-
-export const TooltipText = styled.span`
-  color: var(--mint);
-  font-size: 0.875rem;
-  font-weight: 600;
 `;

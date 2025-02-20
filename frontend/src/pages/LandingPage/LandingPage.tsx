@@ -1,16 +1,15 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import LAMP_STATES from "../../constants/lampStates";
+import PATH from "../../constants/path";
 import logo from "../../assets/images/logo.webp";
 import * as S from "./LandingPageStyle";
 import * as A from "../../animations/landingAnimations";
-import { useNavigate } from "react-router-dom";
-import PATH from "../../constants/path";
 
 const LandingPage = () => {
   const navigate = useNavigate();
   const [lampState, setLampState] = useState<string>(LAMP_STATES[0].src);
-  const [clickCount, setClickCount] = useState(0);
   const [showText, setShowText] = useState(false);
   const [showLogo, setShowLogo] = useState(false);
   const [showOnlyBrandName, setShowOnlyBrandName] = useState(false);
@@ -23,16 +22,22 @@ const LandingPage = () => {
     link.click();
     document.body.removeChild(link);
   };
-  const handleLampClick = () => {
-    setClickCount((prev) => prev + 1);
 
-    if (clickCount === 0) {
+  useEffect(() => {
+    const firstTimer = setTimeout(() => {
       setLampState(LAMP_STATES[1].src);
-    } else {
+    }, 1000);
+
+    const secondTimer = setTimeout(() => {
       setLampState(LAMP_STATES[2].src);
       setTimeout(() => setShowText(true), 1000);
-    }
-  };
+    }, 2000);
+
+    return () => {
+      clearTimeout(firstTimer);
+      clearTimeout(secondTimer);
+    };
+  }, []);
 
   useEffect(() => {
     if (showText) {
@@ -51,11 +56,7 @@ const LandingPage = () => {
     >
       <AnimatePresence>
         {!showText && (
-          <S.LampWrapper
-            as={motion.div}
-            variants={A.lampWrapperVariants}
-            onClick={handleLampClick}
-          >
+          <S.LampWrapper as={motion.div} variants={A.lampWrapperVariants}>
             <S.LampImage
               src={lampState}
               alt="Interactive Lamp"
