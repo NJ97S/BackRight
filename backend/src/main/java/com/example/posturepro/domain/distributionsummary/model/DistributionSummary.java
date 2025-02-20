@@ -56,17 +56,9 @@ public class DistributionSummary {
 	@Column(name = "gender")
 	private Gender gender;
 
-	// 1% 단위 bin 번호 (예: 0~99)
+	// 분 단위 bin 번호 (예: 0~59)
 	@Column(name = "bin", nullable = false)
 	private int bin;
-
-	// 해당 bin의 최소 average_pose_duration
-	@Column(name = "lower_bound", nullable = false)
-	private int lowerBound;
-
-	// 해당 bin의 최대 average_pose_duration
-	@Column(name = "upper_bound", nullable = false)
-	private int upperBound;
 
 	// 해당 bin에 속하는 회원 수
 	@Column(name = "count", nullable = false)
@@ -77,21 +69,16 @@ public class DistributionSummary {
 	public static DistributionSummary createOverallSummary(int bin, int lowerBound, int upperBound,
 		int count) {
 		validateBin(bin);
-		validateBounds(lowerBound, upperBound);
 
-		return new DistributionSummary(DistributionType.OVERALL, null, null, bin, lowerBound,
-			upperBound,
+		return new DistributionSummary(DistributionType.OVERALL, null, null, bin,
 			count);
 	}
 
 	// 연령별 분포 생성 (ageRange 필수, gender는 null)
-	public static DistributionSummary createAgeRangeSummary(String ageRange, int bin, int lowerBound,
-		int upperBound, int count) {
+	public static DistributionSummary createAgeRangeSummary(String ageRange, int bin, int count) {
 		validateAgeRange(ageRange);
 		validateBin(bin);
-		validateBounds(lowerBound, upperBound);
-		return new DistributionSummary(DistributionType.AGE, ageRange, null, bin, lowerBound, upperBound,
-			count);
+		return new DistributionSummary(DistributionType.AGE, ageRange, null, bin, count);
 	}
 
 	// 성별+연령별 분포 생성 (ageRange와 gender 모두 필수)
@@ -101,35 +88,22 @@ public class DistributionSummary {
 		validateAgeRange(ageRange);
 		validateGender(gender);
 		validateBin(bin);
-		validateBounds(lowerBound, upperBound);
-		return new DistributionSummary(DistributionType.GENDER_AGE, ageRange, gender, bin, lowerBound,
-			upperBound, count);
+		return new DistributionSummary(DistributionType.GENDER_AGE, ageRange, gender, bin, count);
 	}
 
 	private DistributionSummary(DistributionType distributionType, String ageRange, Gender gender,
-		int bin, int lowerBound, int upperBound, int count) {
+		int bin, int count) {
 		this.aggregationBaseTime = getBaseTime();
 		this.distributionType = distributionType;
 		this.ageRange = ageRange;
 		this.gender = gender;
 		this.bin = bin;
-		this.lowerBound = lowerBound;
-		this.upperBound = upperBound;
 		this.count = count;
 	}
 
 	private static void validateBin(int bin) {
 		if (bin < 0 || bin > 99) {
 			throw new IllegalArgumentException("bin 값은 0과 99 사이여야 합니다.");
-		}
-	}
-
-	private static void validateBounds(int lowerBound, int upperBound) {
-		if (lowerBound > upperBound) {
-			throw new IllegalArgumentException("lowerBound는 upperBound보다 작은 값이여야 합니다.");
-		}
-		if (lowerBound < 0 || lowerBound > 60 || upperBound > 60) {
-			throw new IllegalArgumentException("lowerBound와 upperBound는 0 이상 60 이하의 값이여야 합니다.");
 		}
 	}
 
@@ -149,7 +123,7 @@ public class DistributionSummary {
 		}
 	}
 
-	private Instant getBaseTime() {
+	public static Instant getBaseTime() {
 		ZoneId kstZone = ZoneId.of("Asia/Seoul");
 		return LocalDate.now(kstZone).atStartOfDay(kstZone).toInstant();
 	}
