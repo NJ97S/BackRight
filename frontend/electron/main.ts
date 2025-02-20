@@ -33,7 +33,7 @@ function createWindow() {
     webPreferences: {
       preload: path.join(__dirname, "preload.mjs"),
       webSecurity: false,
-      devTools: true,
+      devTools: false,
       allowRunningInsecureContent: true,
       backgroundThrottling: false,
     },

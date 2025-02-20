@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "dev:web": "cross-env VITE_DISABLE_ELECTRON=1 vite",
-    "build": "cross-env VITE_WITH_DEVTOOLS=false tsc && vite build --mode production && electron-builder --config electron-builder.production.json5",
+    "build": "cross-env VITE_WITH_DEVTOOLS=false tsc && vite build --mode production && electron-builder --config electron-builder.json5",
     "build:tool": "tsc && vite build --mode production && electron-builder --config electron-builder.json5",
     "build:dev-web": "tsc && vite build --mode staging",
     "build:web": "tsc && vite build",
