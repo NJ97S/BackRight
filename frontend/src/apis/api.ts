@@ -111,3 +111,13 @@ export const postLogout = async () => {
     throw new Error("로그아웃 실패");
   }
 };
+
+export const patchSessionStateToAbsent = async (sessionId: number) => {
+  try {
+    const response = await instance.patch(`/sessions/${sessionId}`);
+
+    return response.data;
+  } catch (error) {
+    throw new Error("업데이트 실패")
+  }
+}

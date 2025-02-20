@@ -76,8 +76,8 @@ public class AnalyzingSessionServiceImpl implements AnalyzingSessionService {
 		if (session == null)
 			throw new EntityNotFoundException(AnalyzingSession.class.toString(), "sessionId", sessionId);
 
-		if (session.getStatus() != AnalyzingSessionStatus.FINISHED
-			&& session.getStatus() != AnalyzingSessionStatus.RUNNING)
+		if (session.getStatus() == AnalyzingSessionStatus.ABSENT
+			|| session.getStatus() == AnalyzingSessionStatus.FORCED)
 			throw new InvalidSessionStateException(sessionId);
 
 		session.setStatus(AnalyzingSessionStatus.ABSENT);
