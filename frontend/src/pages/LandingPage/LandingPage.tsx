@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-
 import LAMP_STATES from "../../constants/lampStates";
 import logo from "../../assets/images/logo.webp";
 import * as S from "./LandingPageStyle";
 import * as A from "../../animations/landingAnimations";
-
 import { useNavigate } from "react-router-dom";
 import PATH from "../../constants/path";
 
@@ -15,18 +13,23 @@ const LandingPage = () => {
   const [clickCount, setClickCount] = useState(0);
   const [showText, setShowText] = useState(false);
   const [showLogo, setShowLogo] = useState(false);
-  const [showClickHint, setShowClickHint] = useState(false);
   const [showOnlyBrandName, setShowOnlyBrandName] = useState(false);
 
+  const handleAppDownload = () => {
+    const link = document.createElement("a");
+    link.href = "/downloads/BackRight-Setup.zip";
+    link.download = "backright-app.zip";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
   const handleLampClick = () => {
     setClickCount((prev) => prev + 1);
 
     if (clickCount === 0) {
       setLampState(LAMP_STATES[1].src);
-      setShowClickHint(true);
-    } else if (clickCount >= 3) {
+    } else {
       setLampState(LAMP_STATES[2].src);
-      setShowClickHint(false);
       setTimeout(() => setShowText(true), 1000);
     }
   };
@@ -59,12 +62,6 @@ const LandingPage = () => {
               as={motion.img}
               variants={A.lampImageVariants}
             />
-            {showClickHint && (
-              <S.PulsingBorder
-                as={motion.div}
-                variants={A.pulsingBorderVariants}
-              />
-            )}
           </S.LampWrapper>
         )}
 
@@ -72,7 +69,7 @@ const LandingPage = () => {
           <S.TextWrapper as={motion.div} variants={A.textWrapperVariants}>
             <S.HeadingLine>
               <motion.div {...A.wordVariants(showOnlyBrandName, false, 0)}>
-                <S.WordSpan>We will </S.WordSpan>
+                <S.WordSpan>We will</S.WordSpan>
               </motion.div>
 
               <motion.div {...A.wordVariants(showOnlyBrandName, true, 1)}>
@@ -80,7 +77,7 @@ const LandingPage = () => {
               </motion.div>
 
               <motion.div {...A.wordVariants(showOnlyBrandName, false, 2)}>
-                <S.WordSpan>you up </S.WordSpan>
+                <S.WordSpan>you up</S.WordSpan>
               </motion.div>
 
               <motion.div {...A.wordVariants(showOnlyBrandName, true, 3)}>
@@ -147,6 +144,7 @@ const LandingPage = () => {
             >
               <S.PrimaryButton
                 as={motion.button}
+                onClick={handleAppDownload}
                 whileHover={{
                   scale: 1.05,
                   y: -3,

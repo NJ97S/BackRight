@@ -18,19 +18,12 @@ export const lampImageVariants: Variants = {
   tap: { scale: 0.9 },
 };
 
-export const pulsingBorderVariants: Variants = {
-  animate: {
-    scale: [1, 1.2, 1],
-    opacity: [1, 0.5, 1],
-  },
-};
-
 export const textWrapperVariants: Variants = {
   initial: { opacity: 0, scale: 0.5 },
   animate: {
     opacity: 1,
-    scale: [1, 1.2, 1], // 0.8 대신 1로 수정
-    y: [0, -30, 0], // 마지막 y값도 0으로 수정
+    scale: [1, 1.2, 1],
+    y: [0, -30, 0],
   },
   exit: {
     opacity: 0,
@@ -71,7 +64,7 @@ export const wordVariants = (
         },
     transition: {
       duration: 1.2,
-      delay: !showOnlyBrandName ? wordIndex * 0.2 : 0.5, // 나타날 때는 순차적으로, 사라질 때는 1초 딜레이
+      delay: !showOnlyBrandName ? wordIndex * 0.2 : 0.5,
       ease: "easeOut",
     },
   };

@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { motion } from "framer-motion";
 
 interface WordSpanProps {
   $accent?: boolean;
@@ -130,7 +131,6 @@ const ButtonBase = styled.button`
   padding: 1rem 2rem;
   border: none;
   border-radius: 0.75rem;
-  font-family: "Pretendard", sans-serif;
   font-size: 1.125rem;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -169,4 +169,38 @@ export const LogoImage = styled.img`
   @media (min-width: 768px) {
     width: 30rem;
   }
+`;
+
+export const ButtonContainer = styled.div`
+  position: relative;
+  display: inline-block;
+`;
+
+export const Tooltip = styled(motion.div)`
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  background-color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -0.375rem;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 0.375rem;
+    border-style: solid;
+    border-color: white transparent transparent transparent;
+  }
+`;
+
+export const TooltipText = styled.span`
+  color: var(--mint);
+  font-size: 0.875rem;
+  font-weight: 600;
 `;
