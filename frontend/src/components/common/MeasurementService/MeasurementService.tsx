@@ -54,8 +54,9 @@ const MeasurementService = () => {
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: {
-          width: { ideal: 1200 },
-          height: { ideal: 720 },
+          width: { ideal: 1440 },
+          height: { ideal: 800 },
+          aspectRatio: 1.8,
         },
       });
 
