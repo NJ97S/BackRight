@@ -15,8 +15,8 @@ const LandingPage = () => {
 
   const handleAppDownload = () => {
     const link = document.createElement("a");
-    link.href = "/downloads/BackRight-Setup.zip";
-    link.download = "BackRight-Setup.zip";
+    link.href = "/downloads/BackRight-Setup.exe";
+    link.download = "BackRight-Setup.exe";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -40,7 +40,7 @@ const LandingPage = () => {
 
   useEffect(() => {
     if (showText) {
-      setTimeout(() => setShowLogo(true), 4500);
+      setTimeout(() => setShowLogo(true), 2300);
     }
   }, [showText]);
 
