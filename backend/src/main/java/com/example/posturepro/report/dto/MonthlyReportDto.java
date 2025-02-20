@@ -7,8 +7,9 @@ import com.example.posturepro.detection.entity.DetectionStatDto;
 public record MonthlyReportDto(
 	List<Integer> weeklyProperPoseMinutesPerHours,
 	DetectionStatDto detectionCountStat,
-	DistributionDataDto overallDistribution,
-	DistributionDataDto ageRangeDistribution,
-	DistributionDataDto ageRangeGenderDistribution
+	int monthlyAveragePoseDuration,
+	GroupDistributionDto overallDistribution,
+	GroupDistributionDto ageRangeDistribution,
+	GroupDistributionDto ageRangeGenderDistribution
 ) {
 }
