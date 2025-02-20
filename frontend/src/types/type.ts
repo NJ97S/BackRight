@@ -24,6 +24,7 @@ export interface ProfileType {
 }
 
 export interface ReceivedDataType {
+  responseType: "POSE_RESPONSE" | "DISCONNECT_RESPONSE";
   referenceSet: boolean;
   poseCollapsed: boolean;
   detectionId: number;

@@ -16,7 +16,7 @@ const useWebRTC = ({ serverUrl }: useWebRTCProps) => {
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
   const dataChannelRef = useRef<RTCDataChannel | null>(null);
 
-  const { setReceivedData } = useMeasurementStore();
+  const { setReceivedData, stopMeasurement} = useMeasurementStore();
 
   const sendToServer = (message: Record<string, unknown>) => {
     const ws = signalingServerConnectionRef.current;
@@ -57,8 +57,13 @@ const useWebRTC = ({ serverUrl }: useWebRTCProps) => {
     dataChannel.onopen = () => signalingServerConnectionRef.current?.close();
     dataChannel.onmessage = (e) => {
       const parsedData: ReceivedDataType = JSON.parse(e.data);
-
+      
       setReceivedData(parsedData);
+
+      if(parsedData.responseType=="DISCONNECT_RESPONSE") {
+        stopMeasurement();
+        closeConnection();
+      }
     };
   };
 
