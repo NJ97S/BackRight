@@ -11,6 +11,7 @@ import {
 import useMeasurementStore from "../../../store/useMeasurementStore";
 import useWebRTC from "../../../hooks/useWebRTC";
 import useRecording from "../../../hooks/useRecording";
+import { patchSessionStateToAbsent } from "../../../apis/api";
 
 import * as S from "./MeasurementServiceStyle";
 
@@ -25,10 +26,13 @@ const MeasurementService = () => {
   const lastVideoTimeRef = useRef<number>(-1);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+  let count = 0;
+
   const {
     setStream,
     setElapsedTime,
     setLandmarkResult,
+    stopMeasurement,
     addSessionAlert,
     clearSessionAlerts,
     setNewAlertCount,
@@ -97,6 +101,13 @@ const MeasurementService = () => {
     landmarkStorageRef.current = [];
   };
 
+  const endAbsentSession = async() => {
+    let sessionId : number = useMeasurementStore.getState().receivedData!.sessionId;
+    await stopMeasurement();
+    await closeConnection();
+    await patchSessionStateToAbsent(sessionId);
+  }
+
   const detectPose = () => {
     const video = videoRef.current;
     const landmarker = landmarkerRef.current;
@@ -120,6 +131,11 @@ const MeasurementService = () => {
     if (poses.landmarks.length > 0) {
       pushLandmark(poses.landmarks[0]);
       setLandmarkResult(poses);
+      count=0;
+    } else {
+      if(++count > 9000){
+        endAbsentSession();
+      }
     }
 
     animationFrameRef.current = requestAnimationFrame(detectPose);
