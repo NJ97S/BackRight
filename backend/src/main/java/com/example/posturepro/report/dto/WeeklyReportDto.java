@@ -6,8 +6,8 @@ public record WeeklyReportDto(
 	int[] dailyProperPoseMinutesPerHours,
 	DetectionStatDto detectionCountStat,
 	int weeklyAveragePoseDuration,
-	int[] overallDistribution,
-	int[] ageRangeDistribution,
-	int[] ageRangeGenderDistribution
+	GroupDistributionDto overallDistribution,
+	GroupDistributionDto ageRangeDistribution,
+	GroupDistributionDto ageRangeGenderDistribution
 ) {
 }

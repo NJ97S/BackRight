@@ -17,13 +17,13 @@ import com.example.posturepro.analyzingsession.dto.AnalyzingSessionDto;
 import com.example.posturepro.analyzingsession.service.AnalyzingSessionService;
 import com.example.posturepro.detection.entity.DetectionStatAggregator;
 import com.example.posturepro.detection.entity.DetectionStatDto;
-import com.example.posturepro.domain.distributionsummary.model.DistributionSummary;
 import com.example.posturepro.domain.distributionsummary.service.DistributionSummaryService;
 import com.example.posturepro.domain.member.Member;
 import com.example.posturepro.domain.member.service.MemberService;
 import com.example.posturepro.exception.EntityNotFoundException;
 import com.example.posturepro.report.dto.DailyReportDto;
 import com.example.posturepro.report.dto.DailyStatDto;
+import com.example.posturepro.report.dto.GroupDistributionDto;
 import com.example.posturepro.report.dto.MonthlyReportDto;
 import com.example.posturepro.report.dto.WeeklyReportDto;
 import com.example.posturepro.report.entity.DailyStat;
@@ -86,18 +86,14 @@ public class ReportService {
 
 		int weeklyAveragePoseDuration = (int)((double)properPoseDurationSum / totalDurationSum * 60);
 		var overallDistribution = distributionSummaryService.getLatestOverallDistribution();
-
 		var ageRangeDistribution = distributionSummaryService.getLatestAgeRangeDistribution(memberId);
-
 		var ageRangeGenderDistribution = distributionSummaryService.getLatestAgeRangeGenderDistribution(memberId);
 
 		return new WeeklyReportDto(dailyProperPoseSecondsPerHours, detectionStatDto, weeklyAveragePoseDuration,
-			overallDistribution.stream().map(DistributionSummary::getCount).mapToInt(Integer::intValue).toArray(),
-			ageRangeDistribution.stream().map(DistributionSummary::getCount).mapToInt(Integer::intValue).toArray(),
-			ageRangeGenderDistribution.stream()
-				.map(DistributionSummary::getCount)
-				.mapToInt(Integer::intValue)
-				.toArray());
+			GroupDistributionDto.from(overallDistribution, weeklyAveragePoseDuration),
+			GroupDistributionDto.from(ageRangeDistribution, weeklyAveragePoseDuration),
+			GroupDistributionDto.from(ageRangeGenderDistribution, weeklyAveragePoseDuration)
+		);
 	}
 
 	public MonthlyReportDto getMonthlyReport(String providerId, String monthStart) {
@@ -133,12 +129,10 @@ public class ReportService {
 
 		return new MonthlyReportDto(weeklyProperPoseMinutesPerHours, detectionStatDto,
 			monthlyAveragePoseDuration,
-			overallDistribution.stream().map(DistributionSummary::getCount).mapToInt(Integer::intValue).toArray(),
-			ageRangeDistribution.stream().map(DistributionSummary::getCount).mapToInt(Integer::intValue).toArray(),
-			ageRangeGenderDistribution.stream()
-				.map(DistributionSummary::getCount)
-				.mapToInt(Integer::intValue)
-				.toArray());
+			GroupDistributionDto.from(overallDistribution, monthlyAveragePoseDuration),
+			GroupDistributionDto.from(ageRangeDistribution, monthlyAveragePoseDuration),
+			GroupDistributionDto.from(ageRangeGenderDistribution, monthlyAveragePoseDuration)
+		);
 	}
 
 	private int calculateMonthlyAverage(List<DailyStat> dailyStatList) {
