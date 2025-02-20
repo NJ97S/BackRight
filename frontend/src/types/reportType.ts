@@ -42,12 +42,7 @@ export interface DailyStatType {
 
 export interface DistributionType {
   groupPercentile: number;
-  groupProperPoseTimeDistribution: [
-    {
-      lowerBound: number;
-      upperBound: number;
-    }
-  ];
+  groupBinCounts: number[];
 }
 
 export interface DailyReportType {
@@ -59,6 +54,7 @@ export interface DailyReportType {
 export interface WeeklyReportType {
   dailyProperPoseMinutesPerHours: number[];
   detectionCountStat: DetectionCountStatType;
+  weeklyAveragePoseDuration: number;
   overallDistribution: DistributionType;
   ageRangeDistribution: DistributionType;
   ageRangeGenderDistribution: DistributionType;
@@ -67,6 +63,7 @@ export interface WeeklyReportType {
 export interface MonthlyReportType {
   weeklyProperPoseMinutesPerHours: number[];
   detectionCountStat: DetectionCountStatType;
+  monthlyAveragePoseDuration: number;
   overallDistribution: DistributionType;
   ageRangeDistribution: DistributionType;
   ageRangeGenderDistribution: DistributionType;

@@ -4,8 +4,8 @@ import PostureWarningSummary from "../../../components/common/PostureWarningSumm
 import WeeklyCalendar from "../../../components/common/Calendar/WeeklyCalendar";
 import AveragePostureTime from "../../../components/common/AveragePostureTime/AveragePostureTime";
 import Loading from "../../../components/common/Loading/Loading";
-
 import RankingSummary from "../../../components/common/RankingSummary/RankingSummary";
+
 import { convertDateToString } from "../../../utils/timeFormatUtils";
 import { getWeeklyReport } from "../../../apis/api";
 import { WeeklyReportType } from "../../../types/reportType";
@@ -33,7 +33,6 @@ const WeeklyReportPage = () => {
 
   const requestWeeklyReport = async (date: Date) => {
     const formattedDate = convertDateToString(date);
-
     const reportData = await getWeeklyReport(formattedDate);
 
     setWeeklyReport(reportData);
@@ -63,7 +62,15 @@ const WeeklyReportPage = () => {
           data={weeklyReport.dailyProperPoseMinutesPerHours}
           labels={["월", "화", "수", "목", "금", "토", "일"]}
         />
-        <RankingSummary />
+
+        <RankingSummary
+          averagePoseDuration={weeklyReport.weeklyAveragePoseDuration}
+          distribution={{
+            overall: weeklyReport.overallDistribution,
+            ageRange: weeklyReport.ageRangeDistribution,
+            ageRangeGender: weeklyReport.ageRangeGenderDistribution,
+          }}
+        />
       </S.SecondeRowContainer>
     </S.WeeklyReportPageContainer>
   );

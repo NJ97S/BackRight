@@ -65,7 +65,14 @@ const MonthlyReportPage = () => {
             (_, i) => `${i + 1}주차`
           )}
         />
-        <RankingSummary />
+        <RankingSummary
+          averagePoseDuration={monthlyReport.monthlyAveragePoseDuration}
+          distribution={{
+            overall: monthlyReport.overallDistribution,
+            ageRange: monthlyReport.ageRangeDistribution,
+            ageRangeGender: monthlyReport.ageRangeGenderDistribution,
+          }}
+        />
       </S.SecondeRowContainer>
     </S.MonthlyReportPageContainer>
   );
