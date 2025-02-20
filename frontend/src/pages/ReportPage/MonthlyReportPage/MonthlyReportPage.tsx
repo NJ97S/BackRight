@@ -12,6 +12,15 @@ import { getMonthlyReport } from "../../../apis/api";
 
 import * as S from "./MonthlyReportPageStyle";
 
+// import { MOCK_DATA } from "./mockData";
+
+// const {
+//   ageRangeGenderDistribution,
+//   overallDistribution,
+//   ageRangeDistribution,
+//   monthlyAveragePoseDuration,
+// } = MOCK_DATA;
+
 const getFirstDayOfMonth = (): Date => {
   const today = new Date();
 
@@ -65,7 +74,21 @@ const MonthlyReportPage = () => {
             (_, i) => `${i + 1}주차`
           )}
         />
-        <RankingSummary />
+        <RankingSummary
+          distribution={monthlyReport.overallDistribution}
+          averagePoseDuration={monthlyReport.monthlyAveragePoseDuration}
+          type="OVERALL"
+        />
+        <RankingSummary
+          distribution={monthlyReport.ageRangeDistribution}
+          averagePoseDuration={monthlyReport.monthlyAveragePoseDuration}
+          type="AGE"
+        />
+        <RankingSummary
+          distribution={monthlyReport.ageRangeGenderDistribution}
+          averagePoseDuration={monthlyReport.monthlyAveragePoseDuration}
+          type="AGE-GENDER"
+        />
       </S.SecondeRowContainer>
     </S.MonthlyReportPageContainer>
   );

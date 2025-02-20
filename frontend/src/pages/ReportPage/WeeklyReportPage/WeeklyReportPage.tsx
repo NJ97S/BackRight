@@ -63,7 +63,21 @@ const WeeklyReportPage = () => {
           data={weeklyReport.dailyProperPoseMinutesPerHours}
           labels={["월", "화", "수", "목", "금", "토", "일"]}
         />
-        <RankingSummary />
+        <RankingSummary
+          averagePoseDuration={weeklyReport.weeklyAveragePoseDuration}
+          distribution={weeklyReport.overallDistribution}
+          type="OVERALL"
+        />
+        <RankingSummary
+          averagePoseDuration={weeklyReport.weeklyAveragePoseDuration}
+          distribution={weeklyReport.ageRangeDistribution}
+          type="AGE"
+        />
+        <RankingSummary
+          averagePoseDuration={weeklyReport.weeklyAveragePoseDuration}
+          distribution={weeklyReport.ageRangeGenderDistribution}
+          type="AGE-GENDER"
+        />
       </S.SecondeRowContainer>
     </S.WeeklyReportPageContainer>
   );

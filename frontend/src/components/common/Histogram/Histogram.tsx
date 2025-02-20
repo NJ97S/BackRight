@@ -19,41 +19,41 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
 
 interface HistogramProps {
   distribution: DistributionType;
+  modeFromBinCounts: number;
+  averagePoseDuration: number;
 }
 
-const Histogram = ({ distribution }: HistogramProps) => {
-  const { groupPercentile, groupProperPoseTimeDistribution } = distribution;
+const Histogram = ({
+  distribution,
+  modeFromBinCounts,
+  averagePoseDuration,
+}: HistogramProps) => {
+  const { groupBinCounts } = distribution;
 
-  const labels = Array.from({ length: 100 }, (_, i) => (i + 1).toString());
+  const labels = Array.from({ length: 60 }, (_, i) => i.toString());
 
-  const averageValues = groupProperPoseTimeDistribution.map(
-    (d) => (d.lowerBound + d.upperBound) / 2
+  const barColors = labels.map((_, index) =>
+    index === averagePoseDuration ? "#76abae" : "#c7c7c7"
   );
 
-  const percentileIndex = Math.round(groupPercentile);
-
-  const barColors = labels.map((label, index) =>
-    index + 1 === percentileIndex ? "#76abae" : "#c7c7c7"
-  );
-
-  const adjustedValues = averageValues.map((value, index) =>
-    index + 1 === percentileIndex ? 60 : value
-  );
+  // const adjustedValues = groupBinCounts.map((value, index) =>
+  //   index + 1 === percentileIndex ? 60 : value
+  // );
 
   const data = useMemo(
     () => ({
       labels,
       datasets: [
         {
-          label: "Average Pose Time",
-          data: adjustedValues,
+          label: "count",
+          data: groupBinCounts,
           backgroundColor: barColors,
           borderColor: barColors,
           borderWidth: 1,
         },
       ],
     }),
-    [adjustedValues, barColors]
+    [groupBinCounts, barColors]
   );
 
   const options = useMemo(
@@ -61,18 +61,6 @@ const Histogram = ({ distribution }: HistogramProps) => {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        tooltip: {
-          callbacks: {
-            label: (context: any) => {
-              const index = context.dataIndex;
-              const correspondingData = groupProperPoseTimeDistribution[index];
-
-              return correspondingData
-                ? `하한: ${correspondingData.lowerBound}분, 상한: ${correspondingData.upperBound}분, 평균: ${averageValues[index]}분`
-                : "";
-            },
-          },
-        },
         legend: {
           display: false,
         },
@@ -97,7 +85,10 @@ const Histogram = ({ distribution }: HistogramProps) => {
         },
         y: {
           beginAtZero: true,
-          max: 60,
+          max: Math.max(
+            Math.floor(modeFromBinCounts * 1.1),
+            Math.floor(modeFromBinCounts / 10 + 1) * 10
+          ),
           grid: {
             display: true,
           },
@@ -110,7 +101,7 @@ const Histogram = ({ distribution }: HistogramProps) => {
         },
       },
     }),
-    [averageValues, groupProperPoseTimeDistribution]
+    [groupBinCounts]
   );
 
   return (

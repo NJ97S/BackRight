@@ -1,25 +1,34 @@
-import MOCK_DATA from "../../../pages/ReportPage/MonthlyReportPage/mockData";
 import useAuthStore from "../../../store/useAuthStore";
+import { DistributionType } from "../../../types/reportType";
 import getAgeGroup from "../../../utils/getAgeGroup";
 import Histogram from "../Histogram/Histogram";
 
 import * as S from "./RankingSummaryStyle";
 
-const { overallDistribution } = MOCK_DATA;
+interface RankingSummaryProps {
+  distribution: DistributionType;
+  averagePoseDuration: number;
+  type: "OVERALL" | "AGE" | "AGE-GENDER";
+}
 
-const RankingSummary = () => {
+const RankingSummary = ({
+  distribution,
+  averagePoseDuration,
+  type,
+}: RankingSummaryProps) => {
   const { user } = useAuthStore();
 
-  const getAverageTime = () => {
-    const userValue =
-      overallDistribution.groupProperPoseTimeDistribution[
-        overallDistribution.groupPercentile
-      ];
-
-    return Math.round(userValue.upperBound - userValue.lowerBound);
-  };
-
   const gender = user?.gender === "MALE" ? "남성" : "여성";
+
+  const { modeValue, minuteIndex } = distribution.groupBinCounts.reduce(
+    (acc, value, index) => {
+      if (value > acc.modeValue) {
+        return { modeValue: value, minuteIndex: index };
+      }
+      return acc;
+    },
+    { modeValue: -Infinity, minuteIndex: -1 }
+  );
 
   if (!user) return null;
 
@@ -31,20 +40,40 @@ const RankingSummary = () => {
         <S.DescriptionContainer>
           <S.Description>
             <b>{user?.name}</b> 님은 상위{" "}
-            <S.MyPercent>{overallDistribution.groupPercentile}%</S.MyPercent>
+            <S.MyPercent>
+              {(100 - distribution.groupPercentile).toFixed(2)}%
+            </S.MyPercent>
             입니다.
           </S.Description>
           <S.Description>
             <b>{user?.name}</b> 님의 평균 자세 유지 시간은{" "}
-            <b>{getAverageTime()}분</b>으로,
+            <b>{averagePoseDuration}분</b>으로,
             <br />
             <b>
-              {getAgeGroup(user.birthDate)} {gender}
+              {type === "OVERALL" ? "전체" : getAgeGroup(user.birthDate)}{" "}
+              {type === "AGE-GENDER" ? gender : ""}
             </b>
-            의 평균인 <b>27분</b>보다 <span>29분</span> 많습니다.
+            의 최빈값인 <b>{minuteIndex}분</b>
+            {averagePoseDuration > minuteIndex ? (
+              <>
+                보다 <span>{averagePoseDuration - minuteIndex}분</span>{" "}
+                높습니다.
+              </>
+            ) : averagePoseDuration < minuteIndex ? (
+              <>
+                보다 <span>{minuteIndex - averagePoseDuration}분</span>{" "}
+                낮습니다.
+              </>
+            ) : (
+              <>과 같습니다.</>
+            )}
           </S.Description>
         </S.DescriptionContainer>
-        <Histogram distribution={overallDistribution} />
+        <Histogram
+          distribution={distribution}
+          modeFromBinCounts={modeValue}
+          averagePoseDuration={averagePoseDuration}
+        />
       </S.ContentContainer>
     </S.RankingSummaryContainer>
   );
