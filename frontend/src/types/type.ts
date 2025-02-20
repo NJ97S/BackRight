@@ -27,6 +27,7 @@ export interface ReceivedDataType {
   responseType: "POSE_RESPONSE" | "DISCONNECT_RESPONSE";
   referenceSet: boolean;
   poseCollapsed: boolean;
+  sessionId: number;
   detectionId: number;
   videoPreSignedUrl: string | null;
   startedAt: string | null;
