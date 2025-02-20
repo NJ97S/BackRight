@@ -9,14 +9,14 @@ import * as A from "../../animations/landingAnimations";
 
 const LandingPage = () => {
   const navigate = useNavigate();
-  const [lampState, setLampState] = useState<string>(LAMP_STATES[0].src);
+  const [lampState, setLampState] = useState(LAMP_STATES[0].src);
   const [showText, setShowText] = useState(false);
   const [showLogo, setShowLogo] = useState(false);
 
   const handleAppDownload = () => {
     const link = document.createElement("a");
     link.href = "/downloads/BackRight-Setup.zip";
-    link.download = "backright-app.zip";
+    link.download = "BackRight-Setup.zip";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
