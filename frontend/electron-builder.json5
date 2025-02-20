@@ -5,7 +5,7 @@
   asar: false,
   productName: "BackRight",
   directories: {
-    output: "output": "release/${version}",
+    output: "release/${version}",
   },
   files: ["dist", "dist-electron"],
   mac: {
