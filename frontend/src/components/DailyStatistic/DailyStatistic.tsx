@@ -2,6 +2,7 @@ import { DailyReportType } from "../../types/reportType";
 import ComparisonBarChart from "../common/ComparisonBarChart/ComparisonBarChart";
 import DoughnutGraph from "../common/DoughnutGraph/DoughnutGraph";
 import Loading from "../common/Loading/Loading";
+
 import * as S from "./DailyStatisticStyle";
 
 interface DailyStatisticProps {
