@@ -12,15 +12,6 @@ import { getMonthlyReport } from "../../../apis/api";
 
 import * as S from "./MonthlyReportPageStyle";
 
-// import { MOCK_DATA } from "./mockData";
-
-// const {
-//   ageRangeGenderDistribution,
-//   overallDistribution,
-//   ageRangeDistribution,
-//   monthlyAveragePoseDuration,
-// } = MOCK_DATA;
-
 const getFirstDayOfMonth = (): Date => {
   const today = new Date();
 
@@ -75,19 +66,12 @@ const MonthlyReportPage = () => {
           )}
         />
         <RankingSummary
-          distribution={monthlyReport.overallDistribution}
           averagePoseDuration={monthlyReport.monthlyAveragePoseDuration}
-          type="OVERALL"
-        />
-        <RankingSummary
-          distribution={monthlyReport.ageRangeDistribution}
-          averagePoseDuration={monthlyReport.monthlyAveragePoseDuration}
-          type="AGE"
-        />
-        <RankingSummary
-          distribution={monthlyReport.ageRangeGenderDistribution}
-          averagePoseDuration={monthlyReport.monthlyAveragePoseDuration}
-          type="AGE-GENDER"
+          distribution={{
+            overall: monthlyReport.overallDistribution,
+            ageRange: monthlyReport.ageRangeDistribution,
+            ageRangeGender: monthlyReport.ageRangeGenderDistribution,
+          }}
         />
       </S.SecondeRowContainer>
     </S.MonthlyReportPageContainer>
