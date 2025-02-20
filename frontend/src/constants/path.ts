@@ -1,4 +1,5 @@
 const PATH = {
+  Landing: "/landing",
   SIGN_IN: "/sign-in",
   SIGN_UP: "/sign-up",
   HOME: "/",
