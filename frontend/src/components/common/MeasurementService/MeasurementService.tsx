@@ -101,12 +101,14 @@ const MeasurementService = () => {
     landmarkStorageRef.current = [];
   };
 
-  const endAbsentSession = async() => {
-    let sessionId : number = useMeasurementStore.getState().receivedData!.sessionId;
+  const endAbsentSession = async () => {
+    const sessionId: number =
+      useMeasurementStore.getState().receivedData!.sessionId;
+
     await stopMeasurement();
     await closeConnection();
     await patchSessionStateToAbsent(sessionId);
-  }
+  };
 
   const detectPose = () => {
     const video = videoRef.current;
@@ -131,11 +133,9 @@ const MeasurementService = () => {
     if (poses.landmarks.length > 0) {
       pushLandmark(poses.landmarks[0]);
       setLandmarkResult(poses);
-      count=0;
-    } else {
-      if(++count > 9000){
-        endAbsentSession();
-      }
+      count = 0;
+    } else if (++count > 9000) {
+      endAbsentSession();
     }
 
     animationFrameRef.current = requestAnimationFrame(detectPose);
@@ -190,6 +190,7 @@ const MeasurementService = () => {
     setLandmarkResult(null);
 
     clearSessionAlerts();
+    setNewAlertCount(0);
   };
 
   useEffect(() => {
