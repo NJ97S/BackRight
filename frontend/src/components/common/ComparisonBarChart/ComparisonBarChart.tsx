@@ -25,7 +25,7 @@ const ComparisonBarChart = ({ current, previous }: ComparisonBarChartProps) => {
   const diffText = diffTime > 0 ? "더 많이" : "더 적게";
 
   const data = {
-    labels: ["1일 전", "오늘"],
+    labels: ["최근", "오늘"],
     datasets: [
       {
         data: [previous, current],
@@ -100,7 +100,7 @@ const ComparisonBarChart = ({ current, previous }: ComparisonBarChartProps) => {
       </S.BarGraph>
 
       <S.DescriptionContainer>
-        <S.Description>1일 전과 비교했을 때</S.Description>
+        <S.Description>최근 데이터와 비교했을 때</S.Description>
         <S.Description>
           <span>{convertSecondsToTimeString(Math.abs(diffTime))}</span>{" "}
           {diffText} 정자세를 유지했어요.
