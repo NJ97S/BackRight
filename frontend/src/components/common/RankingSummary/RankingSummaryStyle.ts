@@ -17,6 +17,16 @@ export const Title = styled.div`
   text-align: center;
 `;
 
+export const RangeText = styled.span`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 0.5rem;
+  color: var(--gray-200);
+  font-size: 0.875rem;
+  text-align: end;
+`;
+
 export const CarouselContainer = styled.div`
   display: flex;
   align-items: center;

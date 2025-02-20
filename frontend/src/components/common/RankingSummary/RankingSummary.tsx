@@ -72,7 +72,10 @@ const RankingSummary = ({
 
   return (
     <S.RankingSummaryContainer>
-      <S.Title>나는 상위 몇 % 일까?</S.Title>
+      <S.Title>
+        나는 상위 몇 % 일까?
+        <S.RangeText>{getRange()}</S.RangeText>
+      </S.Title>
 
       <S.PrevButton onClick={prevSlide}>{"<"}</S.PrevButton>
       <S.NextButton onClick={nextSlide}>{">"}</S.NextButton>
@@ -100,8 +103,8 @@ const RankingSummary = ({
                   <b>{user?.name}</b> 님의 평균 자세 유지 시간은{" "}
                   <b>{averagePoseDuration}분</b>으로,
                   <br />
-                  <b>{getRange()}</b>의 최빈값인 <b>{minuteIndex}분</b>보다{" "}
-                  <span>{Math.abs(diffTime)}분</span> {diffText}
+                  <b>{getRange()}</b>의 최빈값인 <b>{minuteIndex}분</b>
+                  보다 <span>{Math.abs(diffTime)}분</span> {diffText}.
                 </S.Description>
               </S.DescriptionContainer>
               <Histogram
