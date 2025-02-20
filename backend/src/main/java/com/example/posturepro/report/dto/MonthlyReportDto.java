@@ -8,8 +8,8 @@ public record MonthlyReportDto(
 	List<Integer> weeklyProperPoseMinutesPerHours,
 	DetectionStatDto detectionCountStat,
 	int monthlyAveragePoseDuration,
-	int[] overallDistribution,
-	int[] ageRangeDistribution,
-	int[] ageRangeGenderDistribution
+	GroupDistributionDto overallDistribution,
+	GroupDistributionDto ageRangeDistribution,
+	GroupDistributionDto ageRangeGenderDistribution
 ) {
 }
